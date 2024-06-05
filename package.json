@@ -1,0 +1,22 @@
+{
+  "name": "easymenu",
+  "version": "1.0.0",
+  "description": "this is the first version if the easy menu web app",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  
+  "author": "Bassem",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "dirname": "^0.1.0",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.2"
+  }
+}
