@@ -82,6 +82,19 @@ $(function() {
           }
       });
   });
+
+  $(".user_login form").submit(function(event) {
+      event.preventDefault(); // Prevent the form from submitting the traditional way
+      $.post('/login', $(this).serialize(), function(data) {
+          if (data.success) {
+              // Handle login success here
+              //window.location.href = '/dashboard';
+          } else {
+              // Handle login errors here
+              $("#login_message").text(data.message).removeClass("success").addClass('error').show();
+          }
+      });
+  });
 });
 
 

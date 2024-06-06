@@ -19,6 +19,8 @@ app.listen(PORT, () => {
   console.log('Server is running on http://localhost: ' + PORT);
 })
 
+
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/homePage/index.html'));
 })
@@ -32,7 +34,7 @@ app.post('/register', (req, res) => {
         return res.json({ success: false, message: 'Please fill all fields.'});
     }
 
-    if (!validateEmail(email)) {
+    if (email === null) {
         return res.json({ success: false, message: 'This email address already exists.'});
     }
 
@@ -43,5 +45,13 @@ app.post('/login', (req, res) => {
   const {email, password, remember} = req.body;
 
     console.log('email:' + email, password, remember);
+
+    if (!email || !password) {
+        return res.json({ success: false, message: 'Please fill all fields.'});
+    }
+
+    res.json({ success: false, message: 'Invalid login credentials.'});
 });
+
+
 

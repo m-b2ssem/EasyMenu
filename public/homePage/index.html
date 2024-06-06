@@ -47,7 +47,7 @@ https://templatemo.com/tm-570-chain-app-dev
   <!-- ***** Preloader End ***** -->
 
   <!-- ***** Header Area Start ***** -->
-  <header class="header-area header-sticky wow slideInDown" data-wow-duration="0.75s" data-wow-delay="0s">
+  <header class="header-area header-sticky wow slideInDown" style="margin-top: 0px;" data-wow-duration="0.75s" data-wow-delay="0s">
     <div class="container">
       <div class="row">
         <div class="col-12">
@@ -725,6 +725,7 @@ https://templatemo.com/tm-570-chain-app-dev
 
 <!-- to your js part -->
 
+
 <script type="text/javascript">
   function googleTranslateElementInit() {
       new google.translate.TranslateElement(
@@ -736,23 +737,45 @@ https://templatemo.com/tm-570-chain-app-dev
 <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script type="text/javascript">
-  // Additional JavaScript to hide the Google Translate banner
   document.addEventListener('DOMContentLoaded', function() {
-      var hideGoogleTranslateBanner = function() {
+      var hideGoogleTranslateElements = function() {
+          // Hide the Google Translate banner
           var gtBanner = document.querySelector('.goog-te-banner-frame');
+          console.log(gtBanner);
           if (gtBanner) {
               gtBanner.style.display = 'none';
           }
+
+          // Hide the Google Translate gadget text
           var gtGadget = document.querySelector('.goog-te-gadget');
           if (gtGadget) {
               gtGadget.style.color = 'transparent';
           }
+
+          // Hide the Google Translate toolbar
+          var gtToolbar = document.querySelector('.goog-te-toolbar');
+          if (gtToolbar) {
+              gtToolbar.style.display = 'none';
+          }
+
+          // Additional hiding for Google Translate frame
+          var gtFrame = document.querySelector('.goog-te-banner-frame.skiptranslate');
+          if (gtFrame) {
+              gtFrame.style.display = 'none';
+          }
+
+          // Hide iframe if it reappears
+          var gtIframe = document.querySelector('iframe.goog-te-banner-frame');
+          if (gtIframe) {
+              gtIframe.style.display = 'none';
+          }
       };
-      hideGoogleTranslateBanner();
-      // Hide banner again after a delay, in case it gets re-injected
-      setTimeout(hideGoogleTranslateBanner, 500);
-      setTimeout(hideGoogleTranslateBanner, 1000);
-      setTimeout(hideGoogleTranslateBanner, 2000);
+
+      // Initial hide
+      hideGoogleTranslateElements();
+
+      // Repeatedly hide elements in case they reappear
+      setInterval(hideGoogleTranslateElements, 500);
   });
 </script>
 
