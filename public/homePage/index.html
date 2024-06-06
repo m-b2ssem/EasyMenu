@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
 
-    <title>Chain App Dev - App Landing Page HTML5 Template</title>
+    <title>Easy Menu</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -26,10 +26,9 @@ https://templatemo.com/tm-570-chain-app-dev
 
     <!-- Additional CSS Files -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
-    <link rel="stylesheet" href="/assets/css/templatemo-chain-app-dev.css">
+    <link rel="stylesheet" href="/assets/css/template.css">
     <link rel="stylesheet" href="/assets//css/animated.css">
     <link rel="stylesheet" href="/assets//css/owl.css">
-
   </head>
 
 <body>
@@ -59,13 +58,15 @@ https://templatemo.com/tm-570-chain-app-dev
             </a>
             <!-- ***** Logo End ***** -->
             <!-- ***** Menu Start ***** -->
+            
             <ul class="nav">
               <li class="scroll-to-section"><a href="#top" class="active">Home</a></li>
               <li class="scroll-to-section"><a href="#services">Services</a></li>
               <li class="scroll-to-section"><a href="#about">About</a></li>
               <li class="scroll-to-section"><a href="#pricing">Pricing</a></li>
+              <li id="google_translate_element"></li>
             <!-- <li class="scroll-to-section"><a href="#newsletter">Newsletter</a></li> --> 
-              <li><div class="gradient-button"><a id="modal_trigger" href="#modal"><i class="fa fa-sign-in-alt"></i> Sign In Now</a></div></li> 
+              <li><div class="gradient-button"><a id="modal_trigger" href="#modal"><i class="fa fa-sign-in-alt"></i> Sign in or Login</a></div></li> 
             </ul>        
             <a class='menu-trigger'>
                 <span>Menu</span>
@@ -109,6 +110,9 @@ https://templatemo.com/tm-570-chain-app-dev
                 <input type="password" name="password"/>
                 <br />
 
+                <div id="login_message"  style="display: none;"></div>
+                <br />
+
                 <div class="checkbox">
                     <input id="remember" type="checkbox" name="remember"/>
                     <label for="remember">Remember me on this computer</label>
@@ -116,7 +120,7 @@ https://templatemo.com/tm-570-chain-app-dev
 
                 <div class="action_btns">
                     <div class="one_half"><a href="#" class="btn back_btn"><i class="fa fa-angle-double-left"></i> Back</a></div>
-                    <div class="one_half last"><a class="btn btn_red" type="submit">Login</a></div>
+                    <div class="one_half last"><button class="btn btn_red" style="width: 100%;" type="submit">Login</button></div>
                 </div>
             </form>
 
@@ -125,31 +129,29 @@ https://templatemo.com/tm-570-chain-app-dev
 
         <!-- Register Form -->
         <div class="user_register">
-            <form action="/register" method="post">
-                <label>Company Name</label>
-                <input type="text" />
-                <br />
-
+            <form  action="/register" method="post">
                 <label>Restruant Name</label>
-                <input type="text" />
+                <input type="text" name="resturantName"/>
                 <br />
 
                 <label>Email Address</label>
-                <input type="email" />
+                <input type="email" name="email"/>
                 <br />
 
                 <label>Password</label>
-                <input type="password" />
+                <input type="password" name="password" required pattern="(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one uppercase and one lowercase letter, and at least 8 or more characters"/>
                 <br />
 
+                <div id="register_message"  style="display: none;"></div>
+                <br />
                 <div class="checkbox">
-                    <input id="send_updates" type="checkbox" />
+                    <input id="send_updates" type="checkbox" name="sendUpdate"/>
                     <label for="send_updates">Send me occasional email updates</label>
                 </div>
 
                 <div class="action_btns">
                     <div class="one_half"><a href="#" class="btn back_btn"><i class="fa fa-angle-double-left"></i> Back</a></div>
-                    <div class="one_half last"><a href="#" class="btn btn_red">Register</a></div>
+                    <div class="one_half last"><button class="btn btn_red" style="width: 100%;" type="submit">Register</button></div>
                 </div>
             </form>
         </div>
@@ -165,9 +167,10 @@ https://templatemo.com/tm-570-chain-app-dev
               <div class="left-content show-up header-text wow fadeInLeft" data-wow-duration="1s" data-wow-delay="1s">
                 <div class="row">
                   <div class="col-lg-12">
-                    <h2>Get The Latest App From App Stores</h2>
-                    <p>Chain App Dev is an app landing page HTML5 template based on Bootstrap v5.1.3 CSS layout provided by TemplateMo, a great website to download free CSS templates.</p>
+                    <h2>Simplify Your Restaurant's Menu Management </h2>
+                    <p>At Easy Menu Web App, we are dedicated to revolutionizing the way restaurants manage their menus. Our mission is to provide a simple, intuitive, and efficient solution that allows restaurants to create, customize, and update their menus effortlessly. We believe that a well-organized and visually appealing menu can significantly enhance the dining experience and reflect the quality of your establishment.</p>
                   </div>
+                  <!--
                   <div class="col-lg-12">
                     <div class="white-button first-button scroll-to-section">
                       <a href="#contact">Free Quote <i class="fab fa-apple"></i></a>
@@ -175,7 +178,7 @@ https://templatemo.com/tm-570-chain-app-dev
                     <div class="white-button scroll-to-section">
                       <a href="#contact">Free Quote <i class="fab fa-google-play"></i></a>
                     </div>
-                  </div>
+                  </div> -->
                 </div>
               </div>
             </div>
@@ -197,7 +200,7 @@ https://templatemo.com/tm-570-chain-app-dev
           <div class="section-heading  wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">
             <h4>Amazing <em>Services &amp; Features</em> for you</h4>
             <img src="assets/images/heading-line-dec.png" alt="">
-            <p>If you need the greatest collection of HTML templates for your business, please visit <a rel="nofollow" href="https://www.toocss.com/" target="_blank">TooCSS</a> Blog. If you need to have a contact form PHP script, go to <a href="https://templatemo.com/contact" target="_parent">our contact page</a> for more information.</p>
+            <p>If you need an easy and efficient way to manage your restaurant's menu, Easy Menu Web App is your perfect solution. With our web app, you can create, customize, and update your menu effortlessly.</p>
           </div>
         </div>
       </div>
@@ -207,8 +210,9 @@ https://templatemo.com/tm-570-chain-app-dev
         <div class="col-lg-3">
           <div class="service-item first-service">
             <div class="icon"></div>
-            <h4>App Maintenance</h4>
-            <p>You are not allowed to redistribute this template ZIP file on any other website.</p>
+            <h4>Effortless Menu Creation</h4>
+            <p>Creating your menu within minutes.
+              Add, edit, and categorize items with an intuitive interface.</p>
             <div class="text-button">
               <a href="#">Read More <i class="fa fa-arrow-right"></i></a>
             </div>
@@ -217,8 +221,9 @@ https://templatemo.com/tm-570-chain-app-dev
         <div class="col-lg-3">
           <div class="service-item second-service">
             <div class="icon"></div>
-            <h4>Rocket Speed of App</h4>
-            <p>You are allowed to use the Chain App Dev HTML template. Feel free to modify or edit this layout.</p>
+            <h4>Customization Options</h4>
+            <p>Choose background colors to match your restaurant’s theme.
+              Ensure your menu visually represents your brand.</p>
             <div class="text-button">
               <a href="#">Read More <i class="fa fa-arrow-right"></i></a>
             </div>
@@ -227,8 +232,8 @@ https://templatemo.com/tm-570-chain-app-dev
         <div class="col-lg-3">
           <div class="service-item third-service">
             <div class="icon"></div>
-            <h4>Multi Workflow Idea</h4>
-            <p>If this template is beneficial for your work, please support us <a rel="nofollow" href="https://paypal.me/templatemo" target="_blank">a little via PayPal</a>. Thank you.</p>
+            <h4>Real-Time Updates</h4>
+            <p>Update your menu anytime, anywhere. Keep your offerings current with instant changes.</p>
             <div class="text-button">
               <a href="#">Read More <i class="fa fa-arrow-right"></i></a>
             </div>
@@ -237,8 +242,8 @@ https://templatemo.com/tm-570-chain-app-dev
         <div class="col-lg-3">
           <div class="service-item fourth-service">
             <div class="icon"></div>
-            <h4>24/7 Help &amp; Support</h4>
-            <p>Lorem ipsum dolor consectetur adipiscing elit sedder williamsburg photo booth quinoa and fashion axe.</p>
+            <h4>Professional Appearance</h4>
+            <p>Present a sleek and polished menu. Enhance the dining experience with a well-organized menu.</p>
             <div class="text-button">
               <a href="#">Read More <i class="fa fa-arrow-right"></i></a>
             </div>
@@ -253,39 +258,39 @@ https://templatemo.com/tm-570-chain-app-dev
       <div class="row">
         <div class="col-lg-6 align-self-center">
           <div class="section-heading">
-            <h4>About <em>What We Do</em> &amp; Who We Are</h4>
+            <h4>About <em>Easy Menu Web App</em> &amp; Who We Are</h4>
             <img src="/assets/images/heading-line-dec.png" alt="">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eismod tempor incididunt ut labore et dolore magna.</p>
+            <p>At Easy Menu Web App, we simplify restaurant menu management. Our intuitive platform allows you to create, customize, and update your menu effortlessly, enhancing your customers' dining experience.</p>
           </div>
           <div class="row">
             <div class="col-lg-6">
               <div class="box-item">
-                <h4><a href="#">Maintance Problems</a></h4>
-                <p>Lorem Ipsum Text</p>
+                <h4><a href="#">App Maintenance</a></h4>
+                <p>We ensure your app runs smoothly and efficiently at all times.</p>
               </div>
             </div>
             <div class="col-lg-6">
               <div class="box-item">
-                <h4><a href="#">24/7 Support &amp; Help</a></h4>
-                <p>Lorem Ipsum Text</p>
+                <h4><a href="#">Support &amp; Help</a></h4>
+                <p>Our support team is available to assist you with any issues or questions.</p>
               </div>
             </div>
             <div class="col-lg-6">
               <div class="box-item">
-                <h4><a href="#">Fixing Issues About</a></h4>
-                <p>Lorem Ipsum Text</p>
+                <h4><a href="#">Customizable Menus</a></h4>
+                <p>Create and update your menu to match your restaurant's brand and style.</p>
               </div>
             </div>
             <div class="col-lg-6">
               <div class="box-item">
-                <h4><a href="#">Co. Development</a></h4>
-                <p>Lorem Ipsum Text</p>
+                <h4><a href="#">Continuous Improvement</a></h4>
+                <p>We are constantly enhancing our app to better serve your needs.</p>
               </div>
             </div>
             <div class="col-lg-12">
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eismod tempor idunte ut labore et dolore adipiscing  magna.</p>
+              <p>Experience the convenience and efficiency of Easy Menu Web App, and see how a well-organized menu can boost your restaurant's success.</p>
               <div class="gradient-button">
-                <a href="#">Start 14-Day Free Trial</a>
+                <a href="#" id="trailerButton">Start 3-Months Free Trial</a>
               </div>
               <span>*No Credit Card Required</span>
             </div>
@@ -299,7 +304,7 @@ https://templatemo.com/tm-570-chain-app-dev
       </div>
     </div>
   </div>
-
+  <!--
   <div id="clients" class="the-clients">
     <div class="container">
       <div class="row">
@@ -544,7 +549,7 @@ https://templatemo.com/tm-570-chain-app-dev
       </div>
     </div>
   </div>
-
+-->
   <div id="pricing" class="pricing-tables">
     <div class="container">
       <div class="row">
@@ -557,61 +562,61 @@ https://templatemo.com/tm-570-chain-app-dev
         </div>
         <div class="col-lg-4">
           <div class="pricing-item-regular">
-            <span class="price">$12</span>
+            <span class="price">€12</span>
             <h4>Standard Plan App</h4>
             <div class="icon">
               <img src="/assets/images/pricing-table-01.png" alt="">
             </div>
             <ul>
-              <li>Lorem Ipsum Dolores</li>
-              <li>20 TB of Storage</li>
-              <li class="non-function">Life-time Support</li>
-              <li class="non-function">Premium Add-Ons</li>
-              <li class="non-function">Fastest Network</li>
+              <li>Unlimated item</li>
+              <li>Unlimated Catrgires</li>
+              <li>Match the Background color of you resturant</li>
+              <li class="non-function">Resturant Website</li>
+              <li class="non-function">Multiple Menus</li>
               <li class="non-function">More Options</li>
             </ul>
             <div class="border-button">
-              <a href="#">Purchase This Plan Now</a>
+              <a href="#" id="purchase12">Purchase This Plan Now</a>
             </div>
           </div>
         </div>
         <div class="col-lg-4">
           <div class="pricing-item-pro">
-            <span class="price">$25</span>
+            <span class="price">€25</span>
             <h4>Business Plan App</h4>
             <div class="icon">
               <img src="/assets/images/pricing-table-01.png" alt="">
             </div>
             <ul>
-              <li>Lorem Ipsum Dolores</li>
-              <li>50 TB of Storage</li>
-              <li>Life-time Support</li>
-              <li>Premium Add-Ons</li>
-              <li class="non-function">Fastest Network</li>
+              <li>Unlimated item</li>
+              <li>Unlimated Catrgires</li>
+              <li>Match the Background color of you resturant</li>
+              <li>Resturant Website</li>
+              <li class="non-function">Multiple Menus</li>
               <li class="non-function">More Options</li>
             </ul>
             <div class="border-button">
-              <a href="#">Purchase This Plan Now</a>
+              <a href="#" id="purchase25">Purchase This Plan Now</a>
             </div>
           </div>
         </div>
         <div class="col-lg-4">
           <div class="pricing-item-regular">
-            <span class="price">$66</span>
+            <span class="price">€50</span>
             <h4>Premium Plan App</h4>
             <div class="icon">
               <img src="/assets/images/pricing-table-01.png" alt="">
             </div>
             <ul>
-              <li>Lorem Ipsum Dolores</li>
-              <li>120 TB of Storage</li>
-              <li>Life-time Support</li>
-              <li>Premium Add-Ons</li>
-              <li>Fastest Network</li>
+              <li>Unlimated item</li>
+              <li>Unlimated Catrgires</li>
+              <li>Match the Background color of you resturant</li>
+              <li>Resturant Website</li>
+              <li>Multiple Menus</li>
               <li>More Options</li>
             </ul>
             <div class="border-button">
-              <a href="#">Purchase This Plan Now</a>
+              <a href="#" id="purchase50">Purchase This Plan Now</a>
             </div>
           </div>
         </div>
@@ -663,14 +668,14 @@ https://templatemo.com/tm-570-chain-app-dev
               <li><a href="#">Testimonials</a></li>
               <li><a href="#">Pricing</a></li>
             </ul>
-            <ul>
+           <!-- <ul>
               <li><a href="#">About</a></li>
               <li><a href="#">Testimonials</a></li>
               <li><a href="#">Pricing</a></li>
-            </ul>
+            </ul>-->
           </div>
         </div>
-        <div class="col-lg-3">
+        <!-- <div class="col-lg-3">
           <div class="footer-widget">
             <h4>Useful Links</h4>
             <ul>
@@ -686,20 +691,20 @@ https://templatemo.com/tm-570-chain-app-dev
               <li><a href="#">Normal Apps</a></li>
             </ul>
           </div>
-        </div>
+        </div> -->
         <div class="col-lg-3">
           <div class="footer-widget">
             <h4>About Our Company</h4>
-            <div class="logo">
+            <!--<div class="logo">
               <img src="/assets/images/white-logo.png" alt="">
             </div>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.</p>
+          -->
+            <p>At Easy Menu Web App, we're revolutionizing restaurant menu management. Our mission is to offer a simple, intuitive, and efficient solution for creating, customizing, and updating menus effortlessly. We believe a well-organized, visually appealing menu enhances the dining experience and reflects your establishment's quality.</p>
           </div>
         </div>
         <div class="col-lg-12">
           <div class="copyright-text">
-            <p>Copyright © 2022 Chain App Dev Company. All Rights Reserved. 
-          <br>Design: <a href="https://templatemo.com/" target="_blank" title="css templates">TemplateMo</a></p>
+            <p>Copyright © 2024 Easy Menu Company. All Rights Reserved. 
           </div>
         </div>
       </div>
@@ -715,5 +720,42 @@ https://templatemo.com/tm-570-chain-app-dev
   <script src="/assets/js/imagesloaded.js"></script>
   <script src="/assets/js/popup.js"></script>
   <script src="/assets/js/custom.js"></script>
+  <script src="/assets/js/purchases.js"></script>
+
+
+<!-- to your js part -->
+
+<script type="text/javascript">
+  function googleTranslateElementInit() {
+      new google.translate.TranslateElement(
+          {pageLanguage: 'en'},
+          'google_translate_element'
+      );
+  }
+</script>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script type="text/javascript">
+  // Additional JavaScript to hide the Google Translate banner
+  document.addEventListener('DOMContentLoaded', function() {
+      var hideGoogleTranslateBanner = function() {
+          var gtBanner = document.querySelector('.goog-te-banner-frame');
+          if (gtBanner) {
+              gtBanner.style.display = 'none';
+          }
+          var gtGadget = document.querySelector('.goog-te-gadget');
+          if (gtGadget) {
+              gtGadget.style.color = 'transparent';
+          }
+      };
+      hideGoogleTranslateBanner();
+      // Hide banner again after a delay, in case it gets re-injected
+      setTimeout(hideGoogleTranslateBanner, 500);
+      setTimeout(hideGoogleTranslateBanner, 1000);
+      setTimeout(hideGoogleTranslateBanner, 2000);
+  });
+</script>
+
+
 </body>
 </html>

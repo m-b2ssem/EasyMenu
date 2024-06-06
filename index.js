@@ -23,14 +23,25 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/homePage/index.html'));
 })
 
+app.post('/register', (req, res) => {
+  const {resturantName, email, password, sendUpdate} = req.body;
 
+    console.log('name:' + resturantName, email, password, sendUpdate);
 
+    if (!resturantName || !email || !password) {
+        return res.json({ success: false, message: 'Please fill all fields.'});
+    }
 
+    if (!validateEmail(email)) {
+        return res.json({ success: false, message: 'This email address already exists.'});
+    }
+
+    res.json({ success: true, message: 'Registration successful, please login.'});
+});
 
 app.post('/login', (req, res) => {
   const {email, password, remember} = req.body;
 
-    console.log('email:' + email, password);
-
+    console.log('email:' + email, password, remember);
 });
 

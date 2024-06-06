@@ -43,30 +43,48 @@
 });
 
 $(function() {
-		// Calling Login Form
-		$("#login_form").click(function() {
-				$(".social_login").hide();
-				$(".user_login").show();
-				return false;
-		});
+  // Calling Login Form
+  $("#login_form").click(function() {
+      $(".social_login").hide();
+      $(".user_login").show();
+      return false;
+  });
 
-		// Calling Register Form
-		$("#register_form").click(function() {
-				$(".social_login").hide();
-				$(".user_register").show();
-				$(".header_title").text('Register');
-				return false;
-		});
+  // Calling Register Form
+  $("#register_form").click(function() {
+      $(".social_login").hide();
+      $(".user_register").show();
+      $(".header_title").text('Register');
+      return false;
+  });
 
-		// Going back to Social Forms
-		$(".back_btn").click(function() {
-				$(".user_login").hide();
-				$(".user_register").hide();
-				$(".social_login").show();
-				$(".header_title").text('Login');
-				return false;
-		});
+  // Going back to Social Forms
+  $(".back_btn").click(function() {
+      $(".user_login").hide();
+      $(".user_register").hide();
+      $(".social_login").show();
+      $(".header_title").text('Login');
+      return false;
+  });
+
+  // Handle registration form submission
+  $(".user_register form").submit(function(event) {
+      event.preventDefault(); // Prevent the form from submitting the traditional way
+      $.post('/register', $(this).serialize(), function(data) {
+          if (data.success) {
+              $(".user_register").hide();
+              $(".user_login").show();
+              $(".header_title").text('Login');
+              $("#login_message").text(data.message).removeClass("error").addClass("success").show();
+          } else {
+              // Handle registration errors here
+              $("#message").text(data.message).removeClass("success").addClass('error').show();
+          }
+      });
+  });
 });
+
+
 
   // Acc
   $(document).on("click", ".naccs .menu div", function() {
