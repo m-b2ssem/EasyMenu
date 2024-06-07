@@ -47,6 +47,14 @@ https://templatemo.com/tm-570-chain-app-dev
   <!-- ***** Preloader End ***** -->
 
   <!-- ***** Header Area Start ***** -->
+  <link rel="alternate" hreflang="en" href="https://easymenu.systems">
+<link rel="alternate" hreflang="de" href="https://de.easymenu.systems">
+<script type="text/javascript" src="https://cdn.weglot.com/weglot.min.js"></script>
+<script>
+    Weglot.initialize({
+        api_key: 'wg_ccdc61525b763853033f4669bd1f972d2'
+    });
+</script>
   <header class="header-area header-sticky wow slideInDown" style="margin-top: 0px;" data-wow-duration="0.75s" data-wow-delay="0s">
     <div class="container">
       <div class="row">
@@ -64,7 +72,6 @@ https://templatemo.com/tm-570-chain-app-dev
               <li class="scroll-to-section"><a href="#services">Services</a></li>
               <li class="scroll-to-section"><a href="#about">About</a></li>
               <li class="scroll-to-section"><a href="#pricing">Pricing</a></li>
-              <li id="google_translate_element"></li>
             <!-- <li class="scroll-to-section"><a href="#newsletter">Newsletter</a></li> --> 
               <li><div class="gradient-button"><a id="modal_trigger" href="#modal"><i class="fa fa-sign-in-alt"></i> Sign in or Login</a></div></li> 
             </ul>        
@@ -721,64 +728,6 @@ https://templatemo.com/tm-570-chain-app-dev
   <script src="/assets/js/popup.js"></script>
   <script src="/assets/js/custom.js"></script>
   <script src="/assets/js/purchases.js"></script>
-
-
-<!-- to your js part -->
-
-
-<script type="text/javascript">
-  function googleTranslateElementInit() {
-      new google.translate.TranslateElement(
-          {pageLanguage: 'en'},
-          'google_translate_element'
-      );
-  }
-</script>
-<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-<script type="text/javascript">
-  document.addEventListener('DOMContentLoaded', function() {
-      var hideGoogleTranslateElements = function() {
-          // Hide the Google Translate banner
-          var gtBanner = document.querySelector('.goog-te-banner-frame');
-          console.log(gtBanner);
-          if (gtBanner) {
-              gtBanner.style.display = 'none';
-          }
-
-          // Hide the Google Translate gadget text
-          var gtGadget = document.querySelector('.goog-te-gadget');
-          if (gtGadget) {
-              gtGadget.style.color = 'transparent';
-          }
-
-          // Hide the Google Translate toolbar
-          var gtToolbar = document.querySelector('.goog-te-toolbar');
-          if (gtToolbar) {
-              gtToolbar.style.display = 'none';
-          }
-
-          // Additional hiding for Google Translate frame
-          var gtFrame = document.querySelector('.goog-te-banner-frame.skiptranslate');
-          if (gtFrame) {
-              gtFrame.style.display = 'none';
-          }
-
-          // Hide iframe if it reappears
-          var gtIframe = document.querySelector('iframe.goog-te-banner-frame');
-          if (gtIframe) {
-              gtIframe.style.display = 'none';
-          }
-      };
-
-      // Initial hide
-      hideGoogleTranslateElements();
-
-      // Repeatedly hide elements in case they reappear
-      setInterval(hideGoogleTranslateElements, 500);
-  });
-</script>
-
 
 </body>
 </html>
