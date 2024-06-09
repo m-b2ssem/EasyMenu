@@ -1,19 +1,62 @@
-function purchase25(event) {
-    event.preventDefault();
-    alert('Function called!');
-    // Add your logic here
+function checkLoginStatus() {
+	return fetch('/is_logged_in', {
+		method: 'GET',
+		credentials: 'include' // Include cookies in the request
+	})
+	.then(res => res.json())
+	.then(data => data.isLoggedIn)
+	.catch(err => {
+		console.error(err);
+		return false;
+	});
 }
 
 function purchase12(event) {
     event.preventDefault();
-    alert('hello Function called!');
-    // Add your logic here
+    checkLoginStatus().then(isLoggedIn => {
+        if (!isLoggedIn)
+        {
+            window.location = '/b';
+            return;
+        }
+        else
+        {
+            window.location = '/dd';
+            return ;
+        }
+    })
+    fetch('/checkout', {
+        method: 'POST'
+    })
+    .then(res => res.json())
+    .then (({ url}) => {
+        window.location = url;
+    })
+    .catch(err => console.error(err));
+}
+
+function purchase25(event) {
+    event.preventDefault();
+    fetch('/', {
+        method: 'POST'
+    })
+    .then(res => res.json())
+    .then (({ url}) => {
+        window.location = url;
+    })
+    .catch(err => console.error(err));
 }
 
 function purchase50(event) {
     event.preventDefault();
-    alert('Ftion called!');
-    // Add your logic here
+    fetch('/', {
+        method: 'POST'
+    })
+    .then(res => res.json())
+    .then (({ url}) => {
+        window.location = url;
+    })
+    .catch(err => console.error(err));
 }
 
 function Trail(event)

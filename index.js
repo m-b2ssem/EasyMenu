@@ -3,10 +3,40 @@ import path from 'path';  // import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import bodyParser from 'body-parser';
-
 import { config } from 'dotenv';
+import Stripe from 'stripe';
+import pg from 'pg';
+import session from 'express-session';
+import { selectEmailColumn , checkIfUserExist} from './querys.js';
+import Client from 'pg/lib/client.js';
 
+
+
+const stripe = new Stripe("sk_test_51POgvPKtWY2YbQ9R5p483tB6SmRmMVE8mseaPBTZC2sjB2qX1cSAI43cPffcaHfrq8I21Jk83vf0Gn0dSTWPMAwQ00t4XpmXO8");
 config();
+
+const db = new pg.Client({
+  user: "postgres",
+  host: "localhost",
+  database: "easymenu",
+  password: "1234",
+  port: 5432,
+});
+
+db.connect();
+
+/*selectEmailColumn(db, (e, res) => {
+  if (e) {
+    console.log("There was an error:", e);
+  } else {
+    console.log("Results:", res);
+  }
+});*/
+
+
+
+
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -19,6 +49,13 @@ const PORT = process.env.PORT;  // const PORT = 3000;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(session({
+  secret: 'your_secret_key',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Set secure: true if using HTTPS
+}));
+
 app.listen(PORT, () => {
   console.log('Server is running on http://localhost: ' + PORT);
 })
@@ -30,32 +67,218 @@ app.get('/', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-  const {resturantName, email, password, sendUpdate} = req.body;
+  const {resturantName, email, password_req, sendUpdate} = req.body;
 
-    console.log('name:' + resturantName, email, password, sendUpdate);
+    console.log('name:' + resturantName, email, password_req, sendUpdate);
 
-    if (!resturantName || !email || !password) {
+    if (!resturantName || !email || !password_req) {
         return res.json({ success: false, message: 'Please fill all fields.'});
     }
 
     if (email === null) {
         return res.json({ success: false, message: 'This email address already exists.'});
     }
-
+    const hold = db.query("INSERT INTO users (company_name, email, password_hash) VALUES($1, $2, $3)",
+    [resturantName, email.toLowerCase(), password_req]
+    );
     res.json({ success: true, message: 'Registration successful, please login.'});
 });
 
 app.post('/login', (req, res) => {
-  const {email, password, remember} = req.body;
+  const { email, password, remember } = req.body;
 
-    console.log('email:' + email, password, remember);
 
-    if (!email || !password) {
-        return res.json({ success: false, message: 'Please fill all fields.'});
-    }
+  if (!email || !password) {
+      return res.json({ success: false, message: 'Please fill all fields.' });
+  }
 
-    res.json({ success: false, message: 'Invalid login credentials.'});
+  checkIfUserExist(db, email.toLowerCase(), (userExists) => {
+      if (userExists) {
+          req.session.email = email;
+          console.log("session: ", req.session.cookie);
+          res.json({ success: true , message: 'well done'});
+      } else {
+        console.log("here");
+          res.json({ success: false, message: 'Invalid login credentials.' });
+      }
+  });
 });
 
 
 
+app.post("/checkout", async (req, res) => {
+  const { id, amount } = req.body;
+
+  try {
+    const sessionStripe = await stripe.checkout.sessions.create({
+      success_url: "http://localhost:8080/success",
+      cancel_url: "http://localhost:8080",
+      line_items: [
+        {
+          price: process.env.PRICE_ID,
+          quantity: 12,
+        },
+      ],
+      mode: "subscription",
+    });
+
+    console.log("session: ", sessionStripe.id, sessionStripe.url, sessionStripe);
+
+
+    // save the info in the database
+    const sessionId = sessionStripe.id;
+    const url = sessionStripe.url;
+    const subscription = sessionStripe.subscription;
+
+    return res.json({ url: sessionStripe.url });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+
+app.get("/stripe-session", async (req, res) => {
+  console.log("req.body: ", req.body);
+  const { userId } = req.body;
+  console.log("userId: ", userId);
+
+  const db = req.app.get('db');
+
+  // get user from you database
+  const user = {
+    stripe_session_id: "asdfpouhwf;ljnqwfpqo",
+    paid_sub: false
+  }
+
+  if(!user.stripe_session_id || user.paid_sub === true) 
+  return res.send("fail");
+
+  try {
+      // check session
+      const session = await stripe.checkout.sessions.retrieve(user.stripe_session_id);
+      console.log("session: ", session);
+
+      // const sessionResult = {
+      //   id: 'cs_test_a1lpAti8opdtSIDZQIh9NZ6YhqMMwC0H5wrlwkUEYJc6GXokj2g5WyHkv4',
+      //   …
+      //   customer: 'cus_PD6t4AmeZrJ8zq',
+      //   …
+      //   status: 'complete',
+      //   …
+      //   subscription: 'sub_1OOgfhAikiJrlpwD7EQ5TLea',
+      //  …
+      // }
+      
+    
+      // update the user
+      if (session && session.status === "complete") {
+        let updatedUser = await db.update_user_stripe(
+          userId,
+          true
+        );
+        updatedUser = updatedUser[0];
+        console.log(updatedUser);
+    
+        return res.send("success");
+      } else {
+        return res.send("fail");
+      }
+  } catch (error) {
+      // handle the error
+      console.error("An error occurred while retrieving the Stripe session:", error);
+      return res.send("fail");
+  }
+});
+
+
+app.get('/is_logged_in', (req, res) => {
+  if (req.session.user) {
+      res.json({ isLoggedIn: true });
+  } else {
+      res.json({ isLoggedIn: false });
+  }
+});
+
+
+
+/*
+creation of the database 
+
+CREATE TABLE users (
+  user_id SERIAL PRIMARY KEY,
+  company_name VARCHAR(50) NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ //many to one
+
+CREATE TABLE menus (
+  menu_id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+  menu_name VARCHAR(100) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+//many to one
+
+CREATE TABLE categories (
+  category_id SERIAL PRIMARY KEY,
+  menu_id INT REFERENCES menus(menu_id) ON DELETE CASCADE,
+  category_name VARCHAR(100) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+//many to one
+
+CREATE TABLE items (
+  item_id SERIAL PRIMARY KEY,
+  category_id INT REFERENCES categories(category_id) ON DELETE CASCADE,
+  item_name VARCHAR(100) NOT NULL,
+  description TEXT,
+  price DECIMAL(10, 2) NOT NULL,
+	image_path VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+// many to one
+
+CREATE TABLE subscription_plans (
+  plan_id SERIAL PRIMARY KEY,
+  plan_name VARCHAR(100) NOT NULL,
+  user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+  price DECIMAL(10, 2) NOT NULL,
+  duration_days INT NOT NULL, -- Duration of the subscription in days
+  start_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  end_date TIMESTAMP,
+  payment_status VARCHAR(50), -- e.g., 'Paid', 'Pending', 'Failed'
+  status VARCHAR(50), -- e.g., 'Active', 'Expired', 'Cancelled'
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(user_id)
+);
+
+
+
+CREATE TABLE designs (
+  design_id SERIAL PRIMARY KEY,
+  menu_id INT REFERENCES menus(menu_id) ON DELETE CASCADE,
+  category_orientation VARCHAR(50) NOT NULL CHECK (category_orientation IN ('horizontal', 'vertical')),
+  background_color VARCHAR(7) NOT NULL, -- Assuming the color is stored in hex format (e.g., #FFFFFF)
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE payment_sessions (
+  session_id SERIAL PRIMARY KEY,
+  stripe_session_id VARCHAR(255) UNIQUE NOT NULL,
+  user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+  subscription_id INT REFERENCES subscription_plans(plan_id) ON DELETE CASCADE,
+  url VARCHAR(255) NOT NULL,
+  status VARCHAR(50) NOT NULL, -- e.g., 'Pending', 'Completed', 'Expired', 'Cancelled'
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+*/
