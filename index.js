@@ -8,11 +8,13 @@ import Stripe from 'stripe';
 import pg from 'pg';
 import session from 'express-session';
 import { selectEmailColumn , checkIfUserExist} from './querys.js';
-import Client from 'pg/lib/client.js';
+
+let stripe_key = process.env.STRIPE_KEY;
 
 
 
-const stripe = new Stripe("sk_test_51POgvPKtWY2YbQ9R5p483tB6SmRmMVE8mseaPBTZC2sjB2qX1cSAI43cPffcaHfrq8I21Jk83vf0Gn0dSTWPMAwQ00t4XpmXO8");
+
+const stripe = new Stripe(stripe_key);
 config();
 
 const db = new pg.Client({
@@ -24,19 +26,6 @@ const db = new pg.Client({
 });
 
 db.connect();
-
-/*selectEmailColumn(db, (e, res) => {
-  if (e) {
-    console.log("There was an error:", e);
-  } else {
-    console.log("Results:", res);
-  }
-});*/
-
-
-
-
-
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -63,8 +52,18 @@ app.listen(PORT, () => {
 
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/homePage/index.html'));
+  res.sendFile(path.join(__dirname, '/public/pages/index.html'));
 })
+
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/pages/login_page.html'));
+})
+
+app.get('/register', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/pages/register_page.html'));
+})
+
+
 
 app.post('/register', (req, res) => {
   const {resturantName, email, password_req, sendUpdate} = req.body;
@@ -94,7 +93,7 @@ app.post('/login', (req, res) => {
 
   checkIfUserExist(db, email.toLowerCase(), (userExists) => {
       if (userExists) {
-          req.session.email = email;
+          req.session.cookie.signed = true;
           console.log("session: ", req.session.cookie);
           res.json({ success: true , message: 'well done'});
       } else {
@@ -103,7 +102,6 @@ app.post('/login', (req, res) => {
       }
   });
 });
-
 
 
 app.post("/checkout", async (req, res) => {
@@ -282,3 +280,4 @@ CREATE TABLE payment_sessions (
 );
 
 */
+
