@@ -9,9 +9,38 @@ import pg from 'pg';
 import session from 'express-session';
 import { selectEmailColumn , checkIfUserExist} from './querys.js';
 
+
+
 let stripe_key = process.env.STRIPE_KEY;
 
 
+
+const data = {
+  client: {
+      logo: 'https://my.menulogy.at/images/logo/client2/Kopie von Ohne Titel (900 x 128 px) (600 x 128 px) (400 x 128 px) (1).png',
+      backgroundColor: '#324252',
+      backgroundImage: 'https://my.menulogy.at/images/theme/client2/Kopie von Unnamed Design (1200 x 800 px) (800 x 1200 px).jpg'
+  },
+  categories: [
+      {
+          id: 1,
+          name: 'Category 1',
+          products: [
+              { id: 1, name: 'Product 1' },
+              { id: 2, name: 'Product 2' }
+          ]
+      },
+      {
+          id: 2,
+          name: 'Category 2',
+          products: [
+              { id: 3, name: 'Product 3' },
+              { id: 4, name: 'Product 4' }
+          ]
+      }
+  ],
+  locale: 'at', // Default locale
+};
 
 
 const stripe = new Stripe(stripe_key);
@@ -35,6 +64,9 @@ const __dirname = dirname(__filename);
 const app = express();  // const app = express();
 const PORT = process.env.PORT;  // const PORT = 3000;
 
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -50,6 +82,12 @@ app.listen(PORT, () => {
 })
 
 
+
+
+app.get('/b', (req, res) => {
+  res.render('index', data);
+  //res.sendFile(path.join(__dirname, '/public/items.html'));
+})
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/pages/index.html'));
@@ -82,6 +120,7 @@ app.post('/register', (req, res) => {
     );
     res.json({ success: true, message: 'Registration successful, please login.'});
 });
+
 
 app.post('/login', (req, res) => {
   const { email, password, remember } = req.body;
@@ -279,5 +318,7 @@ CREATE TABLE payment_sessions (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-*/
 
+i need also a culonm for the qrc
+also the menu langauge 
+*/
