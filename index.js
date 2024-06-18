@@ -17,25 +17,38 @@ let stripe_key = process.env.STRIPE_KEY;
 
 const data = {
   client: {
-      logo: 'https://my.menulogy.at/images/logo/client2/Kopie von Ohne Titel (900 x 128 px) (600 x 128 px) (400 x 128 px) (1).png',
+      logo: 'https://promova.com/content/fast_food_names_d368a9810d.png',
       backgroundColor: '#324252',
       backgroundImage: 'https://my.menulogy.at/images/theme/client2/Kopie von Unnamed Design (1200 x 800 px) (800 x 1200 px).jpg'
   },
   categories: [
       {
           id: 1,
-          name: 'Category 1',
-          products: [
-              { id: 1, name: 'Product 1' },
-              { id: 2, name: 'Product 2' }
+          name: 'bassem 1',
+          items: [
+              { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
+              { id: 2, name: 'Product 2', price: "12.5", description: 'this is a product description' , image_path: 'https://cdn.britannica.com/36/123536-050-95CB0C6E/Variety-fruits-vegetables.jpg'}
           ]
       },
       {
           id: 2,
           name: 'Category 2',
-          products: [
-              { id: 3, name: 'Product 3' },
-              { id: 4, name: 'Product 4' }
+          items: [
+            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
+            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
+            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
+            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
+            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
+            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
+            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
+            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
+            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
+            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
+            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
+            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
+            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
+            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
+
           ]
       }
   ],
@@ -54,7 +67,7 @@ const db = new pg.Client({
   port: 5432,
 });
 
-db.connect();
+//db.connect();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -85,9 +98,31 @@ app.listen(PORT, () => {
 
 
 app.get('/b', (req, res) => {
-  res.render('index', data);
+  const logo = data.client.logo;
+  const resturantName = 'bassem';
+  const backgroundColor = data.client.backgroundColor;
+  const items = data.categories[0].items;
+  const categories = data.categories;
+  res.render('index', {'categories': categories, 'items': items, 'logo': logo, resturantName: resturantName});
+
+
   //res.sendFile(path.join(__dirname, '/public/items.html'));
-})
+});
+
+
+app.get('/:name/:id', (req, res) => {
+  const logo = data.client.logo;
+  const resturantName = req.params.name;
+  const categoryId = parseInt(req.params.id);
+  const selectedCategory = data.categories.find(category => category.id === categoryId);
+  if (!selectedCategory) {
+    return res.status(404).send('Category not found');
+  }
+  const items = selectedCategory.items;
+  const categories = data.categories;
+  res.render('index', {'categories': categories, 'items': items, logo: logo, resturantName: resturantName});
+});
+
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/pages/index.html'));
@@ -100,6 +135,7 @@ app.get('/login', (req, res) => {
 app.get('/register', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/pages/register_page.html'));
 })
+
 
 
 
