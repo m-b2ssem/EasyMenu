@@ -109,6 +109,14 @@ app.get('/b', (req, res) => {
   //res.sendFile(path.join(__dirname, '/public/items.html'));
 });
 
+app.get('/a', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/categry.html'));
+})
+
+app.get('/d', (req, res) => {
+  res.render('horizontal_menu.ejs');
+})
+
 
 app.get('/:name/:id', (req, res) => {
   const logo = data.client.logo;
