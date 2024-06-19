@@ -8,6 +8,7 @@ import Stripe from 'stripe';
 import pg from 'pg';
 import session from 'express-session';
 import { selectEmailColumn , checkIfUserExist} from './querys.js';
+import { updatePriorities } from './updatePriorities.js';
 
 
 
@@ -210,10 +211,11 @@ app.get('/get-categories', (req, res) => {
 // update the order in the database
 app.post('/update-order', (req, res) => {
   const order = req.body.order;
-  console.log('Updated Order:', order);
+  //console.log('Updated Order:', order);
 
   // Update the order in your data store
   // Assuming success for this example
+  updatePriorities(order);
   res.json({ success: true });
 });
 
