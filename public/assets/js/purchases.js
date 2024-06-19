@@ -1,27 +1,38 @@
-function purchase25(event) {
-    event.preventDefault();
-    alert('Function called!');
-    // Add your logic here
+function checkLoginStatus() {
+    return fetch('/is_logged_in', {
+        method: 'GET',
+        credentials: 'include' // Include cookies in the request
+    })
+    .then(res => res.json())
+    .then(data => data.isLoggedIn)
+    .catch(err => {
+        console.error(err);
+        return false;
+    });
 }
 
-function purchase12(event) {
+function handleSubscription(event, subscriptionType) {
     event.preventDefault();
-    alert('hello Function called!');
-    // Add your logic here
-}
 
-function purchase50(event) {
-    event.preventDefault();
-    alert('Ftion called!');
-    // Add your logic here
-}
+    let isLoggedIn = checkLoginStatus();
+    if (!isLoggedIn) {
+        window.location = '/login';
+        return;
+    }
 
-function Trail(event)
-{
-    event.preventDefault();
-    alert('Function called!');
-    // Add your logic here
-
+    fetch('/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include', // Include cookies in the request
+        body: JSON.stringify({ subscriptionType })
+    })
+    .then(res => res.json())
+    .then(({ url }) => {
+        window.location = url;
+    })
+    .catch(err => console.error(err));
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -30,20 +41,16 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const purchaseButton50 = document.getElementById('purchase50');
     const trailerButton = document.getElementById('trailerButton');
 
-    if (purchaseButton12)
-    {
-        purchaseButton12.addEventListener('click', purchase12);
+    if (purchaseButton12) {
+        purchaseButton12.addEventListener('click', (event) => handleSubscription(event, '12'));
     }
-    if (purchaseButton25)
-    {
-        purchaseButton25.addEventListener('click', purchase25);
+    if (purchaseButton25) {
+        purchaseButton25.addEventListener('click', (event) => handleSubscription(event, '25'));
     }
-    if (purchaseButton50)
-    {
-        purchaseButton50.addEventListener('click', purchase50);
+    if (purchaseButton50) {
+        purchaseButton50.addEventListener('click', (event) => handleSubscription(event, '50'));
     }
-    if (trailerButton)
-    {
-        trailerButton.addEventListener('click', Trail);
+    if (trailerButton) {
+        trailerButton.addEventListener('click', (event) => handleSubscription(event, 'trail'));
     }
 });

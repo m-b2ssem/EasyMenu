@@ -67,6 +67,7 @@ $(function() {
       return false;
   });
 
+
   // Handle registration form submission
   $(".user_register form").submit(function(event) {
       event.preventDefault(); // Prevent the form from submitting the traditional way
