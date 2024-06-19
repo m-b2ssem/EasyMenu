@@ -15,45 +15,97 @@ let stripe_key = process.env.STRIPE_KEY;
 
 
 
-const data = {
-  client: {
-      logo: 'https://promova.com/content/fast_food_names_d368a9810d.png',
-      backgroundColor: '#324252',
-      backgroundImage: 'https://my.menulogy.at/images/theme/client2/Kopie von Unnamed Design (1200 x 800 px) (800 x 1200 px).jpg'
+const categories = [
+  {
+    id: 1,
+    name: 'Appetizers',
+    items: [
+      { name: 'Spring Rolls', price: '5.99', description: 'Crispy vegetarian rolls.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
+      { name: 'Garlic Bread', price: '3.99', description: 'Fresh garlic bread.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
+    ]
   },
-  categories: [
-      {
-          id: 1,
-          name: 'bassem 1',
-          items: [
-              { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
-              { id: 2, name: 'Product 2', price: "12.5", description: 'this is a product description' , image_path: 'https://cdn.britannica.com/36/123536-050-95CB0C6E/Variety-fruits-vegetables.jpg'}
-          ]
-      },
-      {
-          id: 2,
-          name: 'Category 2',
-          items: [
-            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
-            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
-            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
-            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
-            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
-            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
-            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
-            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
-            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
-            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
-            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
-            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
-            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
-            { id: 1, name: 'Product 1' , price: '12.5', description: 'this is a product description', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg'},
+  {
+    id: 2,
+    name: 'Main Course',
+    items: [
+      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
+      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
+    ]
+  },
+  {
+    id: 3,
+    name: 'Main Course',
+    items: [
+      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
+      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
+    ]
+  },
+  {
+    id: 4,
+    name: 'Main Course',
+    items: [
+      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
+      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
+    ]
+  },
+  {
+    id: 5,
+    name: 'Main Course',
+    items: [
+      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
+      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
+    ]
+  },
+  {
+    id: 6,
+    name: 'Main Course',
+    items: [
+      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
+      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
+    ]
+  },
+  {
+    id: 7,
+    name: 'Main Course',
+    items: [
+      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
+      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
+    ]
+  },
+  {
+    id: 8,
+    name: 'Main Course',
+    items: [
+      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
+      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
+    ]
+  },
+  {
+    id: 9,
+    name: 'Main Course',
+    items: [
+      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
+      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
+    ]
+  },
+  {
+    id: 10,
+    name: 'Main Course',
+    items: [
+      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
+      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
+    ]
+  },
+  {
+    id: 11,
+    name: 'Desserts',
+    items: [
+      { name: 'Chocolate Cake', price: '6.99', description: 'Rich chocolate cake.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
+      { name: 'Ice Cream', price: '4.99', description: 'Vanilla ice cream.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
+    ]
+  }
+];
 
-          ]
-      }
-  ],
-  locale: 'at', // Default locale
-};
 
 
 const stripe = new Stripe(stripe_key);
@@ -77,6 +129,8 @@ const __dirname = dirname(__filename);
 const app = express();  // const app = express();
 const PORT = process.env.PORT;  // const PORT = 3000;
 
+app.use(express.json());
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -96,29 +150,75 @@ app.listen(PORT, () => {
 
 
 
-
-app.get('/b', (req, res) => {
+/*
+app.get('/:userid/:resturantname', (req, res) => {
   const logo = data.client.logo;
   const resturantName = 'bassem';
   const backgroundColor = data.client.backgroundColor;
   const items = data.categories[0].items;
   const categories = data.categories;
   res.render('index', {'categories': categories, 'items': items, 'logo': logo, resturantName: resturantName});
-
-
-  //res.sendFile(path.join(__dirname, '/public/items.html'));
 });
+*/
 
-app.get('/a', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/categry.html'));
-})
+const backgroundImage = "https://st4.depositphotos.com/2160693/40759/v/450/depositphotos_407590112-stock-illustration-food-and-drink-logo-plate.jpg";
+const currency = '€';
 
 app.get('/d', (req, res) => {
-  res.render('horizontal_menu.ejs');
+  res.render('horizontal_menu.ejs', {'categories': categories, 'backgroundImage': backgroundImage, 'currency': currency});
 })
 
+const user = {
+  id: 1,
+  resturantName: 'bassem',
+  logo: 'https://st4.depositphotos.com/2160693/40759/v/450/depositphotos_407590112-stock-illustration-food-and-drink-logo-plate.jpg',
+  categories: categories,
+  menus:[
+    {
+      id: 1,
+      name: 'Menu 1',
+    }
+  ]
+}
 
-app.get('/:name/:id', (req, res) => {
+app.get('/management/menu/:userid', (req, res) => {
+  res.render('menu', {'user': user, 'year': new Date().getFullYear()});
+});
+
+app.get('/management/category/:userid', (req, res) => {
+  res.render('categories', {'user': user, 'year': new Date().getFullYear()});
+});
+
+app.get('/management/items/:userid', (req, res) => {
+  res.render('menu', {'user': user, 'year': new Date().getFullYear()});
+});
+
+app.get('/c', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/categry.html'));
+});
+
+
+// get all categories from the database by menu id and return them as JSON
+app.get('/get-categories', (req, res) => {
+  const menuId = req.query.menuId; // Access query parameter
+  console.log('Menu ID:', menuId);
+
+  res.json({categories});
+});
+
+
+// update the order in the database
+app.post('/update-order', (req, res) => {
+  const order = req.body.order;
+  console.log('Updated Order:', order);
+
+  // Update the order in your data store
+  // Assuming success for this example
+  res.json({ success: true });
+});
+
+
+/*app.get('/:name/:id', (req, res) => {
   const logo = data.client.logo;
   const resturantName = req.params.name;
   const categoryId = parseInt(req.params.id);
@@ -129,7 +229,7 @@ app.get('/:name/:id', (req, res) => {
   const items = selectedCategory.items;
   const categories = data.categories;
   res.render('index', {'categories': categories, 'items': items, logo: logo, resturantName: resturantName});
-});
+});*/
 
 
 app.get('/', (req, res) => {

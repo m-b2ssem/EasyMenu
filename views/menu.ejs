@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Buttons</title>
+    <title>Easy Menu</title>
 
     <!-- Custom fonts for this template-->
     <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -66,9 +66,9 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Customize Menu</menu>:</h6>
-                        <a class="collapse-item active" href="/<%= user.id %>/menu">Menues</a>
-                        <a class="collapse-item" href="/<%= user.id %>/categry">Categories</a>
-                        <a class="collapse-item" href="/<%= user.id %>/items">Items</a>
+                        <a class="collapse-item active" href="/management/menu/<%= user.id %>">Menues</a>
+                        <a class="collapse-item" href="/management/category/<%= user.id %>">Categories</a>
+                        <a class="collapse-item" href="/management/items/<%= user.id %>">Items</a>
                     </div>
                 </div>
             </li>
@@ -180,7 +180,7 @@
                 <div class="container-fluid">
                     <div style="position: relative;margin-top: 15px;">
                         <div class="col" style="text-align: center;"><label class="col-form-label" style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Menu URL</label></div>
-                        <div class="col" style="text-align: center;"><a id="menuLink" href="http://localhost:8080/<%= user.id %>/menu" >thttp://localhost:8080/<%= user.id %>/menu</a></div>
+                        <div class="col" style="text-align: center;"><a id="menuLink" href="http://localhost:8080/menu/<%= user.id %>/<%= user.resturantName%>" >thttp://localhost:8080/menu/<%= user.id %>/<%= user.resturantName%></a></div>
                     </div>
                     <div style="position: relative;margin-top: 15px;">
                         <div class="col" style="text-align: center;"><label class="col-form-label" style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Menu background color</label></div>
@@ -213,7 +213,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2020</span>
+                        <span>Copyright &copy; Easy Menu <%= year %></span>
                     </div>
                 </div>
             </footer>
