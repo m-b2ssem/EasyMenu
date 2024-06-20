@@ -7,110 +7,33 @@ import { config } from 'dotenv';
 import Stripe from 'stripe';
 import pg from 'pg';
 import session from 'express-session';
-import { selectEmailColumn , checkIfUserExist} from './querys.js';
+import { selectUser , checkIfUserExist, insertUser, insertMenu, insertDesign
+  ,getMenuById
+} from './querys.js';
+import {createLangaugeList} from './helperFunctions.js';
 import { updatePriorities } from './updatePriorities.js';
+import passport from 'passport';
+import { Strategy } from 'passport-local';
+import bcrypt from 'bcrypt';
+import { categories, user, backgroundImage, currency } from './test.js';
+import { get } from 'http';
+import { create } from 'domain';
 
 
 
 let stripe_key = process.env.STRIPE_KEY;
-
-
-
-const categories = [
-  {
-    id: 1,
-    name: 'Appetizers',
-    items: [
-      { name: 'Spring Rolls', price: '5.99', description: 'Crispy vegetarian rolls.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Garlic Bread', price: '3.99', description: 'Fresh garlic bread.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  },
-  {
-    id: 2,
-    name: 'Main Course',
-    items: [
-      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  },
-  {
-    id: 3,
-    name: 'Main Course',
-    items: [
-      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  },
-  {
-    id: 4,
-    name: 'Main Course',
-    items: [
-      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  },
-  {
-    id: 5,
-    name: 'Main Course',
-    items: [
-      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  },
-  {
-    id: 6,
-    name: 'Main Course',
-    items: [
-      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  },
-  {
-    id: 7,
-    name: 'Main Course',
-    items: [
-      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  },
-  {
-    id: 8,
-    name: 'Main Course',
-    items: [
-      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  },
-  {
-    id: 9,
-    name: 'Main Course',
-    items: [
-      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  },
-  {
-    id: 10,
-    name: 'Main Course',
-    items: [
-      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  },
-  {
-    id: 11,
-    name: 'Desserts',
-    items: [
-      { name: 'Chocolate Cake', price: '6.99', description: 'Rich chocolate cake.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Ice Cream', price: '4.99', description: 'Vanilla ice cream.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  }
-];
-
-
-
 const stripe = new Stripe(stripe_key);
 config();
+const app = express();
+
+app.use(session({
+  secret: 'ROPQWJFJ',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { 
+    maxAge: 60000 * 60 * 24 * 7  // 1 week
+   } 
+}));
 
 const db = new pg.Client({
   user: "postgres",
@@ -120,34 +43,24 @@ const db = new pg.Client({
   port: 5432,
 });
 
-//db.connect();
-
+db.connect();  // const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-
-
-const app = express();  // const app = express();
-const PORT = process.env.PORT;  // const PORT = 3000;
-
 app.use(express.json());
-
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(passport.initialize());
+app.use(passport.session());
+const PORT = process.env.PORT;  // const PORT = 3000;
+const saltRounds = 10;
 
-app.use(session({
-  secret: 'your_secret_key',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false } // Set secure: true if using HTTPS
-}));
 
-app.listen(PORT, () => {
-  console.log('Server is running on http://localhost: ' + PORT);
-})
+
+
+
+
 
 
 
@@ -162,36 +75,56 @@ app.get('/:userid/:resturantname', (req, res) => {
 });
 */
 
-const backgroundImage = "https://st4.depositphotos.com/2160693/40759/v/450/depositphotos_407590112-stock-illustration-food-and-drink-logo-plate.jpg";
-const currency = '€';
+
 
 app.get('/d', (req, res) => {
   res.render('horizontal_menu.ejs', {'categories': categories, 'backgroundImage': backgroundImage, 'currency': currency});
 })
 
-const user = {
-  id: 1,
-  resturantName: 'bassem',
-  logo: 'https://st4.depositphotos.com/2160693/40759/v/450/depositphotos_407590112-stock-illustration-food-and-drink-logo-plate.jpg',
-  categories: categories,
-  menus:[
-    {
-      id: 1,
-      name: 'Menu 1',
-    }
-  ]
-}
 
-app.get('/management/menu/:userid', (req, res) => {
-  res.render('menu', {'user': user, 'year': new Date().getFullYear()});
+
+app.get('/management/menu/:userid', async (req, res) => {
+  const urlid = parseInt(req.params.userid);
+  if (req.isAuthenticated()) {
+    if (urlid === req.user.user_id) {
+      const menu = await getMenuById(db ,req.user.user_id);
+      const menu_name = 'http://www.easymenu.systems/menu/' + req.user.user_id +'/'+ menu.menu_name.replace(/\s+/g, '');;
+      const langauges = await createLangaugeList(menu.menu_langauge);
+      console.log(menu);
+      res.render('menu', {'user': user, 'year': new Date().getFullYear(), 'langauges': langauges, 'menu_name': menu_name});
+    } else {
+      res.redirect('/login');
+    }
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.get('/management/category/:userid', (req, res) => {
-  res.render('categories', {'user': user, 'year': new Date().getFullYear()});
+  const urlid = parseInt(req.params.userid);
+  console.log(req.isAuthenticated());
+  if (req.isAuthenticated()) {
+    if (urlid === req.user.user_id) {
+      res.render('categories', {'user': user, 'year': new Date().getFullYear()});
+    } else {
+      res.redirect('/login');
+    }
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.get('/management/items/:userid', (req, res) => {
-  res.render('menu', {'user': user, 'year': new Date().getFullYear()});
+  const urlid = parseInt(req.params.userid);
+  if (req.isAuthenticated()) {
+    if (urlid === req.user.user_id) {
+      res.render('menu', {'user': user, 'year': new Date().getFullYear()});
+    } else {
+      res.redirect('/login');
+    }
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.get('/c', (req, res) => {
@@ -249,44 +182,49 @@ app.get('/register', (req, res) => {
 
 
 
-app.post('/register', (req, res) => {
-  const {resturantName, email, password_req, sendUpdate} = req.body;
+app.post('/register', async (req, res) => {
+  const {campanyName, email, password} = req.body;
 
-    console.log('name:' + resturantName, email, password_req, sendUpdate);
 
-    if (!resturantName || !email || !password_req) {
+
+    if (!campanyName || !email || !password) {
         return res.json({ success: false, message: 'Please fill all fields.'});
     }
 
-    if (email === null) {
+    // in need to pass the email lower case
+    const checkIfExist = await checkIfUserExist(db, email);
+    if (checkIfExist) {
         return res.json({ success: false, message: 'This email address already exists.'});
+    }else{
+      bcrypt.hash(password, saltRounds, async (err, hash) => {
+        if (err) {
+          return res.json({ success: false, message: 'Something went wrong, please try again.'});
+        }else {
+          const result = await insertUser(db, campanyName, email, hash);
+          const result_2 = await insertMenu(db, result.rows[0].user_id, campanyName);
+          const result_3 = await insertDesign(db, result_2.rows[0].menu_id);
+              const user = result.rows[0];
+              
+          
+              req.login(user, (err) => {
+                if (err) {
+                  console.log(err);
+                  return res.redirect('/login');
+              }else{
+                return res.redirect('/management/menu/' + user.user_id);
+              }
+              });
+          }
+      });
     }
-    const hold = db.query("INSERT INTO users (company_name, email, password_hash) VALUES($1, $2, $3)",
-    [resturantName, email.toLowerCase(), password_req]
-    );
-    res.json({ success: true, message: 'Registration successful, please login.'});
 });
 
 
-app.post('/login', (req, res) => {
-  const { email, password, remember } = req.body;
-
-
-  if (!email || !password) {
-      return res.json({ success: false, message: 'Please fill all fields.' });
-  }
-
-  checkIfUserExist(db, email.toLowerCase(), (userExists) => {
-      if (userExists) {
-          req.session.cookie.signed = true;
-          console.log("session: ", req.session.cookie);
-          res.json({ success: true , message: 'well done'});
-      } else {
-        console.log("here");
-          res.json({ success: false, message: 'Invalid login credentials.' });
-      }
+app.post('/login', 
+  passport.authenticate('local', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/management/menu/' + req.user.user_id);
   });
-});
 
 
 app.post("/checkout", async (req, res) => {
@@ -375,96 +313,45 @@ app.get("/stripe-session", async (req, res) => {
 });
 
 
-app.get('/is_logged_in', (req, res) => {
-  if (req.session.user) {
-      res.json({ isLoggedIn: true });
-  } else {
-      res.json({ isLoggedIn: false });
-  }
+
+passport.use(
+  new Strategy (async function verify(username, password, cb) {
+    try {
+      const result = await selectUser(db, username);
+      if (result.rows.length > 0) {
+        const user = result.rows[0];
+        const hashPassword = user.password;
+        bcrypt.compare(password, hashPassword, (err, res) => {
+          if (err) {
+            console.log(err);
+            return cb(err);
+          } else {
+            if (res) {
+              return cb(null, user);
+            } else {
+              cb(null, false);
+            }
+          }
+        }); 
+      } else {
+        return cb("User not found.");
+      }
+    } catch (error) {
+      cb(error);
+    }
+  }));
+
+passport.serializeUser(function(user, cb) {
+    cb(null, user);
+});
+
+passport.deserializeUser(function(user, cb) {
+    cb(null, user);
 });
 
 
 
-/*
-creation of the database 
+app.listen(PORT, () => {
+  console.log('Server is running on http://localhost: ' + PORT);
+})
 
-CREATE TABLE users (
-  user_id SERIAL PRIMARY KEY,
-  company_name VARCHAR(50) NOT NULL,
-  email VARCHAR(100) UNIQUE NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
- //many to one
-
-CREATE TABLE menus (
-  menu_id SERIAL PRIMARY KEY,
-  user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
-  menu_name VARCHAR(100) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-//many to one
-
-CREATE TABLE categories (
-  category_id SERIAL PRIMARY KEY,
-  menu_id INT REFERENCES menus(menu_id) ON DELETE CASCADE,
-  category_name VARCHAR(100) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-//many to one
-
-CREATE TABLE items (
-  item_id SERIAL PRIMARY KEY,
-  category_id INT REFERENCES categories(category_id) ON DELETE CASCADE,
-  item_name VARCHAR(100) NOT NULL,
-  description TEXT,
-  price DECIMAL(10, 2) NOT NULL,
-	image_path VARCHAR(255),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-// many to one
-
-CREATE TABLE subscription_plans (
-  plan_id SERIAL PRIMARY KEY,
-  plan_name VARCHAR(100) NOT NULL,
-  user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
-  price DECIMAL(10, 2) NOT NULL,
-  duration_days INT NOT NULL, -- Duration of the subscription in days
-  start_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  end_date TIMESTAMP,
-  payment_status VARCHAR(50), -- e.g., 'Paid', 'Pending', 'Failed'
-  status VARCHAR(50), -- e.g., 'Active', 'Expired', 'Cancelled'
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE(user_id)
-);
-
-
-
-CREATE TABLE designs (
-  design_id SERIAL PRIMARY KEY,
-  menu_id INT REFERENCES menus(menu_id) ON DELETE CASCADE,
-  category_orientation VARCHAR(50) NOT NULL CHECK (category_orientation IN ('horizontal', 'vertical')),
-  background_color VARCHAR(7) NOT NULL, -- Assuming the color is stored in hex format (e.g., #FFFFFF)
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE payment_sessions (
-  session_id SERIAL PRIMARY KEY,
-  stripe_session_id VARCHAR(255) UNIQUE NOT NULL,
-  user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
-  subscription_id INT REFERENCES subscription_plans(plan_id) ON DELETE CASCADE,
-  url VARCHAR(255) NOT NULL,
-  status VARCHAR(50) NOT NULL, -- e.g., 'Pending', 'Completed', 'Expired', 'Cancelled'
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-
-i need also a culonm for the qrc
-also the menu langauge 
-*/

@@ -180,7 +180,7 @@
                 <div class="container-fluid">
                     <div style="position: relative;margin-top: 15px;">
                         <div class="col" style="text-align: center;"><label class="col-form-label" style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Menu URL</label></div>
-                        <div class="col" style="text-align: center;"><a id="menuLink" href="http://localhost:8080/menu/<%= user.id %>/<%= user.resturantName%>" >thttp://localhost:8080/menu/<%= user.id %>/<%= user.resturantName%></a></div>
+                        <div class="col" style="text-align: center;"><a id="menuLink" href="<%= menu_name %>"> <%= menu_name %></a></div>
                     </div>
                     <div style="position: relative;margin-top: 15px;">
                         <div class="col" style="text-align: center;"><label class="col-form-label" style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Menu background color</label></div>
@@ -193,8 +193,10 @@
                         <div class="col" style="text-align: center;">
                             <label for="select">choose a langauge</label>
                             <select class="selectpicker" data-width="fit">
-                                <option data-content='<span class="flag-icon flag-icon-us"></span> English'>English</option>
-                              <option  data-content='<span class="flag-icon flag-icon-mx"></span> Español'>Español</option>
+                                <% langauges.forEach(function(langauge) {%>
+
+                                <option data-content='<span class="flag-icon flag-icon-us"></span> <%= langauge.name %>'><%= langauge.name %></option>
+                              <% });%>
                             </select>
                         </div>
                     </div>
