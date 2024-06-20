@@ -12,13 +12,13 @@
     <title>SB Admin 2 - Buttons</title>
 
     <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
 
         <style>
         .sortable-list {
@@ -181,7 +181,7 @@
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.name %></span>
                                 <img class="img-profile rounded-circle"
-                                    src="img/undraw_profile.svg">
+                                    src="/img/undraw_profile.svg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -221,16 +221,17 @@
                                 <form action="/deleteitem" method="post">
                                     <div class="dropdown" style="text-align: right;display: inline;margin-right: 18px;">
                                         <button class="btn btn-primary dropdown-toggle" aria-expanded="false"
-                                            data-bs-toggle="dropdown" type="button">Items </button>
-                                        <div class="dropdown-menu">
+                                            data-bs-toggle="dropdown" id="deleteitem" name="item" type="button">Items </button>
+                                        <div class="dropdown-menu deleteitem">
                                             <% items.forEach(item=> { %>
-                                                <a class="dropdown-item" id="<%= items.id %>" href="#">
-                                                    <%= items.name %>
+                                                <a class="dropdown-item" id="<%= item.id %>" href="#">
+                                                    <%= item.name %>
                                                 </a>
                                                 <% }) %>
                                         </div>
-                                    </div><button class="btn btn-primary" type="submit"
-                                        style="text-align: right;">Delete</button>
+                                    </div>
+                                    <input type="hidden" name="itemId" id="itemId" />
+                                    <button class="btn btn-primary" type="submit" style="text-align: right;">Delete</button>
                                 </form>
                             </div>
                         </div>
@@ -269,7 +270,7 @@
                                         id="setcategory" data-bs-toggle="dropdown" type="button">Choose Categry </button>
                                     <div class="dropdown-menu setcategory">
                                         <% categories.forEach(categry=> { %>
-                                            <a class="dropdown-item" id="<%= categry.name %>" href="#">
+                                            <a class="dropdown-item" id="<%= categry.id %>" href="#">
                                                 <%= categry.name %>
                                             </a>
                                             <% }) %>
@@ -299,7 +300,7 @@
                                     data-bs-toggle="dropdown" type="button">Choose Categry</button>
                                 <div class="dropdown-menu orderItems">
                                     <% categories.forEach(categry=> { %>
-                                        <a class="dropdown-item" id="<%= categry.name %>" href="#">
+                                        <a class="dropdown-item" id="<%= categry.id %>" href="#">
                                             <%= categry.name %>
                                         </a>
                                         <% }) %>
@@ -357,14 +358,14 @@
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <script src="/js/sb-admin-2.min.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
@@ -373,6 +374,7 @@
 
     <script>
         $(document).ready(function () {
+            
             // Event listener for dropdown items
             $('.setcategory a').on('click', function () {
                 // Get the text of the clicked item
@@ -382,6 +384,16 @@
                 $('#setcategory').text(selectedText);
                 // Update the dropdown button data-id attribute
                 $('#setcategory').attr('data-id', selectedId);
+            });
+
+            $('.deleteitem a').on('click', function () {
+                // Get the text of the clicked item
+                var selectedText = $(this).text();
+                var selectedId = $(this).attr('id');
+                // Update the dropdown button text
+                $('#deleteitem').text(selectedText);
+                
+                $('#itemId').val(selectedId);
             });
 
             // Event listener for dropdown items
@@ -402,10 +414,10 @@
                         sortableList.empty(); // Clear the existing list
 
                         // Populate the sortable list with fetched categories
-                        data.categories.forEach(function (category) {
+                        data.items.forEach(function (item) {
                             var listItem = $('<li></li>')
-                                .attr('data-id', category.id)
-                                .text(category.name);
+                                .attr('data-id', item.id)
+                                .text(item.name);
                             sortableList.append(listItem);
                         });
 

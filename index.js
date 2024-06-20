@@ -8,9 +8,9 @@ import Stripe from 'stripe';
 import pg from 'pg';
 import session from 'express-session';
 import { selectUser , checkIfUserExist, insertUser, insertMenu, insertDesign
-  ,getMenuById
+  ,getMenuById, deleteItem
 } from './querys.js';
-import {createLangaugeList} from './helperFunctions.js';
+import {createLangaugeList, convertArrayBufferToBase64} from './helperFunctions.js';
 import { updatePriorities } from './updatePriorities.js';
 import passport from 'passport';
 import { Strategy } from 'passport-local';
@@ -18,6 +18,7 @@ import bcrypt from 'bcrypt';
 import { categories, user, backgroundImage, currency } from './test.js';
 import { get } from 'http';
 import { create } from 'domain';
+
 
 
 
@@ -90,8 +91,9 @@ app.get('/management/menu/:userid', async (req, res) => {
       const menu = await getMenuById(db ,req.user.user_id);
       const menu_name = 'http://www.easymenu.systems/menu/' + req.user.user_id +'/'+ menu.menu_name.replace(/\s+/g, '');;
       const langauges = await createLangaugeList(menu.menu_langauge);
+      const image = 'data:image/png;base64,' + convertArrayBufferToBase64(menu.qrcode);
       console.log(menu);
-      res.render('menu', {'user': user, 'year': new Date().getFullYear(), 'langauges': langauges, 'menu_name': menu_name});
+      res.render('menu', {'user': user ,'year': new Date().getFullYear(), 'langauges': langauges, 'menu_name': menu_name, 'image': image});
     } else {
       res.redirect('/login');
     }
@@ -114,22 +116,6 @@ app.get('/management/category/:userid', (req, res) => {
   }
 });
 
-app.get('/management/items/:userid', (req, res) => {
-  const urlid = parseInt(req.params.userid);
-  if (req.isAuthenticated()) {
-    if (urlid === req.user.user_id) {
-      res.render('menu', {'user': user, 'year': new Date().getFullYear()});
-    } else {
-      res.redirect('/login');
-    }
-  } else {
-    res.redirect('/login');
-  }
-});
-
-app.get('/c', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/categry.html'));
-});
 
 
 // get all categories from the database by menu id and return them as JSON
@@ -311,6 +297,47 @@ app.get("/stripe-session", async (req, res) => {
       return res.send("fail");
   }
 });
+
+// to do. I need to delete the chosse item from the database
+app.post('/deleteitem', async(req, res) => {
+  const itemId = req.body.itemId;
+  //await deleteItem(db, itemId);
+  res.json({ success: true });
+});
+
+// to do. I need to add  item to the database
+app.post('/additem', (req, res) => {
+  console.log(req.body);
+  res.json({ success: true });
+});
+
+app.get('/get-items', (req, res) => {
+  const menuId = req.query.categoryId; // Access query parameter
+  console.log('Menu ID:', menuId);
+
+  const items = categories[0].items;
+  console.log(items);
+  res.json({items});
+});
+
+// tp render the info inside the ejs items page
+app.get('/management/items/:userid', (req, res) => {
+  const urlid = parseInt(req.params.userid);
+  console.log(req.isAuthenticated());
+  /*if (req.isAuthenticated()) {
+    if (urlid === req.user.user_id) {
+      const itmms = categories[0].items;
+      res.render('menu', {'user': user, 'year': new Date().getFullYear(), 'categories': categories, 'items': itmms});
+    } else {
+      res.redirect('/login');
+    }
+  } else {
+    res.redirect('/login');
+  }*/
+    const itmms = categories[0].items;
+    res.render('items', {'user': user, 'year': new Date().getFullYear(), 'categories': categories, 'items': itmms});
+});
+
 
 
 

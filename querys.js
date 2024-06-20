@@ -78,4 +78,8 @@ export async function getMenuById(db, id) {
     }
 }
 
+export async function deleteItem(db, id) {
+    await db.query("DELETE FROM items WHERE id = $1",
+        [id]);
+}
 

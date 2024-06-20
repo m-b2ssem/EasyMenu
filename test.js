@@ -3,15 +3,15 @@ export const categories = [
       id: 1,
       name: 'Appetizers',
       items: [
-        { name: 'Spring Rolls', price: '5.99', description: 'Crispy vegetarian rolls.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-        { name: 'Garlic Bread', price: '3.99', description: 'Fresh garlic bread.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
+        { name: 'Spring Rolls',id: 1 ,price: '5.99', description: 'Crispy vegetarian rolls.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
+        { name: 'Garlic Bread',id: 2 ,price: '3.99', description: 'Fresh garlic bread.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
       ]
     },
     {
       id: 2,
       name: 'Main Course',
       items: [
-        { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
+        { name: 'Grilled Chicken',  price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
         { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
       ]
     },

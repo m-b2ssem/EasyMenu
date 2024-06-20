@@ -1,38 +1,22 @@
-export function createLangaugeList(langauge) {
-    const langauges = [];
+export function createLangaugeList(language) {
+    const allLanguages = [
+        { name: 'English' },
+        { name: 'عربي' },
+        { name: 'Deutsch' },
+        { name: 'Türkçe' },
+        { name: 'Español' }
+    ];
 
-    if (langauge === 'English') {
-        langauges.push({ name: 'English'});
-        langauges.push({ name: 'عربي'});
-        langauges.push({ name: 'Deutsch'});
-        langauges.push({ name: 'Türkçe'});
-        langauges.push({ name: 'Español'});
-    } else if (langauge === 'Arabic') {
-        langauges.push({ name: 'عربي'});
-        langauges.push({ name: 'English'});
-        langauges.push({ name: 'Deutsch'});
-        langauges.push({ name: 'Türkçe'});
-        langauges.push({ name: 'Español'});
-    } else if (langauge === 'Deutsch') {
-        langauges.push({ name: 'Deutsch'});
-        langauges.push({ name: 'English'});
-        langauges.push({ name:  'عربي'});
-        langauges.push({ name: 'Español'});
-        langauges.push({ name: 'Türkçe'});
+    const primaryLanguage = allLanguages.find(lang => lang.name === language);
+    if (!primaryLanguage) {
+        return allLanguages; // or return an empty array or throw an error if the input language is not found.
     }
-    else if (langauge === 'Türkçe') {
-        langauges.push({ name: 'Türkçe'});
-        langauges.push({ name:  'عربي'});
-        langauges.push({ name: 'Español'});
-        langauges.push({ name: 'Deutsch'});
-        langauges.push({ name: 'English'});
-    }
-    else if (langauge === 'Español') {
-        langauges.push({ name: 'Español'});
-        langauges.push({ name: 'English'});
-        langauges.push({ name: 'عربي'});
-        langauges.push({ name: 'Deutsch'});
-        langauges.push({ name: 'Türkçe'});
-    }
-    return langauges;
+
+    const otherLanguages = allLanguages.filter(lang => lang.name !== language);
+    return [primaryLanguage, ...otherLanguages];
+}
+
+
+export function convertArrayBufferToBase64(buffer) {
+    return Buffer.from(buffer).toString('base64');
 }

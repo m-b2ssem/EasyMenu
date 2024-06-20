@@ -201,7 +201,9 @@
                         </div>
                     </div>
                     <div style="position: relative; margin-top: 40px;text-align: center;color: var(--bs-btn-disabled-color);">
-                        <div class="col" style="text-align: center;" id="qrcode"></div>
+                        <div class="col" style="text-align: center; height: 128px; width: 128px;" id="qrcode">
+                            <img src="<%= image %>" alt="QR Code" style="max-height: 100%; max-width: 100%;">
+                        </div>
                         <button class="btn btn-primary" type="button" style="background: rgb(42,208,28);position: relative;filter: brightness(96%) contrast(93%);backdrop-filter: blur(46px);transform: perspective(0px) translate(0px);">download QRCode</button>
                     </div>
 
@@ -261,22 +263,6 @@
 
     <!-- Custom scripts for all pages-->
     <script src="/js/sb-admin-2.min.js"></script>
-
-    <!-- QRCode.js Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const qrCodeContainer = document.getElementById('qrcode');
-            const menuLink = document.getElementById('menuLink').href;
-
-            new QRCode(qrCodeContainer, {
-                text: menuLink,
-                width: 128,
-                height: 128
-            });
-        });
-    </script>
-
 
 </body>
 
