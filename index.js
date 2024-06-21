@@ -7,17 +7,27 @@ import { config } from 'dotenv';
 import Stripe from 'stripe';
 import pg from 'pg';
 import session from 'express-session';
-import { selectUser , checkIfUserExist, insertUser, insertMenu, insertDesign
-  ,getMenuById, deleteItem
+import { selectUser ,
+  checkIfUserExist,
+  insertUser,
+  insertMenu,
+  insertDesign,
+  getMenuById,
+  deleteItem,
+  findHeighestPriority,
+  insertItem,
+  getItemsByCategory,
+  getDesignByMenuId,
+  updateColoInDesign,
+  updateLangauge
 } from './querys.js';
-import {createLangaugeList, convertArrayBufferToBase64} from './helperFunctions.js';
+import {createLangaugeList, convertArrayBufferToBase64, cehckSizeandConvertTOBytea} from './helperFunctions.js';
 import { updatePriorities } from './updatePriorities.js';
 import passport from 'passport';
 import { Strategy } from 'passport-local';
 import bcrypt from 'bcrypt';
 import { categories, user, backgroundImage, currency } from './test.js';
-import { get } from 'http';
-import { create } from 'domain';
+import multer from 'multer';
 
 
 
@@ -76,7 +86,17 @@ app.get('/:userid/:resturantname', (req, res) => {
 });
 */
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/pages/index.html'));
+})
 
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/pages/login_page.html'));
+})
+
+app.get('/register', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/pages/register_page.html'));
+})
 
 app.get('/d', (req, res) => {
   res.render('horizontal_menu.ejs', {'categories': categories, 'backgroundImage': backgroundImage, 'currency': currency});
@@ -92,8 +112,16 @@ app.get('/management/menu/:userid', async (req, res) => {
       const menu_name = 'http://www.easymenu.systems/menu/' + req.user.user_id +'/'+ menu.menu_name.replace(/\s+/g, '');;
       const langauges = await createLangaugeList(menu.menu_langauge);
       const image = 'data:image/png;base64,' + convertArrayBufferToBase64(menu.qrcode);
-      console.log(menu);
-      res.render('menu', {'user': user ,'year': new Date().getFullYear(), 'langauges': langauges, 'menu_name': menu_name, 'image': image});
+      const menuDesign = await getDesignByMenuId(db, menu.menu_id);
+      res.render('menu', {
+        'user': req.user ,
+        'year': new Date().getFullYear(),
+        'langauges': langauges,
+        'menu_name': menu_name,
+        'image': image,
+        'background_color': menuDesign.background_color,
+        'menu_id': menu.menu_id
+      });
     } else {
       res.redirect('/login');
     }
@@ -102,9 +130,38 @@ app.get('/management/menu/:userid', async (req, res) => {
   }
 });
 
+app.post('/updateColor', async (req, res) => {
+  let {designId, color }= req.body;
+  designId = parseInt(designId);
+  
+
+  const  result = await updateColoInDesign(db, designId, color);
+  if (!result) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  res.json({ success: true });
+});
+
+app.post('/updateLangauge', async (req, res) => {
+  let {langauge, menuId }= req.body;
+  menuId = parseInt(menuId);
+
+  const  result = await updateLangauge(db, langauge, menuId);
+  if (!result) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  res.json({ success: true });
+});
+
+
+
+
+
 app.get('/management/category/:userid', (req, res) => {
   const urlid = parseInt(req.params.userid);
   console.log(req.isAuthenticated());
+  console.log(urlid);
+  console.log(req.user.user_id);
   if (req.isAuthenticated()) {
     if (urlid === req.user.user_id) {
       res.render('categories', {'user': user, 'year': new Date().getFullYear()});
@@ -115,8 +172,6 @@ app.get('/management/category/:userid', (req, res) => {
     res.redirect('/login');
   }
 });
-
-
 
 // get all categories from the database by menu id and return them as JSON
 app.get('/get-categories', (req, res) => {
@@ -139,33 +194,61 @@ app.post('/update-order', (req, res) => {
 });
 
 
-/*app.get('/:name/:id', (req, res) => {
-  const logo = data.client.logo;
-  const resturantName = req.params.name;
-  const categoryId = parseInt(req.params.id);
-  const selectedCategory = data.categories.find(category => category.id === categoryId);
-  if (!selectedCategory) {
-    return res.status(404).send('Category not found');
+
+
+
+// to do. I need to delete the chosse item from the database
+app.post('/deleteitem', async(req, res) => {
+  const itemId = req.body.itemId;
+  const result = await deleteItem(db, itemId);
+  if (!result) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
-  const items = selectedCategory.items;
-  const categories = data.categories;
-  res.render('index', {'categories': categories, 'items': items, logo: logo, resturantName: resturantName});
-});*/
+  res.json({ success: true });
+});
+
+// to do. I need to add  item to the database
+
+const upload = multer();
+app.post('/additem', upload.single('image'), async (req, res) => {
+  const { itemName, price, description, categoryId } = req.body;
+  const file = req.file;
+  const buffer = await cehckSizeandConvertTOBytea(file);
+  if (!buffer) {
+    return res.json({ success: false, message: 'Image is too large.'});
+  }
+  const priority = await findHeighestPriority(db, categoryId);
+  const intPrice = parseFloat(price);
+  const inserted = await insertItem(db, categoryId, itemName, description, intPrice, buffer, priority);
+  if (!inserted) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  
+  res.json({ success: true });
+  });
 
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/pages/index.html'));
-})
+app.get('/get-items', async (req, res) => {
+  const category_id = req.query.categoryId; // Access query parameter
+  const items = await getItemsByCategory(db, category_id);
+  res.json({items});
+});
 
-app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/pages/login_page.html'));
-})
-
-app.get('/register', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/pages/register_page.html'));
-})
-
-
+// tp render the info inside the ejs items page
+app.get('/management/items/:userid', (req, res) => {
+  const urlid = parseInt(req.params.userid);
+  console.log(req.isAuthenticated());
+  if (req.isAuthenticated()) {
+    if (urlid === req.user.user_id) {
+      const itmms = categories[0].items;
+      res.render('menu', {'user': user, 'year': new Date().getFullYear(), 'categories': categories, 'items': itmms});
+    } else {
+      res.redirect('/login');
+    }
+  } else {
+    res.redirect('/login');
+  }
+});
 
 
 app.post('/register', async (req, res) => {
@@ -212,135 +295,6 @@ app.post('/login',
     res.redirect('/management/menu/' + req.user.user_id);
   });
 
-
-app.post("/checkout", async (req, res) => {
-  const { id, amount } = req.body;
-
-  try {
-    const sessionStripe = await stripe.checkout.sessions.create({
-      success_url: "http://localhost:8080/success",
-      cancel_url: "http://localhost:8080",
-      line_items: [
-        {
-          price: process.env.PRICE_ID,
-          quantity: 12,
-        },
-      ],
-      mode: "subscription",
-    });
-
-    console.log("session: ", sessionStripe.id, sessionStripe.url, sessionStripe);
-
-
-    // save the info in the database
-    const sessionId = sessionStripe.id;
-    const url = sessionStripe.url;
-    const subscription = sessionStripe.subscription;
-
-    return res.json({ url: sessionStripe.url });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: error.message });
-  }
-});
-
-
-app.get("/stripe-session", async (req, res) => {
-  console.log("req.body: ", req.body);
-  const { userId } = req.body;
-  console.log("userId: ", userId);
-
-  const db = req.app.get('db');
-
-  // get user from you database
-  const user = {
-    stripe_session_id: "asdfpouhwf;ljnqwfpqo",
-    paid_sub: false
-  }
-
-  if(!user.stripe_session_id || user.paid_sub === true) 
-  return res.send("fail");
-
-  try {
-      // check session
-      const session = await stripe.checkout.sessions.retrieve(user.stripe_session_id);
-      console.log("session: ", session);
-
-      // const sessionResult = {
-      //   id: 'cs_test_a1lpAti8opdtSIDZQIh9NZ6YhqMMwC0H5wrlwkUEYJc6GXokj2g5WyHkv4',
-      //   …
-      //   customer: 'cus_PD6t4AmeZrJ8zq',
-      //   …
-      //   status: 'complete',
-      //   …
-      //   subscription: 'sub_1OOgfhAikiJrlpwD7EQ5TLea',
-      //  …
-      // }
-      
-    
-      // update the user
-      if (session && session.status === "complete") {
-        let updatedUser = await db.update_user_stripe(
-          userId,
-          true
-        );
-        updatedUser = updatedUser[0];
-        console.log(updatedUser);
-    
-        return res.send("success");
-      } else {
-        return res.send("fail");
-      }
-  } catch (error) {
-      // handle the error
-      console.error("An error occurred while retrieving the Stripe session:", error);
-      return res.send("fail");
-  }
-});
-
-// to do. I need to delete the chosse item from the database
-app.post('/deleteitem', async(req, res) => {
-  const itemId = req.body.itemId;
-  //await deleteItem(db, itemId);
-  res.json({ success: true });
-});
-
-// to do. I need to add  item to the database
-app.post('/additem', (req, res) => {
-  console.log(req.body);
-  res.json({ success: true });
-});
-
-app.get('/get-items', (req, res) => {
-  const menuId = req.query.categoryId; // Access query parameter
-  console.log('Menu ID:', menuId);
-
-  const items = categories[0].items;
-  console.log(items);
-  res.json({items});
-});
-
-// tp render the info inside the ejs items page
-app.get('/management/items/:userid', (req, res) => {
-  const urlid = parseInt(req.params.userid);
-  console.log(req.isAuthenticated());
-  /*if (req.isAuthenticated()) {
-    if (urlid === req.user.user_id) {
-      const itmms = categories[0].items;
-      res.render('menu', {'user': user, 'year': new Date().getFullYear(), 'categories': categories, 'items': itmms});
-    } else {
-      res.redirect('/login');
-    }
-  } else {
-    res.redirect('/login');
-  }*/
-    const itmms = categories[0].items;
-    res.render('items', {'user': user, 'year': new Date().getFullYear(), 'categories': categories, 'items': itmms});
-});
-
-
-
-
 passport.use(
   new Strategy (async function verify(username, password, cb) {
     try {
@@ -369,14 +323,14 @@ passport.use(
   }));
 
 passport.serializeUser(function(user, cb) {
+  // remove the password from the user object
+  delete user.password;
     cb(null, user);
 });
 
 passport.deserializeUser(function(user, cb) {
     cb(null, user);
 });
-
-
 
 app.listen(PORT, () => {
   console.log('Server is running on http://localhost: ' + PORT);

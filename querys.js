@@ -30,7 +30,7 @@ export async function selectUserById(db, id) {
 }
 
 export async function insertMenu(db, user_id, campanyName) {
-    const toQrcode = 'https://www.easymenu.systems/menu/' + user_id + '/' + campanyName.replace(/\s+/g, '');;
+    const toQrcode = 'https://www.easymenu.systems/menu/' + user_id + '/' + campanyName.replace(/\s+/g, '');
     const menuLangauhe = 'English';
     try {
         // Generate the QR code as a data URL
@@ -79,7 +79,67 @@ export async function getMenuById(db, id) {
 }
 
 export async function deleteItem(db, id) {
-    await db.query("DELETE FROM items WHERE id = $1",
+    const result = await db.query("DELETE FROM items WHERE id = $1",
+        [id]);
+    if (result.rowCount > 0) {
+        return true;
+    }
+    return false;
+}
+
+export async function deleteCategory(db, id) {
+    await db.query("DELETE FROM categories WHERE id = $1",
         [id]);
 }
 
+export async function findHeighestPriority(db, category_id) {
+    const result = await db.query("SELECT MAX(priority) FROM items WHERE category_id = $1",
+        [category_id]);
+    return result.rows[0].max;
+}
+
+export async function insertItem(db, category_id, item_name, description, price, image, item_priority) {
+    try {
+        const priority = item_priority + 1;
+        const result = await db.query(
+            "INSERT INTO items (category_id, item_name, description, price, image ,priority) VALUES($1, $2, $3, $4, $5, $6) RETURNING *",
+            [category_id, item_name, description, price, image, priority]);
+        if (result.rows.length > 0) {
+            return true;
+        }
+        return false;
+    } catch (error) {
+        console.error('error inserting the item', error);
+        throw error;
+    }
+}
+
+export async function getItemsByCategory(db, category_id) {
+    const result = await db.query("SELECT * FROM items WHERE category_id = $1",
+        [category_id]);
+    return result.rows;
+}
+
+export async function getDesignByMenuId(db, menu_id) {
+    const result = await db.query("SELECT * FROM designs WHERE menu_id = $1",
+        [menu_id]);
+    return result.rows[0];
+}
+
+export async function updateColoInDesign(db, menu_id, color) {
+    const result = await db.query("UPDATE designs SET background_color = $1 WHERE menu_id = $2",
+        [color, menu_id]);
+    if (result.rowCount > 0) {
+        return true;
+    }
+    return false;
+}
+
+export async function updateLangauge(db, langauge, menu_id) {
+    const result = await db.query("UPDATE menus SET menu_langauge = $1 WHERE menu_id = $2",
+        [langauge, menu_id]);
+    if (result.rowCount > 0) {
+        return true;
+    }
+    return false;
+}

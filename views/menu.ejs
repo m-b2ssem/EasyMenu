@@ -66,9 +66,9 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Customize Menu</menu>:</h6>
-                        <a class="collapse-item active" href="/management/menu/<%= user.id %>">Menues</a>
-                        <a class="collapse-item" href="/management/category/<%= user.id %>">Categories</a>
-                        <a class="collapse-item" href="/management/items/<%= user.id %>">Items</a>
+                        <a class="collapse-item active" href="/management/menu/<%= user.user_id %>">Menues</a>
+                        <a class="collapse-item" href="/management/category/<%= user.user_id %>">Categories</a>
+                        <a class="collapse-item" href="/management/items/<%= user.user_id %>">Items</a>
                     </div>
                 </div>
             </li>
@@ -185,14 +185,14 @@
                     <div style="position: relative;margin-top: 15px;">
                         <div class="col" style="text-align: center;"><label class="col-form-label" style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Menu background color</label></div>
                         <div class="col" style="text-align: center;">
-                            <input type="color" style="border-radius: 8px;box-shadow: 1px 1px 5px var(--bs-blue);" />
-                            <p>Selected Color: <span id="colorValue">#000000</span></p>
+                            <input type="color" id="colorPicker" data-id="<%= menu_id %>" style="border-radius: 8px;box-shadow: 1px 1px 5px var(--bs-blue);"  value="<%= background_color %>"/>
+                            <p>Selected Color: <span id="<%= background_color %>"><%= background_color %></span></p>
                         </div>
                     </div>
                     <div style="position: relative;margin-top: 15px;">
                         <div class="col" style="text-align: center;">
                             <label for="select">choose a langauge</label>
-                            <select class="selectpicker" data-width="fit">
+                            <select class="selectpicker" data-id="<%= menu_id %>" id="langaugepecker" data-width="fit">
                                 <% langauges.forEach(function(langauge) {%>
 
                                 <option data-content='<span class="flag-icon flag-icon-us"></span> <%= langauge.name %>'><%= langauge.name %></option>
@@ -200,11 +200,13 @@
                             </select>
                         </div>
                     </div>
-                    <div style="position: relative; margin-top: 40px;text-align: center;color: var(--bs-btn-disabled-color);">
-                        <div class="col" style="text-align: center; height: 128px; width: 128px;" id="qrcode">
+                    <div class="d-flex justify-content-center" style="margin-top: 40px; margin-bottom:40px; text-align: center;color: var(--bs-btn-disabled-color);">
+                        <div class="col text-center" style="height: 128px; width: 128px;" id="qrcode">
                             <img src="<%= image %>" alt="QR Code" style="max-height: 100%; max-width: 100%;">
                         </div>
-                        <button class="btn btn-primary" type="button" style="background: rgb(42,208,28);position: relative;filter: brightness(96%) contrast(93%);backdrop-filter: blur(46px);transform: perspective(0px) translate(0px);">download QRCode</button>
+                    </div>
+                    <div class="text-center">
+                        <button class="btn btn-primary" type="button" onClick="download()" data-id="<%= menu_id %>" style="background: rgb(42,208,28);position: relative;filter: brightness(96%) contrast(93%);backdrop-filter: blur(46px);transform: perspective(0px) translate(0px);">download QRCode</button>
                     </div>
 
                 </div>
@@ -263,6 +265,72 @@
 
     <!-- Custom scripts for all pages-->
     <script src="/js/sb-admin-2.min.js"></script>
+
+    <script>
+         document.getElementById('colorPicker').addEventListener('change', function() {
+        const selectedColor = this.value;
+        const dataId = this.dataset.id;
+        console.log('Selected color:', selectedColor);
+        console.log('Data ID:', dataId);
+        
+        // Send the selected color to the server
+        fetch('/updateColor', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ color: selectedColor, designId: dataId})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Color updated successfully');
+                
+            } else {
+                console.error('Failed to update color');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+
+    document.getElementById('langaugepecker').addEventListener('change', function() {
+        const selectedLangauge = this.value;
+        const dataId = this.dataset.id;
+        console.log('Selected langauge:', selectedLangauge);
+        console.log('Data ID:', dataId);
+
+        
+        // Send the selected langauge to the server
+        fetch('/updateLangauge', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ langauge: selectedLangauge, menuId: dataId})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Langauge updated successfully');
+            } else {
+                alert('Failed to update langauge, please try again');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+
+    download = () => {
+        const dataId = document.getElementById('qrcode').dataset.id;
+        const link = document.createElement('a');
+        link.download = 'QRCode.png';
+        link.href = document.getElementById('qrcode').children[0].src;
+        link.click();
+    }
+    </script>
 
 </body>
 

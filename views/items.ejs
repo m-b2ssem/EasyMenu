@@ -236,11 +236,9 @@
                             </div>
                         </div>
                     </div>
-                    <form action="/additem" method="post">
+                    <form onsubmit="upload(event)">
+                        <!-- your form fields -->
                         <div style="position: relative;margin-top: 15px;">
-                            <div class="col" style="text-align: center;"><label class="col-form-label"
-                                    style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Add an item
-                                    <br></label></div>
                             <div class="col" style="text-align: center;"><label class="col-form-label"
                                     style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Item
                                     Name</label></div>
@@ -268,6 +266,7 @@
                             <div class="col" style="text-align: center;">
                                 <div class="dropdown"><button class="btn btn-primary dropdown-toggle" aria-expanded="false"
                                         id="setcategory" data-bs-toggle="dropdown" type="button">Choose Categry </button>
+                                    <input type="hidden" name="categoryId" id="categoryId" />
                                     <div class="dropdown-menu setcategory">
                                         <% categories.forEach(categry=> { %>
                                             <a class="dropdown-item" id="<%= categry.id %>" href="#">
@@ -282,15 +281,16 @@
                             <div class="col" style="text-align: center;"><label class="col-form-label"
                                     style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Item
                                     Image</label></div>
-                            <div class="col" style="text-align: center;"><input name="image" type="file"
+                            <div class="col" style="text-align: center;"><input name="image" type="file" accept="image/*" 
                                     style="border-radius: 4px;border-width: 0px;position: relative;" /></div>
                         </div>
                         <div
                             style="position: relative;margin-top: 40px;text-align: center;color: var(--bs-btn-disabled-color);">
                             <button class="btn btn-primary" type="submit"
                                 style="background: rgb(42,208,28);position: relative;filter: brightness(96%) contrast(93%);backdrop-filter: blur(46px);transform: perspective(0px) translate(0px);">Add
-                                Item</button></div>
+                                Item</button>
                     </form>
+
                     <div style="border-bottom-style: solid; "></div>
                     <div class="centered-container" style="margin-top: 60px; margin-bottom: 60px;">
                         <label>Drag and Drop to set the order of the Categories.</label>
@@ -383,7 +383,7 @@
                 // Update the dropdown button text
                 $('#setcategory').text(selectedText);
                 // Update the dropdown button data-id attribute
-                $('#setcategory').attr('data-id', selectedId);
+                $('#categoryId').val(selectedId);
             });
 
             $('.deleteitem a').on('click', function () {
@@ -416,8 +416,8 @@
                         // Populate the sortable list with fetched categories
                         data.items.forEach(function (item) {
                             var listItem = $('<li></li>')
-                                .attr('data-id', item.id)
-                                .text(item.name);
+                                .attr('data-id', item.item_id)
+                                .text(item.item_name);
                             sortableList.append(listItem);
                         });
 
@@ -451,6 +451,32 @@
             });
             $("#sortable").disableSelection();
         });
+    </script>
+
+    <script>
+        async function upload(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            console.log('Form data:', formData);
+            console.log('Form data:', form);
+            try {
+                const response = await fetch('/additem', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Item added successfully');
+                    form.reset();
+                } else {
+                    alert('Failed to add item please try again');
+                }
+                console.log(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
     </script>
 
 </body>
