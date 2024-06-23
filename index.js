@@ -19,15 +19,24 @@ import { selectUser ,
   getItemsByCategory,
   getDesignByMenuId,
   updateColoInDesign,
-  updateLangauge
+  updateLangauge,
+  getItemsByuserId,
+  getCategoriesByUserId,
+  insertCategory,
+  getCategoriesByMenuId,
+  updateCategoryPriority,
+  deleteCategory,
+  getCategoriesWithItems,
+  updateLogoImage,
+  getLogoImage
 } from './querys.js';
 import {createLangaugeList, convertArrayBufferToBase64, cehckSizeandConvertTOBytea} from './helperFunctions.js';
-import { updatePriorities } from './updatePriorities.js';
 import passport from 'passport';
 import { Strategy } from 'passport-local';
 import bcrypt from 'bcrypt';
-import { categories, user, backgroundImage, currency } from './test.js';
+import { user, backgroundImage, currency } from './test.js';
 import multer from 'multer';
+import { get } from 'http';
 
 
 
@@ -70,22 +79,6 @@ const saltRounds = 10;
 
 
 
-
-
-
-
-
-/*
-app.get('/:userid/:resturantname', (req, res) => {
-  const logo = data.client.logo;
-  const resturantName = 'bassem';
-  const backgroundColor = data.client.backgroundColor;
-  const items = data.categories[0].items;
-  const categories = data.categories;
-  res.render('index', {'categories': categories, 'items': items, 'logo': logo, resturantName: resturantName});
-});
-*/
-
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/pages/index.html'));
 })
@@ -98,8 +91,26 @@ app.get('/register', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/pages/register_page.html'));
 })
 
-app.get('/d', (req, res) => {
-  res.render('horizontal_menu.ejs', {'categories': categories, 'backgroundImage': backgroundImage, 'currency': currency});
+
+app.get('/menu/:menuid', async (req, res) => {
+  const menuid = req.params.menuid;
+
+  //const langauges = await createLangaugeList(menu.menu_langauge);
+  let categories = await getCategoriesWithItems(db, menuid);
+  let logo = await getLogoImage(db, menuid);
+  console.log(logo);
+  if (!logo) {
+    logo = 'http://www.easymenu.systems/images/logo.png';
+  }
+  else{
+    logo = 'data:image/png;base64,' + await convertArrayBufferToBase64(logo);
+  }
+  if (!categories) {
+    categories = [];
+  }
+  const backgroundImage = 'http://www.easymenu.systems/images/background.jpg';
+  const currency = '€';
+  res.render('horizontal_menu.ejs', {'categories': categories, 'backgroundImage': logo, 'currency': currency});
 })
 
 
@@ -108,10 +119,11 @@ app.get('/management/menu/:userid', async (req, res) => {
   const urlid = parseInt(req.params.userid);
   if (req.isAuthenticated()) {
     if (urlid === req.user.user_id) {
-      const menu = await getMenuById(db ,req.user.user_id);
+      const menus = await getMenuById(db ,req.user.user_id);
+      const menu = menus[0];
       const menu_name = 'http://www.easymenu.systems/menu/' + req.user.user_id +'/'+ menu.menu_name.replace(/\s+/g, '');;
       const langauges = await createLangaugeList(menu.menu_langauge);
-      const image = 'data:image/png;base64,' + convertArrayBufferToBase64(menu.qrcode);
+      const image = await 'data:image/png;base64,' + await convertArrayBufferToBase64(menu.qrcode);
       const menuDesign = await getDesignByMenuId(db, menu.menu_id);
       res.render('menu', {
         'user': req.user ,
@@ -130,11 +142,28 @@ app.get('/management/menu/:userid', async (req, res) => {
   }
 });
 
+
+
+const storage = multer();
+app.post('/uplaod-logo-image', storage.single('image'), async (req, res) => {
+  const file = req.file;
+  const menu_id = req.body.menu_id;
+  console.log(file);
+  const buffer = await cehckSizeandConvertTOBytea(file);
+  if (!buffer) {
+    return res.json({ success: false, message: 'Image is too large.'});
+  }
+  const result = await updateLogoImage(db, menu_id, buffer);
+  if (!result) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  res.json({ success: true });
+});
+
 app.post('/updateColor', async (req, res) => {
   let {designId, color }= req.body;
   designId = parseInt(designId);
   
-
   const  result = await updateColoInDesign(db, designId, color);
   if (!result) {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
@@ -157,14 +186,15 @@ app.post('/updateLangauge', async (req, res) => {
 
 
 
-app.get('/management/category/:userid', (req, res) => {
+app.get('/management/category/:userid', async (req, res) => {
   const urlid = parseInt(req.params.userid);
-  console.log(req.isAuthenticated());
-  console.log(urlid);
-  console.log(req.user.user_id);
+  const user = req.user;
+
   if (req.isAuthenticated()) {
     if (urlid === req.user.user_id) {
-      res.render('categories', {'user': user, 'year': new Date().getFullYear()});
+      const categories = await getCategoriesByUserId(db, req.user.user_id);
+      const menus = await getMenuById(db ,req.user.user_id);
+      res.render('categories', {'user': user, 'categories': categories, 'year': new Date().getFullYear(), 'menus': menus});
     } else {
       res.redirect('/login');
     }
@@ -173,24 +203,61 @@ app.get('/management/category/:userid', (req, res) => {
   }
 });
 
-// get all categories from the database by menu id and return them as JSON
-app.get('/get-categories', (req, res) => {
-  const menuId = req.query.menuId; // Access query parameter
-  console.log('Menu ID:', menuId);
+app.post('/add-category', async (req, res) => {
+  const {categoryName, menuId} = req.body;
+  const menu_id = parseInt(menuId);
+  const userId = req.user.user_id
+  const result = await insertCategory(db, menu_id, categoryName, userId);
+  if (!result) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  res.redirect('/management/category/' + userId);
+});
 
+app.post('/deletecategory', async (req, res) => {
+  const categoryId = req.body.categoryId;
+  const result = await deleteCategory(db, categoryId);
+  if (!result) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  res.redirect('/management/category/' + req.user.user_id);
+});
+
+
+
+
+// get all categories from the database by menu id and return them as JSON
+app.get('/get-categories', async (req, res) => {
+  const menuId = req.query.menuId; // Access query parameter
+  let categories = await getCategoriesByMenuId(db, menuId);
+  if (!categories) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+
+  categories = await categories.sort((a, b) => b.priority - a.priority);
   res.json({categories});
 });
 
 
 // update the order in the database
-app.post('/update-order', (req, res) => {
+app.post('/reorder-categories', async(req, res) => {
   const order = req.body.order;
-  //console.log('Updated Order:', order);
 
-  // Update the order in your data store
-  // Assuming success for this example
-  updatePriorities(order);
-  res.json({ success: true });
+  let priority = 1;
+
+
+  const reversedCategoriesIds = order.slice().reverse();
+  try {
+    for (const id of reversedCategoriesIds) {
+      // update the priority of the category
+      await updateCategoryPriority(db ,id, priority);
+      priority++;
+    }
+    res.json({ success: true });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
 });
 
 
@@ -199,24 +266,35 @@ app.post('/update-order', (req, res) => {
 
 // to do. I need to delete the chosse item from the database
 app.post('/deleteitem', async(req, res) => {
-  const itemId = req.body.itemId;
+  const itemId = parseInt(req.body.itemId);
   const result = await deleteItem(db, itemId);
   if (!result) {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
-  res.json({ success: true });
+  res.redirect('/management/items/' + req.user.user_id);
 });
+
+
+
+
 
 // to do. I need to add  item to the database
 
 const upload = multer();
 app.post('/additem', upload.single('image'), async (req, res) => {
-  const { itemName, price, description, categoryId } = req.body;
+  let { itemName, price, description, categoryId } = req.body;
   const file = req.file;
+  if (!file) {
+    return res.json({ success: false, message: 'Please upload an image.'});
+  }
+  if (!itemName || !price || !description || !categoryId) {
+    return res.json({ success: false, message: 'Please fill all fields.'});
+  }
   const buffer = await cehckSizeandConvertTOBytea(file);
   if (!buffer) {
     return res.json({ success: false, message: 'Image is too large.'});
   }
+  categoryId = parseInt(categoryId);
   const priority = await findHeighestPriority(db, categoryId);
   const intPrice = parseFloat(price);
   const inserted = await insertItem(db, categoryId, itemName, description, intPrice, buffer, priority);
@@ -234,14 +312,15 @@ app.get('/get-items', async (req, res) => {
   res.json({items});
 });
 
+
 // tp render the info inside the ejs items page
-app.get('/management/items/:userid', (req, res) => {
+app.get('/management/items/:userid', async(req, res) => {
   const urlid = parseInt(req.params.userid);
-  console.log(req.isAuthenticated());
   if (req.isAuthenticated()) {
     if (urlid === req.user.user_id) {
-      const itmms = categories[0].items;
-      res.render('menu', {'user': user, 'year': new Date().getFullYear(), 'categories': categories, 'items': itmms});
+      const categories = await getCategoriesByUserId(db, req.user.user_id);
+      const items = await getItemsByuserId(db, req.user.user_id);
+      res.render('items', {'user': req.user, 'year': new Date().getFullYear(), 'categories': categories, 'items': items});
     } else {
       res.redirect('/login');
     }
@@ -272,7 +351,7 @@ app.post('/register', async (req, res) => {
           const result = await insertUser(db, campanyName, email, hash);
           const result_2 = await insertMenu(db, result.rows[0].user_id, campanyName);
           const result_3 = await insertDesign(db, result_2.rows[0].menu_id);
-              const user = result.rows[0];
+          const result_user = result.rows[0];
               
           
               req.login(user, (err) => {
@@ -280,7 +359,7 @@ app.post('/register', async (req, res) => {
                   console.log(err);
                   return res.redirect('/login');
               }else{
-                return res.redirect('/management/menu/' + user.user_id);
+                return res.redirect('/management/menu/' + result_user.user_id);
               }
               });
           }
@@ -293,6 +372,13 @@ app.post('/login',
   passport.authenticate('local', { failureRedirect: '/login' }),
   function(req, res) {
     res.redirect('/management/menu/' + req.user.user_id);
+  });
+
+  app.get('/logout', function(req, res){
+    req.logout(function(err) {
+      if (err) { return next(err); }
+      res.redirect('/login');
+    });
   });
 
 passport.use(
@@ -327,6 +413,7 @@ passport.serializeUser(function(user, cb) {
   delete user.password;
     cb(null, user);
 });
+
 
 passport.deserializeUser(function(user, cb) {
     cb(null, user);

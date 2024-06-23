@@ -93,9 +93,9 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Custom Components:</h6>
-                        <a class="collapse-item" href="/management/menu/<%= user.id %>">Menues</a>
-                        <a class="collapse-item" href="/management/category/<%= user.id %>">Categories</a>
-                        <a class="collapse-item active" href="/management/items/<%= user.id %>">Items</a>
+                        <a class="collapse-item" href="/management/menu/<%= user.user_id %>">Menues</a>
+                        <a class="collapse-item" href="/management/category/<%= user.user_id %>">Categories</a>
+                        <a class="collapse-item active" href="/management/items/<%= user.user_id %>">Items</a>
                     </div>
                 </div>
             </li>
@@ -118,16 +118,17 @@
                     </button>
 
                     <!-- Topbar Navbar -->
+                    <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <!-- Nav Item - Alerts -->
                         <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                            <!--<a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-bell fa-fw"></i>
-                                <!-- Counter - Alerts -->
+                                 Counter - Alerts 
                                 <span class="badge badge-danger badge-counter">3+</span>
-                            </a>
-                            <!-- Dropdown - Alerts -->
+                            </a>-->
+                            <!-- Dropdown - Alerts 
                             <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="alertsDropdown">
                                 <h6 class="dropdown-header">
@@ -168,6 +169,7 @@
                                 </a>
                                 <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
                             </div>
+                            -->
                         </li>
 
                         
@@ -179,7 +181,7 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.name %></span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.company_name %></span>
                                 <img class="img-profile rounded-circle"
                                     src="/img/undraw_profile.svg">
                             </a>
@@ -221,16 +223,17 @@
                                 <form action="/deleteitem" method="post">
                                     <div class="dropdown" style="text-align: right;display: inline;margin-right: 18px;">
                                         <button class="btn btn-primary dropdown-toggle" aria-expanded="false"
-                                            data-bs-toggle="dropdown" id="deleteitem" name="item" type="button">Items </button>
+                                            data-bs-toggle="dropdown" id="deleteitem"  name="item" type="button">Items </button>
+                                            
                                         <div class="dropdown-menu deleteitem">
                                             <% items.forEach(item=> { %>
-                                                <a class="dropdown-item" id="<%= item.id %>" href="#">
-                                                    <%= item.name %>
+                                                <a class="dropdown-item" id="<%= item.item_id %>" href="#">
+                                                    <%= item.item_name %>
                                                 </a>
                                                 <% }) %>
                                         </div>
                                     </div>
-                                    <input type="hidden" name="itemId" id="itemId" />
+                                    <input type="hidden" name="itemId"  id="itemId" />
                                     <button class="btn btn-primary" type="submit" style="text-align: right;">Delete</button>
                                 </form>
                             </div>
@@ -242,21 +245,21 @@
                             <div class="col" style="text-align: center;"><label class="col-form-label"
                                     style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Item
                                     Name</label></div>
-                            <div class="col" style="text-align: center;"><input name="itemName" type="text"
+                            <div class="col" style="text-align: center;"><input required name="itemName" type="text"
                                     style="border-radius: 8px;box-shadow: 1px 1px 5px var(--bs-blue);" /></div>
                         </div>
                         <div style="position: relative;margin-top: 15px;">
                             <div class="col" style="text-align: center;"><label class="col-form-label"
                                     style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Item
                                     Price</label></div>
-                            <div class="col" style="text-align: center;"><input name="price" type="text"
+                            <div class="col" style="text-align: center;"><input required name="price" type="text"
                                     style="border-radius: 8px;box-shadow: 1px 1px 5px var(--bs-blue);" /></div>
                         </div>
                         <div style="position: relative;margin-top: 15px;">
                             <div class="col" style="text-align: center;"><label class="col-form-label"
                                     style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Item
                                     Description</label></div>
-                            <div class="col" style="text-align: center;"><input name="description" type="text"
+                            <div class="col" style="text-align: center;"><input required name="description" type="text"
                                     style="border-radius: 8px;box-shadow: 1px 1px 5px var(--bs-blue);" /></div>
                         </div>
                         <div style="position: relative;margin-top: 15px;">
@@ -267,10 +270,10 @@
                                 <div class="dropdown"><button class="btn btn-primary dropdown-toggle" aria-expanded="false"
                                         id="setcategory" data-bs-toggle="dropdown" type="button">Choose Categry </button>
                                     <input type="hidden" name="categoryId" id="categoryId" />
-                                    <div class="dropdown-menu setcategory">
+                                    <div class="dropdown-menu setcategory" required>
                                         <% categories.forEach(categry=> { %>
-                                            <a class="dropdown-item" id="<%= categry.id %>" href="#">
-                                                <%= categry.name %>
+                                            <a class="dropdown-item" id="<%= categry.category_id %>" href="#">
+                                                <%= categry.category_name %>
                                             </a>
                                             <% }) %>
                                     </div>
@@ -281,7 +284,7 @@
                             <div class="col" style="text-align: center;"><label class="col-form-label"
                                     style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Item
                                     Image</label></div>
-                            <div class="col" style="text-align: center;"><input name="image" type="file" accept="image/*" 
+                            <div class="col" style="text-align: center;"><input required name="image" type="file" accept="image/*" 
                                     style="border-radius: 4px;border-width: 0px;position: relative;" /></div>
                         </div>
                         <div
@@ -300,8 +303,8 @@
                                     data-bs-toggle="dropdown" type="button">Choose Categry</button>
                                 <div class="dropdown-menu orderItems">
                                     <% categories.forEach(categry=> { %>
-                                        <a class="dropdown-item" id="<%= categry.id %>" href="#">
-                                            <%= categry.name %>
+                                        <a class="dropdown-item" id="<%= categry.category_id %>" href="#">
+                                            <%= categry.category_name %>
                                         </a>
                                         <% }) %>
                                 </div>
@@ -431,6 +434,7 @@
 
             $("#sortable").sortable({
                 update: function (event, ui) {
+                    
                     var sortedIDs = $("#sortable").sortable("toArray", { attribute: "data-id" });
                     console.log(sortedIDs);
                     // Send sortedIDs to your backend to update the priority/order
@@ -445,6 +449,7 @@
                         .then(data => {
                             console.log('Success:', data);
                         }).catch((error) => {
+                            alert('Failed, please try again')
                             console.error('Error:', error);
                         });
                 }
@@ -457,6 +462,11 @@
         async function upload(event) {
             event.preventDefault();
             const form = event.target;
+            if (!document.getElementById('categoryId').value) {
+            event.preventDefault();
+            alert('Please choose a category.');
+            return;
+            }
             const formData = new FormData(form);
             console.log('Form data:', formData);
             console.log('Form data:', form);
@@ -469,6 +479,7 @@
                 if (data.success) {
                     alert('Item added successfully');
                     form.reset();
+                    location.reload();
                 } else {
                     alert('Failed to add item please try again');
                 }

@@ -124,6 +124,9 @@ CREATE TABLE menus (
   menu_id SERIAL PRIMARY KEY,
   user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
   menu_name VARCHAR(100) NOT NULL,
+  menu_language VARCHAR(50) NOT NULL,
+  background_image_path VARCHAR(255),
+  qr_code BYTEA,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -131,8 +134,10 @@ CREATE TABLE menus (
 
 CREATE TABLE categories (
   category_id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
   menu_id INT REFERENCES menus(menu_id) ON DELETE CASCADE,
   category_name VARCHAR(100) NOT NULL,
+  priority INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -140,11 +145,13 @@ CREATE TABLE categories (
 
 CREATE TABLE items (
   item_id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
   category_id INT REFERENCES categories(category_id) ON DELETE CASCADE,
   item_name VARCHAR(100) NOT NULL,
   description TEXT,
   price DECIMAL(10, 2) NOT NULL,
-	image_path VARCHAR(255),
+	image BYTEA,
+  priority INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -171,7 +178,8 @@ CREATE TABLE designs (
   design_id SERIAL PRIMARY KEY,
   menu_id INT REFERENCES menus(menu_id) ON DELETE CASCADE,
   category_orientation VARCHAR(50) NOT NULL CHECK (category_orientation IN ('horizontal', 'vertical')),
-  background_color VARCHAR(7) NOT NULL, -- Assuming the color is stored in hex format (e.g., #FFFFFF)
+  background_color VARCHAR(100) NOT NULL, -- Assuming the color is stored in hex format (e.g., #FFFFFF)
+  background_image BYTEA,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

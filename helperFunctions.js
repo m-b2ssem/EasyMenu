@@ -26,8 +26,8 @@ export function createLangaugeList(language) {
 }
 
 
-export function convertArrayBufferToBase64(buffer) {
-    return Buffer.from(buffer).toString('base64');
+export async function convertArrayBufferToBase64(buffer) {
+    return await Buffer.from(buffer).toString('base64');
 }
 
 
@@ -35,13 +35,13 @@ export async function cehckSizeandConvertTOBytea(file) {
     try {
         const compressedImageBuffer = await sharp(file.buffer)
         .resize({ // Resize the image
-          width: 80, // You can adjust this width as needed
-          height: 80, // You can adjust this height as needed
+          width: 800, // You can adjust this width as needed
+          height: 800, // You can adjust this height as needed
           fit: sharp.fit.inside,
           withoutEnlargement: true
         })
         .toFormat('jpeg')
-        .jpeg({ quality: 80 }) // Adjust the quality to compress
+        .jpeg({ quality: 100 }) // Adjust the quality to compress
         .toBuffer();
   
         if (compressedImageBuffer.length > 2 * 1024 * 1024) { // 2 MB limit

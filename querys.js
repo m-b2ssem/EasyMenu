@@ -1,4 +1,5 @@
 import QRCode from 'qrcode';
+import { convertArrayBufferToBase64 } from './helperFunctions.js';
 
 export async function checkIfUserExist(db, email) {
      const result = await db.query("SELECT email FROM users WHERE email = $1",
@@ -72,24 +73,20 @@ export async function getMenuById(db, id) {
     const result = await db.query("SELECT * FROM menus WHERE user_id = $1",
         [id]);
     if (result.rows.length > 0) {
-        return result.rows[0];
+        return result.rows;
     } else {
         return false;
     }
 }
 
+
 export async function deleteItem(db, id) {
-    const result = await db.query("DELETE FROM items WHERE id = $1",
+    const result = await db.query("DELETE FROM items WHERE item_id = $1",
         [id]);
     if (result.rowCount > 0) {
         return true;
     }
     return false;
-}
-
-export async function deleteCategory(db, id) {
-    await db.query("DELETE FROM categories WHERE id = $1",
-        [id]);
 }
 
 export async function findHeighestPriority(db, category_id) {
@@ -98,12 +95,19 @@ export async function findHeighestPriority(db, category_id) {
     return result.rows[0].max;
 }
 
+export async function getUserIdByGategoryId(db, category_id) {
+    const result = await db.query("SELECT user_id FROM categories WHERE category_id = $1",
+        [category_id]);
+    return result.rows[0].user_id;
+}
+
 export async function insertItem(db, category_id, item_name, description, price, image, item_priority) {
     try {
+        const user_id = await getUserIdByGategoryId(db, category_id);
         const priority = item_priority + 1;
         const result = await db.query(
-            "INSERT INTO items (category_id, item_name, description, price, image ,priority) VALUES($1, $2, $3, $4, $5, $6) RETURNING *",
-            [category_id, item_name, description, price, image, priority]);
+            "INSERT INTO items (category_id, item_name, description, price, image ,priority, user_id) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+            [category_id, item_name, description, price, image, priority, user_id]);
         if (result.rows.length > 0) {
             return true;
         }
@@ -142,4 +146,157 @@ export async function updateLangauge(db, langauge, menu_id) {
         return true;
     }
     return false;
+}
+
+export async function getItemsByuserId(db, user_id) {
+    const result = await db.query("SELECT * FROM items WHERE user_id = $1",
+        [user_id]);
+    return result.rows;
+}
+
+
+export async function getCategoriesByUserId(db, user_id) {
+    const result = await db.query("SELECT * FROM categories WHERE user_id = $1",
+        [user_id]);
+    return result.rows;
+}
+
+export async function findHeighestPriorityInCategory(db, menu_id) {
+    const result = await db.query("SELECT MAX(priority) FROM categories WHERE menu_id = $1",
+        [menu_id]);
+    return result.rows[0].max;
+}
+
+export async function insertCategory(db, menu_id, category_name, user_id) {
+    let priority = await findHeighestPriorityInCategory(db, menu_id);
+    if (priority === null) {
+        priority = 1;
+    }
+    const result = await db.query(
+        "INSERT INTO categories (menu_id, category_name, priority, user_id) VALUES($1, $2, $3, $4) RETURNING *",
+        [menu_id, category_name, priority, user_id]);
+    if (result.rows.length > 0) {
+        return true;
+    } 
+    return null;
+}
+
+export async function getCategoriesByMenuId(db, menu_id) {
+    const result = await db.query("SELECT * FROM categories WHERE menu_id = $1",
+        [menu_id]);
+    if (result.rows.length > 0) {
+        return result.rows;
+    }   
+    return null;
+}
+
+export async function updateCategoryPriority(db, category_id, priority) {
+    const result = await db.query("UPDATE categories SET priority = $1 WHERE category_id = $2",
+        [priority, category_id]);
+        console.log(result);
+    if (result.rowCount > 0) {
+        return true;
+    }
+    return false;
+}
+
+export async function updateItemPriority(db, item_id, priority) {
+    const result = await db.query("UPDATE items SET priority = $1 WHERE id = $2",
+        [priority, item_id]);
+    if (result.rowCount > 0) {
+        return true;
+    }
+    return false;
+}
+
+export async function updateItem(db, item_id, item_name, description, price, image) {
+    const result = await db.query("UPDATE items SET item_name = $1, description = $2, price = $3, image = $4 WHERE id = $5",
+        [item_name, description, price, image, item_id]);
+    if (result.rowCount > 0) {
+        return true;
+    }
+    return false;
+}
+
+export async function updateCategory(db, category_id, category_name) {
+    const result = await db.query("UPDATE categories SET category_name = $1 WHERE id = $2",
+        [category_name, category_id]);
+    if (result.rowCount > 0) {
+        return true;
+    }
+    return false;
+}
+
+export async function deleteMenu(db, id) {
+    const result = await db.query("DELETE FROM menus WHERE user_id = $1",
+        [id]);
+    if (result.rowCount > 0) {
+        return true;
+    }
+    return false;
+}
+
+export async function deleteCategory(db, id) {
+    const result = await db.query("DELETE FROM categories WHERE category_id = $1",
+        [id]);
+    if (result.rowCount > 0) {
+        return true;
+    }
+    return false;
+}
+
+export async function getCategoriesWithItems(db, menu_id) {
+    let categories = await getCategoriesByMenuId(db, menu_id);
+    if (categories === null) {
+        return null;
+    }
+    
+    categories.sort((a, b) => b.priority - a.priority);
+
+    const result = [];
+
+    for (const category of categories) {
+        const items = await getItemsByCategory(db, category.category_id);
+        
+        if (items.length > 0) {
+            items.sort((a, b) => a.priority - b.priority);
+
+            const items_list = await Promise.all(items.map(async item => {
+                const image = await 'data:image/png;base64,' + await convertArrayBufferToBase64(item.image);
+                return {
+                    item_name: item.item_name,
+                    description: item.description,
+                    price: item.price,
+                    image: image,
+                    priority: item.priority,
+                    item_id: item.item_id
+                };
+            }));
+
+            result.push({
+                category_name: category.category_name,
+                priority: category.priority,
+                category_id: category.category_id,
+                items: items_list
+            });
+        }
+    }
+
+    console.log(result);
+    return result;
+}
+
+export async function updateLogoImage(db, menu_id, image) {
+    const result = await db.query("UPDATE menus SET menu_logo = $1 WHERE menu_id = $2",
+        [image, menu_id]);
+    if (result.rowCount > 0) {
+        return true;
+    }
+    return false;
+}
+
+export async function getLogoImage(db, menu_id) {
+    const result = await db.query("SELECT menu_logo FROM menus WHERE menu_id = $1",
+        [menu_id]);
+    return result.rows[0].menu_logo;
 }

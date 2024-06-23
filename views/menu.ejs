@@ -152,7 +152,7 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.resturantName %></span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.company_name %></span>
                                 <img class="img-profile rounded-circle"
                                     src="/img/undraw_profile.svg">
                             </a>
@@ -200,6 +200,22 @@
                             </select>
                         </div>
                     </div>
+                    <form onsubmit="uploadImage(event)">
+                        <!-- your form fields -->
+                        <div style="position: relative;margin-top: 15px;">
+                            <div class="col" style="text-align: center;"><label class="col-form-label"
+                                    style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Update Menu Logo</label></div>
+                            <div class="col" style="text-align: center;"><input required name="image" type="file" accept="image/*" 
+                                    style="border-radius: 4px;border-width: 0px;position: relative;" /></div>
+                        </div>
+                        <input type="hidden" name="menu_id" value="<%= menu_id %>">
+                        <div
+                            style="position: relative;margin-top: 40px;text-align: center;color: var(--bs-btn-disabled-color);">
+                            <button class="btn btn-primary" type="submit"
+                                style="background: rgb(42,208,28);position: relative;filter: brightness(96%) contrast(93%);backdrop-filter: blur(46px);transform: perspective(0px) translate(0px);">
+                                Upload Image</button>
+                    </form>
+                    <div style="border-bottom-style: solid; margin:40px;"></div>
                     <div class="d-flex justify-content-center" style="margin-top: 40px; margin-bottom:40px; text-align: center;color: var(--bs-btn-disabled-color);">
                         <div class="col text-center" style="height: 128px; width: 128px;" id="qrcode">
                             <img src="<%= image %>" alt="QR Code" style="max-height: 100%; max-width: 100%;">
@@ -250,7 +266,7 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
+                    <a class="btn btn-primary" href="/Logout">Logout</a>
                 </div>
             </div>
         </div>
@@ -330,6 +346,33 @@
         link.href = document.getElementById('qrcode').children[0].src;
         link.click();
     }
+    </script>
+
+        <script>
+        async function uploadImage(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            console.log('Form data:', formData);
+            console.log('Form data:', form);
+            try {
+                const response = await fetch('/uplaod-logo-image', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Image was asuccessfully uploaded');
+                    form.reset();
+                    location.reload();
+                } else {
+                    alert('Failed to add item please try again');
+                }
+                console.log(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
     </script>
 
 </body>

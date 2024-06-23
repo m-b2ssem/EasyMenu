@@ -19,19 +19,19 @@
         <div>
             <div class="col scrollmenu">
                 <% categories.forEach(function(category) { %>
-                <a href="#<%= category.id %>" ><%= category.name %></a>
+                <a href="#<%= category.category_id %>" ><%= category.category_name %></a>
                 <% }); %>
             </div>
             <div class="col items" style="text-align: center; margin-top:30px;">
                 <% categories.forEach(function(category) { %>
-                    <a href="#<%= category.name %>" id="<%= category.id %>" class="link" style="position: relative;"><%= category.name %></a>
+                    <a href="#<%= category.category_name %>" id="<%= category.category_id %>" class="link" style="position: relative;"><%= category.category_name %></a>
                     <div style="text-align: left; margin-top: 20px;">
                         <div>
                             <% category.items.forEach(function(item) { %>
                                 <div class="custom-card">
-                                    <img src="<%= item.image_path %>" alt="<%= item.name %>">
+                                    <img src="<%= item.image %>" alt="<%= item.item_name %>">
                                     <div class="card-content">
-                                        <h5><%= item.name %></h5>
+                                        <h5><%= item.item_name %></h5>
                                         <div class="price"><%= item.price %> <%= currency %></div>
                                         <div class="description"><%= item.description %></div>
                                     </div>
