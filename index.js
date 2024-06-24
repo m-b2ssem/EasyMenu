@@ -74,15 +74,6 @@ db.connect((err) => {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-<<<<<<< HEAD
-
-
-
-const app = express();  // const app = express();
-const PORT = 5000;  // const PORT = 3000;
-
-=======
->>>>>>> dev
 app.use(express.json());
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
