@@ -18,14 +18,14 @@ export async function insertUser(db, campanyName, email, hash) {
 }
 
 
-export async function selectUser(db, email) {
+export async function selectUserByEmail(db, email) {
     const result = await db.query("SELECT * FROM users WHERE email = $1",
         [email]);
     return result;
 }
 
 export async function selectUserById(db, id) {
-    const result = await db.query("SELECT * FROM users WHERE id = $1",
+    const result = await db.query("SELECT * FROM users WHERE user_id = $1",
         [id]);
     return result;
 }
@@ -302,4 +302,14 @@ export async function getLogoImage(db, menu_id) {
     const result = await db.query("SELECT menu_logo FROM menus WHERE menu_id = $1",
         [menu_id]);
     return result.rows[0].menu_logo;
+}
+
+
+export async function updatePassword(db, user_id, hash) {
+    const result = await db.query("UPDATE users SET password = $1 WHERE user_id = $2",
+        [hash, user_id]);
+    if (result.rowCount > 0) {
+        return true;
+    }
+    return false;
 }

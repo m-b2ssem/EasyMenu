@@ -108,3 +108,5 @@ div.scrollmenu::-webkit-scrollbar {
     transform: scaleX(4); /* Adjust this value to change the length of the border */
     transform-origin: center; /* Keep the scaling centered */
   }
+
+  

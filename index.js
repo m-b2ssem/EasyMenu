@@ -7,7 +7,8 @@ import { config } from 'dotenv';
 import Stripe from 'stripe';
 import pg from 'pg';
 import session from 'express-session';
-import { selectUser ,
+import { 
+  selectUserByEmail,
   checkIfUserExist,
   insertUser,
   insertMenu,
@@ -29,7 +30,9 @@ import { selectUser ,
   getCategoriesWithItems,
   updateLogoImage,
   getLogoImage,
-  updateItemPriority
+  updateItemPriority,
+  selectUserById,
+  updatePassword
 } from './querys.js';
 import {createLangaugeList, convertArrayBufferToBase64, cehckSizeandConvertTOBytea} from './helperFunctions.js';
 import passport from 'passport';
@@ -120,7 +123,8 @@ app.get('/menu/:menuid/:res', async (req, res) => {
   const backgroundImage = 'http://www.easymenu.systems/images/background.jpg';
   const currency = '€';
   res.render('horizontal_menu.ejs', {'categories': categories, 'backgroundImage': logo, 'currency': currency});
-})
+});
+
 
 
 
@@ -339,6 +343,61 @@ app.get('/management/items/:userid', async(req, res) => {
   }
 });
 
+app.get('/management/profile/:user_id', async (req, res) => {
+  if (req.isAuthenticated()) {
+    const user_id = parseInt(req.params.user_id);
+    const result = await selectUserById(db, user_id);
+    if (result.rows.length > 0) {
+      const user = result.rows[0];
+      res.render('profile.ejs', {'user': user, 'year': new Date().getFullYear()});
+    }    
+    else
+    {
+      res.redirect('/login');
+    }
+  }
+  else
+  {
+    res.redirect('/login');
+  }
+});
+
+
+
+app.post('/change-pass', async (req, res) => {
+  const { currentPassword, newPassword, userId } = req.body;
+
+  try {
+    const result = await selectUserById(db, parseInt(userId));
+    
+    if (result.rows.length > 0) {
+      const user = result.rows[0];
+      const hashPassword = user.password;
+      
+      const isMatch = await bcrypt.compare(currentPassword, hashPassword);
+      
+      if (isMatch) {
+        const hash = await bcrypt.hash(newPassword, saltRounds);
+        const updateResult = await updatePassword(db, userId, hash);
+
+        if (updateResult) {
+          return res.json({ success: true });
+        } else {
+          return res.json({ success: false, message: 'Something went wrong, please try again.' });
+        }
+      } else {
+        return res.json({ success: false, message: 'Current password is incorrect.' });
+      }
+    } else {
+      return res.json({ success: false, message: 'User not found.' });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.json({ success: false, message: 'Something went wrong, please try again.' });
+  }
+});
+
+
 
 
 app.post('/register', async (req, res) => {
@@ -392,7 +451,7 @@ app.post('/login',
 passport.use(
   new Strategy (async function verify(username, password, cb) {
     try {
-      const result = await selectUser(db, username.toLowerCase());
+      const result = await selectUserByEmail(db, username.toLowerCase());
       if (result.rows.length > 0) {
         const user = result.rows[0];
         const hashPassword = user.password;

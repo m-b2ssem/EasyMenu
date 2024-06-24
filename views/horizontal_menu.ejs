@@ -96,6 +96,12 @@ body.modal-open .scrollmenu {
             </div>
         </div>
     </div>
+    <div id="language-buttons">
+    <button onclick="translatePage('en')">English</button>
+    <button onclick="translatePage('fr')">French</button>
+    <button onclick="translatePage('de')">German</button>
+    <!-- Add more buttons for other languages as needed -->
+    </div>
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -134,6 +140,42 @@ body.modal-open .scrollmenu {
                 document.body.classList.remove("modal-open");
             }
         }
+    </script>
+
+        <!-- JavaScript for Translation -->
+    <script>
+        // Function to translate page content
+        function translatePage(language) {
+            // Replace with your translation API endpoint and key
+            const apiKey = 'YOUR_TRANSLATOR_API_KEY';
+            const endpoint = `https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=${language}`;
+
+            // Translate content example (you need to adapt this to your specific content structure)
+            const elementsToTranslate = document.querySelectorAll('[data-translate]');
+            elementsToTranslate.forEach(element => {
+                const textToTranslate = element.getAttribute('data-translate');
+                fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Ocp-Apim-Subscription-Key': apiKey,
+                        'Ocp-Apim-Subscription-Region': 'YOUR_REGION', // e.g., 'westeurope'
+                    },
+                    body: JSON.stringify([{
+                        Text: textToTranslate
+                    }])
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Update the element with translated text
+                    element.textContent = data[0].translations[0].text;
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        }
+
+        // Initial translation on page load (optional)
+        // translatePage('en'); // Uncomment this line to translate to English initially
     </script>
 </body>
 
