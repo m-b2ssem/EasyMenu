@@ -90,9 +90,9 @@
                 <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Custom Components:</h6>
-                        <a class="collapse-item" href="/management/menu/<%= user.id %>">Menues</a>
-                        <a class="collapse-item active" href="/management/Category/<%= user.id %>">Categories</a>
-                        <a class="collapse-item" href="/management/items/<%= user.id %>">Items</a>
+                        <a class="collapse-item" href="/management/menu/<%= user.user_id %>">Menues</a>
+                        <a class="collapse-item active" href="/management/Category/<%= user.user_id %>">Categories</a>
+                        <a class="collapse-item" href="/management/items/<%= user.user_id %>">Items</a>
                     </div>
                 </div>
             </li>
@@ -171,8 +171,8 @@
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.resturantName %></span>
-                                <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.company_name %></span>
+                                <img class="img-profile rounded-circle" src="/img/undraw_profile.svg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
@@ -210,12 +210,13 @@
                         </div>
                         <div class="centered-container" style="margin: 10px; margin-bottom: 30px;">
                             <div class="col">
-                                <form action="deletecategory" method="post">
+                                <form action="/deletecategory" method="post">
                                     <div class="dropdown" style="display: inline; margin-right: 18px;">
-                                        <button class="btn btn-primary dropdown-toggle deleteButtonClass" aria-expanded="false" id="deleteButton" data-bs-toggle="dropdown" type="button">Categories</button>
+                                        <button class="btn btn-primary dropdown-toggle deleteButtonClass" aria-expanded="false" name="category_id" id="deleteButton" data-bs-toggle="dropdown" type="button">Categories</button>
+                                        <input type="hidden" name="categoryId" id="categoryId" />
                                         <div class="dropdown-menu deleteButton">
-                                            <% user.categories.forEach(function(category){ %>
-                                                <a class="dropdown-item " href="#" name="<%= category.name %>" id="<%= category.id %>"><%= category.name %></a>
+                                            <% categories.forEach(function(category){ %>
+                                                <a class="dropdown-item " href="#" name="<%= category.category_name %>" id="<%= category.category_id %>"><%= category.category_name %></a>
                                             <% }); %>
                                         </div>
                                     </div>
@@ -224,7 +225,7 @@
                             </div>
                         </div>
                     </div>
-                    <form action="addcategory" method="post">
+                    <form action="/add-category" method="post">
                         <div style="position: relative; margin-top: 15px;">
                             <div class="col" style="text-align: center;"><label class="col-form-label" style="position: relative;">Category Name</label></div>
                             <div class="col" style="text-align: center;"><input type="text" name="categoryName" style="border-radius: 8px; box-shadow: 1px 1px 5px var(--bs-blue);" /></div>
@@ -233,10 +234,11 @@
                             <div class="col" style="text-align: center;"><label class="col-form-label" style="position: relative;">Choose a Menu to assign the Category to</label></div>
                             <div class="col" style="text-align: center;">
                                 <div class="dropdown">
-                                    <button class="btn btn-primary dropdown-toggle" aria-expanded="false" id="addCategory" data-bs-toggle="dropdown" type="button">Choose Menu</button>
-                                    <div class="dropdown-menu addCategory">
-                                        <% user.menus.forEach(function(menu){ %>
-                                        <a class="dropdown-item" href="#" name="<%= menu.name %>" id="<%= menu.id %>"><%= menu.name %></a>
+                                    <button class="btn btn-primary dropdown-toggle" aria-expanded="false" id="addCategory" name="id" data-bs-toggle="dropdown" type="button">Choose Menu</button>
+                                    <input type="hidden" name="menuId" id="menuId" />
+                                    <div class="dropdown-menu addCategory" >
+                                        <% menus.forEach(function(menu){ %>
+                                        <a class="dropdown-item" href="#" data-id="<%= menu.menu_id %>" id="<%= menu.menu_id %>"><%= menu.menu_name %></a>
                                         <% }); %>
                                     </div>
                                 </div>
@@ -254,8 +256,8 @@
                             <div class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle" aria-expanded="false" id="orderCategory" data-bs-toggle="dropdown" type="button">Choose Menu</button>
                                 <div class="dropdown-menu orderCategory">
-                                    <% user.menus.forEach(function(menu){ %>
-                                        <a class="dropdown-item" href="#" name="<%= menu.name %>" id="<%= menu.id %>"><%= menu.name %></a>
+                                    <% menus.forEach(function(menu){ %>
+                                        <a class="dropdown-item" href="#" name="<%= menu.menu_name %>" id="<%= menu.menu_id %>"><%= menu.menu_name %></a>
                                     <% }); %>
                                 </div>
                             </div>
@@ -336,7 +338,7 @@
             // Update the dropdown button text
             $('#deleteButton').text(selectedText);
             // Update the dropdown button data-id attribute
-            $('#deleteButton').attr('data-id', selectedId);
+            $('#categoryId').val(selectedId);
         });
 
         $('.addCategory a').on('click', function () {
@@ -346,7 +348,7 @@
             // Update the dropdown button text
             $('#addCategory').text(selectedText);
             // Update the dropdown button data-id attribute
-            $('#addCategory').attr('data-id', selectedId);
+            $('#menuId').val(selectedId);
         });
 
         $('.orderCategory a').on('click', function () {
@@ -369,14 +371,15 @@
                 // Populate the sortable list with fetched categories
                 data.categories.forEach(function(category) {
                     var listItem = $('<li></li>')
-                        .attr('data-id', category.id)
-                        .text(category.name);
+                        .attr('data-id', category.category_id)
+                        .text(category.category_name);
                     sortableList.append(listItem);
                 });
                 
                 // Re-initialize sortable after dynamically adding items
                 $("#sortable").sortable("refresh");
             }).catch(error => {
+                alert('something went wrong!, please try again.');
                 console.error('Error fetching categories:', error);
             });
         });
@@ -387,7 +390,7 @@
                 console.log(sortedIDs);
                 // Send sortedIDs to your backend to update the priority/order
                 // Example using fetch API:
-                fetch('/update-order', {
+                fetch('/reorder-categories', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

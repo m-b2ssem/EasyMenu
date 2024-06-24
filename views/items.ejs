@@ -12,13 +12,13 @@
     <title>SB Admin 2 - Buttons</title>
 
     <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
 
         <style>
         .sortable-list {
@@ -93,9 +93,9 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Custom Components:</h6>
-                        <a class="collapse-item" href="/management/menu/<%= user.id %>">Menues</a>
-                        <a class="collapse-item" href="/management/category/<%= user.id %>">Categories</a>
-                        <a class="collapse-item active" href="/management/items/<%= user.id %>">Items</a>
+                        <a class="collapse-item" href="/management/menu/<%= user.user_id %>">Menues</a>
+                        <a class="collapse-item" href="/management/category/<%= user.user_id %>">Categories</a>
+                        <a class="collapse-item active" href="/management/items/<%= user.user_id %>">Items</a>
                     </div>
                 </div>
             </li>
@@ -118,16 +118,17 @@
                     </button>
 
                     <!-- Topbar Navbar -->
+                    <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <!-- Nav Item - Alerts -->
                         <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                            <!--<a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-bell fa-fw"></i>
-                                <!-- Counter - Alerts -->
+                                 Counter - Alerts 
                                 <span class="badge badge-danger badge-counter">3+</span>
-                            </a>
-                            <!-- Dropdown - Alerts -->
+                            </a>-->
+                            <!-- Dropdown - Alerts 
                             <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="alertsDropdown">
                                 <h6 class="dropdown-header">
@@ -168,6 +169,7 @@
                                 </a>
                                 <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
                             </div>
+                            -->
                         </li>
 
                         
@@ -179,9 +181,9 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.name %></span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.company_name %></span>
                                 <img class="img-profile rounded-circle"
-                                    src="img/undraw_profile.svg">
+                                    src="/img/undraw_profile.svg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -221,43 +223,43 @@
                                 <form action="/deleteitem" method="post">
                                     <div class="dropdown" style="text-align: right;display: inline;margin-right: 18px;">
                                         <button class="btn btn-primary dropdown-toggle" aria-expanded="false"
-                                            data-bs-toggle="dropdown" type="button">Items </button>
-                                        <div class="dropdown-menu">
+                                            data-bs-toggle="dropdown" id="deleteitem"  name="item" type="button">Items </button>
+                                            
+                                        <div class="dropdown-menu deleteitem">
                                             <% items.forEach(item=> { %>
-                                                <a class="dropdown-item" id="<%= items.id %>" href="#">
-                                                    <%= items.name %>
+                                                <a class="dropdown-item" id="<%= item.item_id %>" href="#">
+                                                    <%= item.item_name %>
                                                 </a>
                                                 <% }) %>
                                         </div>
-                                    </div><button class="btn btn-primary" type="submit"
-                                        style="text-align: right;">Delete</button>
+                                    </div>
+                                    <input type="hidden" name="itemId"  id="itemId" />
+                                    <button class="btn btn-primary" type="submit" style="text-align: right;">Delete</button>
                                 </form>
                             </div>
                         </div>
                     </div>
-                    <form action="/additem" method="post">
+                    <form onsubmit="upload(event)">
+                        <!-- your form fields -->
                         <div style="position: relative;margin-top: 15px;">
-                            <div class="col" style="text-align: center;"><label class="col-form-label"
-                                    style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Add an item
-                                    <br></label></div>
                             <div class="col" style="text-align: center;"><label class="col-form-label"
                                     style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Item
                                     Name</label></div>
-                            <div class="col" style="text-align: center;"><input name="itemName" type="text"
+                            <div class="col" style="text-align: center;"><input required name="itemName" type="text"
                                     style="border-radius: 8px;box-shadow: 1px 1px 5px var(--bs-blue);" /></div>
                         </div>
                         <div style="position: relative;margin-top: 15px;">
                             <div class="col" style="text-align: center;"><label class="col-form-label"
                                     style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Item
                                     Price</label></div>
-                            <div class="col" style="text-align: center;"><input name="price" type="text"
+                            <div class="col" style="text-align: center;"><input required name="price" type="text"
                                     style="border-radius: 8px;box-shadow: 1px 1px 5px var(--bs-blue);" /></div>
                         </div>
                         <div style="position: relative;margin-top: 15px;">
                             <div class="col" style="text-align: center;"><label class="col-form-label"
                                     style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Item
                                     Description</label></div>
-                            <div class="col" style="text-align: center;"><input name="description" type="text"
+                            <div class="col" style="text-align: center;"><input required name="description" type="text"
                                     style="border-radius: 8px;box-shadow: 1px 1px 5px var(--bs-blue);" /></div>
                         </div>
                         <div style="position: relative;margin-top: 15px;">
@@ -267,10 +269,11 @@
                             <div class="col" style="text-align: center;">
                                 <div class="dropdown"><button class="btn btn-primary dropdown-toggle" aria-expanded="false"
                                         id="setcategory" data-bs-toggle="dropdown" type="button">Choose Categry </button>
-                                    <div class="dropdown-menu setcategory">
+                                    <input type="hidden" name="categoryId" id="categoryId" />
+                                    <div class="dropdown-menu setcategory" required>
                                         <% categories.forEach(categry=> { %>
-                                            <a class="dropdown-item" id="<%= categry.name %>" href="#">
-                                                <%= categry.name %>
+                                            <a class="dropdown-item" id="<%= categry.category_id %>" href="#">
+                                                <%= categry.category_name %>
                                             </a>
                                             <% }) %>
                                     </div>
@@ -281,15 +284,16 @@
                             <div class="col" style="text-align: center;"><label class="col-form-label"
                                     style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Item
                                     Image</label></div>
-                            <div class="col" style="text-align: center;"><input name="image" type="file"
+                            <div class="col" style="text-align: center;"><input required name="image" type="file" accept="image/*" 
                                     style="border-radius: 4px;border-width: 0px;position: relative;" /></div>
                         </div>
                         <div
                             style="position: relative;margin-top: 40px;text-align: center;color: var(--bs-btn-disabled-color);">
                             <button class="btn btn-primary" type="submit"
                                 style="background: rgb(42,208,28);position: relative;filter: brightness(96%) contrast(93%);backdrop-filter: blur(46px);transform: perspective(0px) translate(0px);">Add
-                                Item</button></div>
+                                Item</button>
                     </form>
+
                     <div style="border-bottom-style: solid; "></div>
                     <div class="centered-container" style="margin-top: 60px; margin-bottom: 60px;">
                         <label>Drag and Drop to set the order of the Categories.</label>
@@ -299,8 +303,8 @@
                                     data-bs-toggle="dropdown" type="button">Choose Categry</button>
                                 <div class="dropdown-menu orderItems">
                                     <% categories.forEach(categry=> { %>
-                                        <a class="dropdown-item" id="<%= categry.name %>" href="#">
-                                            <%= categry.name %>
+                                        <a class="dropdown-item" id="<%= categry.category_id %>" href="#">
+                                            <%= categry.category_name %>
                                         </a>
                                         <% }) %>
                                 </div>
@@ -357,14 +361,14 @@
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <script src="/js/sb-admin-2.min.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
@@ -373,6 +377,7 @@
 
     <script>
         $(document).ready(function () {
+            
             // Event listener for dropdown items
             $('.setcategory a').on('click', function () {
                 // Get the text of the clicked item
@@ -381,7 +386,17 @@
                 // Update the dropdown button text
                 $('#setcategory').text(selectedText);
                 // Update the dropdown button data-id attribute
-                $('#setcategory').attr('data-id', selectedId);
+                $('#categoryId').val(selectedId);
+            });
+
+            $('.deleteitem a').on('click', function () {
+                // Get the text of the clicked item
+                var selectedText = $(this).text();
+                var selectedId = $(this).attr('id');
+                // Update the dropdown button text
+                $('#deleteitem').text(selectedText);
+                
+                $('#itemId').val(selectedId);
             });
 
             // Event listener for dropdown items
@@ -402,10 +417,10 @@
                         sortableList.empty(); // Clear the existing list
 
                         // Populate the sortable list with fetched categories
-                        data.categories.forEach(function (category) {
+                        data.items.forEach(function (item) {
                             var listItem = $('<li></li>')
-                                .attr('data-id', category.id)
-                                .text(category.name);
+                                .attr('data-id', item.item_id)
+                                .text(item.item_name);
                             sortableList.append(listItem);
                         });
 
@@ -419,6 +434,7 @@
 
             $("#sortable").sortable({
                 update: function (event, ui) {
+                    
                     var sortedIDs = $("#sortable").sortable("toArray", { attribute: "data-id" });
                     console.log(sortedIDs);
                     // Send sortedIDs to your backend to update the priority/order
@@ -433,12 +449,45 @@
                         .then(data => {
                             console.log('Success:', data);
                         }).catch((error) => {
+                            alert('Failed, please try again')
                             console.error('Error:', error);
                         });
                 }
             });
             $("#sortable").disableSelection();
         });
+    </script>
+
+    <script>
+        async function upload(event) {
+            event.preventDefault();
+            const form = event.target;
+            if (!document.getElementById('categoryId').value) {
+            event.preventDefault();
+            alert('Please choose a category.');
+            return;
+            }
+            const formData = new FormData(form);
+            console.log('Form data:', formData);
+            console.log('Form data:', form);
+            try {
+                const response = await fetch('/additem', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Item added successfully');
+                    form.reset();
+                    location.reload();
+                } else {
+                    alert('Failed to add item please try again');
+                }
+                console.log(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
     </script>
 
 </body>

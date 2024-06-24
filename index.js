@@ -7,229 +7,93 @@ import { config } from 'dotenv';
 import Stripe from 'stripe';
 import pg from 'pg';
 import session from 'express-session';
-import { selectEmailColumn , checkIfUserExist} from './querys.js';
+import { selectUser ,
+  checkIfUserExist,
+  insertUser,
+  insertMenu,
+  insertDesign,
+  getMenuById,
+  deleteItem,
+  findHeighestPriority,
+  insertItem,
+  getItemsByCategory,
+  getDesignByMenuId,
+  updateColoInDesign,
+  updateLangauge,
+  getItemsByuserId,
+  getCategoriesByUserId,
+  insertCategory,
+  getCategoriesByMenuId,
+  updateCategoryPriority,
+  deleteCategory,
+  getCategoriesWithItems,
+  updateLogoImage,
+  getLogoImage
+} from './querys.js';
+import {createLangaugeList, convertArrayBufferToBase64, cehckSizeandConvertTOBytea} from './helperFunctions.js';
+import passport from 'passport';
+import { Strategy } from 'passport-local';
+import bcrypt from 'bcrypt';
+import { user, backgroundImage, currency } from './test.js';
+import multer from 'multer';
+import { get } from 'http';
+
 
 
 
 let stripe_key = process.env.STRIPE_KEY;
-
-
-
-const categories = [
-  {
-    id: 1,
-    name: 'Appetizers',
-    items: [
-      { name: 'Spring Rolls', price: '5.99', description: 'Crispy vegetarian rolls.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Garlic Bread', price: '3.99', description: 'Fresh garlic bread.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  },
-  {
-    id: 2,
-    name: 'Main Course',
-    items: [
-      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  },
-  {
-    id: 3,
-    name: 'Main Course',
-    items: [
-      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  },
-  {
-    id: 4,
-    name: 'Main Course',
-    items: [
-      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  },
-  {
-    id: 5,
-    name: 'Main Course',
-    items: [
-      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  },
-  {
-    id: 6,
-    name: 'Main Course',
-    items: [
-      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  },
-  {
-    id: 7,
-    name: 'Main Course',
-    items: [
-      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  },
-  {
-    id: 8,
-    name: 'Main Course',
-    items: [
-      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  },
-  {
-    id: 9,
-    name: 'Main Course',
-    items: [
-      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  },
-  {
-    id: 10,
-    name: 'Main Course',
-    items: [
-      { name: 'Grilled Chicken', price: '12.99', description: 'Served with vegetables.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Pasta Carbonara', price: '10.99', description: 'Classic Italian pasta.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  },
-  {
-    id: 11,
-    name: 'Desserts',
-    items: [
-      { name: 'Chocolate Cake', price: '6.99', description: 'Rich chocolate cake.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' },
-      { name: 'Ice Cream', price: '4.99', description: 'Vanilla ice cream.', image_path: 'https://www.eatingwell.com/thmb/m5xUzIOmhWSoXZnY-oZcO9SdArQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/article_291139_the-top-10-healthiest-foods-for-kids_-02-4b745e57928c4786a61b47d8ba920058.jpg' }
-    ]
-  }
-];
-
-
-
 const stripe = new Stripe(stripe_key);
 config();
+const app = express();
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { 
+    maxAge: 60000 * 60 * 24 * 7  // 1 week
+   } 
+}));
 
 const db = new pg.Client({
-  user: "postgres",
-  host: "localhost",
-  database: "easymenu",
-  password: "1234",
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_DATABASE,
+  password: process.env.DB_PASSWORD,
   port: 5432,
 });
 
-//db.connect();
+db.connect((err) => {
+  if (err) {
+    console.error('Connection error', err.stack);
+  } else {
+    console.log('Connected to the database');
+  }
+});
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+<<<<<<< HEAD
 
 
 
 const app = express();  // const app = express();
 const PORT = 5000;  // const PORT = 3000;
 
+=======
+>>>>>>> dev
 app.use(express.json());
-
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.use(session({
-  secret: 'your_secret_key',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false } // Set secure: true if using HTTPS
-}));
-
-app.listen(PORT, () => {
-  console.log('Server is running on http://localhost: ' + PORT);
-})
+app.use(passport.initialize());
+app.use(passport.session());
+const PORT = process.env.PORT;  // const PORT = 3000;
+const saltRounds = 10;
 
 
-
-/*
-app.get('/:userid/:resturantname', (req, res) => {
-  const logo = data.client.logo;
-  const resturantName = 'bassem';
-  const backgroundColor = data.client.backgroundColor;
-  const items = data.categories[0].items;
-  const categories = data.categories;
-  res.render('index', {'categories': categories, 'items': items, 'logo': logo, resturantName: resturantName});
-});
-*/
-
-const backgroundImage = "https://st4.depositphotos.com/2160693/40759/v/450/depositphotos_407590112-stock-illustration-food-and-drink-logo-plate.jpg";
-const currency = '€';
-
-app.get('/d', (req, res) => {
-  res.render('horizontal_menu.ejs', {'categories': categories, 'backgroundImage': backgroundImage, 'currency': currency});
-})
-
-const user = {
-  id: 1,
-  resturantName: 'bassem',
-  logo: 'https://st4.depositphotos.com/2160693/40759/v/450/depositphotos_407590112-stock-illustration-food-and-drink-logo-plate.jpg',
-  categories: categories,
-  menus:[
-    {
-      id: 1,
-      name: 'Menu 1',
-    }
-  ]
-}
-
-app.get('/management/menu/:userid', (req, res) => {
-  res.render('menu', {'user': user, 'year': new Date().getFullYear()});
-});
-
-app.get('/management/category/:userid', (req, res) => {
-  res.render('categories', {'user': user, 'year': new Date().getFullYear()});
-});
-
-app.get('/management/items/:userid', (req, res) => {
-  res.render('menu', {'user': user, 'year': new Date().getFullYear()});
-});
-
-app.get('/c', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/categry.html'));
-});
-
-
-// get all categories from the database by menu id and return them as JSON
-app.get('/get-categories', (req, res) => {
-  const menuId = req.query.menuId; // Access query parameter
-  console.log('Menu ID:', menuId);
-
-  res.json({categories});
-});
-
-
-// update the order in the database
-app.post('/update-order', (req, res) => {
-  const order = req.body.order;
-  console.log('Updated Order:', order);
-
-  // Update the order in your data store
-  // Assuming success for this example
-  res.json({ success: true });
-});
-
-
-/*app.get('/:name/:id', (req, res) => {
-  const logo = data.client.logo;
-  const resturantName = req.params.name;
-  const categoryId = parseInt(req.params.id);
-  const selectedCategory = data.categories.find(category => category.id === categoryId);
-  if (!selectedCategory) {
-    return res.status(404).send('Category not found');
-  }
-  const items = selectedCategory.items;
-  const categories = data.categories;
-  res.render('index', {'categories': categories, 'items': items, logo: logo, resturantName: resturantName});
-});*/
 
 
 app.get('/', (req, res) => {
@@ -245,143 +109,338 @@ app.get('/register', (req, res) => {
 })
 
 
+app.get('/menu/:menuid', async (req, res) => {
+  const menuid = req.params.menuid;
+
+  //const langauges = await createLangaugeList(menu.menu_langauge);
+  let categories = await getCategoriesWithItems(db, menuid);
+  let logo = await getLogoImage(db, menuid);
+  console.log(logo);
+  if (!logo) {
+    logo = 'http://www.easymenu.systems/images/logo.png';
+  }
+  else{
+    logo = 'data:image/png;base64,' + await convertArrayBufferToBase64(logo);
+  }
+  if (!categories) {
+    categories = [];
+  }
+  const backgroundImage = 'http://www.easymenu.systems/images/background.jpg';
+  const currency = '€';
+  res.render('horizontal_menu.ejs', {'categories': categories, 'backgroundImage': logo, 'currency': currency});
+})
 
 
-app.post('/register', (req, res) => {
-  const {resturantName, email, password_req, sendUpdate} = req.body;
 
-    console.log('name:' + resturantName, email, password_req, sendUpdate);
+app.get('/management/menu/:userid', async (req, res) => {
+  const urlid = parseInt(req.params.userid);
+  if (req.isAuthenticated()) {
+    if (urlid === req.user.user_id) {
+      const menus = await getMenuById(db ,req.user.user_id);
+      const menu = menus[0];
+      const menu_name = 'http://www.easymenu.systems/menu/' + req.user.user_id +'/'+ menu.menu_name.replace(/\s+/g, '');;
+      const langauges = await createLangaugeList(menu.menu_langauge);
+      const image = await 'data:image/png;base64,' + await convertArrayBufferToBase64(menu.qrcode);
+      const menuDesign = await getDesignByMenuId(db, menu.menu_id);
+      res.render('menu', {
+        'user': req.user ,
+        'year': new Date().getFullYear(),
+        'langauges': langauges,
+        'menu_name': menu_name,
+        'image': image,
+        'background_color': menuDesign.background_color,
+        'menu_id': menu.menu_id
+      });
+    } else {
+      res.redirect('/login');
+    }
+  } else {
+    res.redirect('/login');
+  }
+});
 
-    if (!resturantName || !email || !password_req) {
+
+
+const storage = multer();
+app.post('/uplaod-logo-image', storage.single('image'), async (req, res) => {
+  const file = req.file;
+  const menu_id = req.body.menu_id;
+  console.log(file);
+  const buffer = await cehckSizeandConvertTOBytea(file);
+  if (!buffer) {
+    return res.json({ success: false, message: 'Image is too large.'});
+  }
+  const result = await updateLogoImage(db, menu_id, buffer);
+  if (!result) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  res.json({ success: true });
+});
+
+app.post('/updateColor', async (req, res) => {
+  let {designId, color }= req.body;
+  designId = parseInt(designId);
+  
+  const  result = await updateColoInDesign(db, designId, color);
+  if (!result) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  res.json({ success: true });
+});
+
+app.post('/updateLangauge', async (req, res) => {
+  let {langauge, menuId }= req.body;
+  menuId = parseInt(menuId);
+
+  const  result = await updateLangauge(db, langauge, menuId);
+  if (!result) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  res.json({ success: true });
+});
+
+
+
+
+
+app.get('/management/category/:userid', async (req, res) => {
+  const urlid = parseInt(req.params.userid);
+  const user = req.user;
+
+  if (req.isAuthenticated()) {
+    if (urlid === req.user.user_id) {
+      const categories = await getCategoriesByUserId(db, req.user.user_id);
+      const menus = await getMenuById(db ,req.user.user_id);
+      res.render('categories', {'user': user, 'categories': categories, 'year': new Date().getFullYear(), 'menus': menus});
+    } else {
+      res.redirect('/login');
+    }
+  } else {
+    res.redirect('/login');
+  }
+});
+
+app.post('/add-category', async (req, res) => {
+  const {categoryName, menuId} = req.body;
+  const menu_id = parseInt(menuId);
+  const userId = req.user.user_id
+  const result = await insertCategory(db, menu_id, categoryName, userId);
+  if (!result) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  res.redirect('/management/category/' + userId);
+});
+
+app.post('/deletecategory', async (req, res) => {
+  const categoryId = req.body.categoryId;
+  const result = await deleteCategory(db, categoryId);
+  if (!result) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  res.redirect('/management/category/' + req.user.user_id);
+});
+
+
+
+
+// get all categories from the database by menu id and return them as JSON
+app.get('/get-categories', async (req, res) => {
+  const menuId = req.query.menuId; // Access query parameter
+  let categories = await getCategoriesByMenuId(db, menuId);
+  if (!categories) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+
+  categories = await categories.sort((a, b) => b.priority - a.priority);
+  res.json({categories});
+});
+
+
+// update the order in the database
+app.post('/reorder-categories', async(req, res) => {
+  const order = req.body.order;
+
+  let priority = 1;
+
+
+  const reversedCategoriesIds = order.slice().reverse();
+  try {
+    for (const id of reversedCategoriesIds) {
+      // update the priority of the category
+      await updateCategoryPriority(db ,id, priority);
+      priority++;
+    }
+    res.json({ success: true });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+});
+
+
+
+
+
+// to do. I need to delete the chosse item from the database
+app.post('/deleteitem', async(req, res) => {
+  const itemId = parseInt(req.body.itemId);
+  const result = await deleteItem(db, itemId);
+  if (!result) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  res.redirect('/management/items/' + req.user.user_id);
+});
+
+
+
+
+
+// to do. I need to add  item to the database
+
+const upload = multer();
+app.post('/additem', upload.single('image'), async (req, res) => {
+  let { itemName, price, description, categoryId } = req.body;
+  const file = req.file;
+  if (!file) {
+    return res.json({ success: false, message: 'Please upload an image.'});
+  }
+  if (!itemName || !price || !description || !categoryId) {
+    return res.json({ success: false, message: 'Please fill all fields.'});
+  }
+  const buffer = await cehckSizeandConvertTOBytea(file);
+  if (!buffer) {
+    return res.json({ success: false, message: 'Image is too large.'});
+  }
+  categoryId = parseInt(categoryId);
+  const priority = await findHeighestPriority(db, categoryId);
+  const intPrice = parseFloat(price);
+  const inserted = await insertItem(db, categoryId, itemName, description, intPrice, buffer, priority);
+  if (!inserted) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  
+  res.json({ success: true });
+  });
+
+
+app.get('/get-items', async (req, res) => {
+  const category_id = req.query.categoryId; // Access query parameter
+  const items = await getItemsByCategory(db, category_id);
+  res.json({items});
+});
+
+
+// tp render the info inside the ejs items page
+app.get('/management/items/:userid', async(req, res) => {
+  const urlid = parseInt(req.params.userid);
+  if (req.isAuthenticated()) {
+    if (urlid === req.user.user_id) {
+      const categories = await getCategoriesByUserId(db, req.user.user_id);
+      const items = await getItemsByuserId(db, req.user.user_id);
+      res.render('items', {'user': req.user, 'year': new Date().getFullYear(), 'categories': categories, 'items': items});
+    } else {
+      res.redirect('/login');
+    }
+  } else {
+    res.redirect('/login');
+  }
+});
+
+
+app.post('/register', async (req, res) => {
+  const {campanyName, email, password} = req.body;
+
+
+
+    if (!campanyName || !email || !password) {
         return res.json({ success: false, message: 'Please fill all fields.'});
     }
 
-    if (email === null) {
+    // in need to pass the email lower case
+    const checkIfExist = await checkIfUserExist(db, email);
+    if (checkIfExist) {
         return res.json({ success: false, message: 'This email address already exists.'});
+    }else{
+      bcrypt.hash(password, saltRounds, async (err, hash) => {
+        if (err) {
+          return res.json({ success: false, message: 'Something went wrong, please try again.'});
+        }else {
+          const result = await insertUser(db, campanyName, email, hash);
+          const result_2 = await insertMenu(db, result.rows[0].user_id, campanyName);
+          const result_3 = await insertDesign(db, result_2.rows[0].menu_id);
+          const result_user = result.rows[0];
+              
+          
+              req.login(user, (err) => {
+                if (err) {
+                  console.log(err);
+                  return res.redirect('/login');
+              }else{
+                return res.redirect('/management/menu/' + result_user.user_id);
+              }
+              });
+          }
+      });
     }
-    const hold = db.query("INSERT INTO users (company_name, email, password_hash) VALUES($1, $2, $3)",
-    [resturantName, email.toLowerCase(), password_req]
-    );
-    res.json({ success: true, message: 'Registration successful, please login.'});
 });
 
 
-app.post('/login', (req, res) => {
-  const { email, password, remember } = req.body;
-
-
-  if (!email || !password) {
-      return res.json({ success: false, message: 'Please fill all fields.' });
-  }
-
-  checkIfUserExist(db, email.toLowerCase(), (userExists) => {
-      if (userExists) {
-          req.session.cookie.signed = true;
-          console.log("session: ", req.session.cookie);
-          res.json({ success: true , message: 'well done'});
-      } else {
-        console.log("here");
-          res.json({ success: false, message: 'Invalid login credentials.' });
-      }
+app.post('/login', 
+  passport.authenticate('local', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/management/menu/' + req.user.user_id);
   });
-});
 
-
-app.post("/checkout", async (req, res) => {
-  const { id, amount } = req.body;
-
-  try {
-    const sessionStripe = await stripe.checkout.sessions.create({
-      success_url: "http://localhost:8080/success",
-      cancel_url: "http://localhost:8080",
-      line_items: [
-        {
-          price: process.env.PRICE_ID,
-          quantity: 12,
-        },
-      ],
-      mode: "subscription",
+  app.get('/logout', function(req, res){
+    req.logout(function(err) {
+      if (err) { return next(err); }
+      res.redirect('/login');
     });
+  });
 
-    console.log("session: ", sessionStripe.id, sessionStripe.url, sessionStripe);
-
-
-    // save the info in the database
-    const sessionId = sessionStripe.id;
-    const url = sessionStripe.url;
-    const subscription = sessionStripe.subscription;
-
-    return res.json({ url: sessionStripe.url });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: error.message });
-  }
-});
-
-
-app.get("/stripe-session", async (req, res) => {
-  console.log("req.body: ", req.body);
-  const { userId } = req.body;
-  console.log("userId: ", userId);
-
-  const db = req.app.get('db');
-
-  // get user from you database
-  const user = {
-    stripe_session_id: "asdfpouhwf;ljnqwfpqo",
-    paid_sub: false
-  }
-
-  if(!user.stripe_session_id || user.paid_sub === true) 
-  return res.send("fail");
-
-  try {
-      // check session
-      const session = await stripe.checkout.sessions.retrieve(user.stripe_session_id);
-      console.log("session: ", session);
-
-      // const sessionResult = {
-      //   id: 'cs_test_a1lpAti8opdtSIDZQIh9NZ6YhqMMwC0H5wrlwkUEYJc6GXokj2g5WyHkv4',
-      //   …
-      //   customer: 'cus_PD6t4AmeZrJ8zq',
-      //   …
-      //   status: 'complete',
-      //   …
-      //   subscription: 'sub_1OOgfhAikiJrlpwD7EQ5TLea',
-      //  …
-      // }
-      
-    
-      // update the user
-      if (session && session.status === "complete") {
-        let updatedUser = await db.update_user_stripe(
-          userId,
-          true
-        );
-        updatedUser = updatedUser[0];
-        console.log(updatedUser);
-    
-        return res.send("success");
+passport.use(
+  new Strategy (async function verify(username, password, cb) {
+    try {
+      const result = await selectUser(db, username);
+      if (result.rows.length > 0) {
+        const user = result.rows[0];
+        const hashPassword = user.password;
+        bcrypt.compare(password, hashPassword, (err, res) => {
+          if (err) {
+            console.log(err);
+            return cb(err);
+          } else {
+            if (res) {
+              return cb(null, user);
+            } else {
+              cb(null, false);
+            }
+          }
+        }); 
       } else {
-        return res.send("fail");
+        return cb("User not found.");
       }
-  } catch (error) {
-      // handle the error
-      console.error("An error occurred while retrieving the Stripe session:", error);
-      return res.send("fail");
-  }
+    } catch (error) {
+      cb(error);
+    }
+  }));
+
+passport.serializeUser(function(user, cb) {
+  // remove the password from the user object
+  delete user.password;
+    cb(null, user);
 });
 
 
-app.get('/is_logged_in', (req, res) => {
-  if (req.session.user) {
-      res.json({ isLoggedIn: true });
-  } else {
-      res.json({ isLoggedIn: false });
-  }
+passport.deserializeUser(function(user, cb) {
+    cb(null, user);
 });
 
+app.listen(PORT, () => {
+  console.log('Server is running on http://localhost: ' + PORT);
+})
 
+<<<<<<< HEAD
 
 /*
 creation of the database 
@@ -466,3 +525,5 @@ CREATE TABLE payment_sessions (
 i need also a culonm for the qrc
 also the menu langauge 
 */
+=======
+>>>>>>> dev
