@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="/css/horizontalmenu.css">
     <style>
         /* Add this CSS to your horizontalmenu.css file */
-/* Add this CSS to your horizontalmenu.css file */
 .modal {
     display: none; 
     position: fixed; 
@@ -55,6 +54,10 @@
     cursor: pointer;
 }
 
+/* New CSS to hide the sidebar when modal is active */
+body.modal-open .scrollmenu {
+    display: none;
+}
 
     </style>
 </head>
@@ -83,7 +86,7 @@
                                     <div class="card-content">
                                         <h5><%= item.item_name %></h5>
                                         <div class="price"><%= item.price %> <%= currency %></div>
-                                          <div class="description"><%= item.description.length > 120 ? item.description.substring(0, 120) + '...' : item.description %></div>
+                                        <div class="description"><%= item.description %></div>
                                     </div>
                                 </div>
                             <% }); %>
@@ -98,7 +101,7 @@
     <div id="myModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <img id="modalImage" src="" alt="" style="width:100%;">
+            <img id="modalImage" src="" alt="">
             <h2 id="modalItemName"></h2>
             <div id="modalPrice"></div>
             <p id="modalDescription"></p>
@@ -117,15 +120,18 @@
             document.getElementById("modalDescription").innerText = description;
             document.getElementById("modalImage").src = image;
             modal.style.display = "block";
+            document.body.classList.add("modal-open");
         }
 
         span.onclick = function() {
             modal.style.display = "none";
+            document.body.classList.remove("modal-open");
         }
 
         window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
+                document.body.classList.remove("modal-open");
             }
         }
     </script>
