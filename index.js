@@ -28,7 +28,8 @@ import { selectUser ,
   deleteCategory,
   getCategoriesWithItems,
   updateLogoImage,
-  getLogoImage
+  getLogoImage,
+  updateItemPriority
 } from './querys.js';
 import {createLangaugeList, convertArrayBufferToBase64, cehckSizeandConvertTOBytea} from './helperFunctions.js';
 import passport from 'passport';
@@ -100,10 +101,10 @@ app.get('/register', (req, res) => {
 })
 
 
-app.get('/menu/:menuid', async (req, res) => {
+app.get('/menu/:menuid/:res', async (req, res) => {
   const menuid = req.params.menuid;
 
-  //const langauges = await createLangaugeList(menu.menu_langauge);
+  //const langauges = await createLangaugeList(menu.menu_language);
   let categories = await getCategoriesWithItems(db, menuid);
   let logo = await getLogoImage(db, menuid);
   console.log(logo);
@@ -129,9 +130,9 @@ app.get('/management/menu/:userid', async (req, res) => {
     if (urlid === req.user.user_id) {
       const menus = await getMenuById(db ,req.user.user_id);
       const menu = menus[0];
-      const menu_name = 'http://www.easymenu.systems/menu/' + req.user.user_id +'/'+ menu.menu_name.replace(/\s+/g, '');;
-      const langauges = await createLangaugeList(menu.menu_langauge);
-      const image = await 'data:image/png;base64,' + await convertArrayBufferToBase64(menu.qrcode);
+      const menu_name = 'http://www.easymenu.systems/menu/' + menu.menu_id +'/'+ menu.menu_name.replace(/\s+/g, '');;
+      const langauges = await createLangaugeList(menu.menu_language);
+      const image = await 'data:image/png;base64,' + await convertArrayBufferToBase64(menu.qr_code);
       const menuDesign = await getDesignByMenuId(db, menu.menu_id);
       res.render('menu', {
         'user': req.user ,
@@ -248,17 +249,18 @@ app.get('/get-categories', async (req, res) => {
 
 
 // update the order in the database
-app.post('/reorder-categories', async(req, res) => {
+app.post('/reorder-items', async(req, res) => {
   const order = req.body.order;
 
   let priority = 1;
 
 
   const reversedCategoriesIds = order.slice().reverse();
+  console.log(reversedCategoriesIds);
   try {
     for (const id of reversedCategoriesIds) {
       // update the priority of the category
-      await updateCategoryPriority(db ,id, priority);
+      await updateItemPriority(db ,id, priority);
       priority++;
     }
     res.json({ success: true });
@@ -338,41 +340,39 @@ app.get('/management/items/:userid', async(req, res) => {
 });
 
 
+
 app.post('/register', async (req, res) => {
-  const {campanyName, email, password} = req.body;
+  const { campanyName, email, password } = req.body;
 
+  if (!campanyName || !email || !password) {
+    return res.status(400).json({ success: false, message: 'Please fill all fields.' });
+  }
 
+  const lowerCaseEmail = email.toLowerCase();
+  const checkIfExist = await checkIfUserExist(db, lowerCaseEmail);
+  if (checkIfExist) {
+    return res.status(409).json({ success: false, message: 'This email address already exists.' });
+  } else {
+    bcrypt.hash(password, saltRounds, async (err, hash) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: 'Something went wrong, please try again.' });
+      } else {
+        const result = await insertUser(db, campanyName, lowerCaseEmail, hash);
+        const result_2 = await insertMenu(db, result.rows[0].user_id, campanyName);
+        const result_3 = await insertDesign(db, result_2.rows[0].menu_id);
+        const result_user = result.rows[0];
 
-    if (!campanyName || !email || !password) {
-        return res.json({ success: false, message: 'Please fill all fields.'});
-    }
-
-    // in need to pass the email lower case
-    const checkIfExist = await checkIfUserExist(db, email);
-    if (checkIfExist) {
-        return res.json({ success: false, message: 'This email address already exists.'});
-    }else{
-      bcrypt.hash(password, saltRounds, async (err, hash) => {
-        if (err) {
-          return res.json({ success: false, message: 'Something went wrong, please try again.'});
-        }else {
-          const result = await insertUser(db, campanyName, email, hash);
-          const result_2 = await insertMenu(db, result.rows[0].user_id, campanyName);
-          const result_3 = await insertDesign(db, result_2.rows[0].menu_id);
-          const result_user = result.rows[0];
-              
-          
-              req.login(user, (err) => {
-                if (err) {
-                  console.log(err);
-                  return res.redirect('/login');
-              }else{
-                return res.redirect('/management/menu/' + result_user.user_id);
-              }
-              });
+        req.login(result_user, (err) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).json({ success: false, message: 'Login failed, please try again.' });
+          } else {
+            return res.status(200).json({ success: true, message: 'Registration successful.', userId: result_user.user_id });
           }
-      });
-    }
+        });
+      }
+    });
+  }
 });
 
 
@@ -392,7 +392,7 @@ app.post('/login',
 passport.use(
   new Strategy (async function verify(username, password, cb) {
     try {
-      const result = await selectUser(db, username);
+      const result = await selectUser(db, username.toLowerCase());
       if (result.rows.length > 0) {
         const user = result.rows[0];
         const hashPassword = user.password;

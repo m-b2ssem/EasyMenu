@@ -405,6 +405,13 @@
             }
         });
         $("#sortable").disableSelection();
+
+         $('form[action="/add-category"]').on('submit', function (e) {
+            if ($('#menuId').val() === "") {
+                e.preventDefault();
+                alert('Please choose a menu before submitting the form.');
+            }
+        });
     });
 </script>
 

@@ -31,22 +31,28 @@ export async function selectUserById(db, id) {
 }
 
 export async function insertMenu(db, user_id, campanyName) {
-    const toQrcode = 'https://www.easymenu.systems/menu/' + user_id + '/' + campanyName.replace(/\s+/g, '');
     const menuLangauhe = 'English';
     try {
-        // Generate the QR code as a data URL
-        const qrCodeDataUrl = await QRCode.toDataURL(toQrcode);
-        
-        // Remove the data URL prefix and convert the remaining base64 string to a buffer
-        const base64Data = qrCodeDataUrl.replace(/^data:image\/png;base64,/, '');
-        const qrCodeBuffer = Buffer.from(base64Data, 'base64');
         
         // Insert the data into the database
         const result = await db.query(
-          "INSERT INTO menus (user_id, menu_name, menu_langauge, qrcode) VALUES($1, $2, $3, $4) RETURNING *",
-          [user_id, campanyName, menuLangauhe, qrCodeBuffer]
+          "INSERT INTO menus (user_id, menu_name, menu_language) VALUES($1, $2, $3) RETURNING *",
+          [user_id, campanyName, menuLangauhe]
         );
-        return result;
+        if (result.rows.length > 0) {
+            const menu_id = result.rows[0].menu_id;
+            const toQrcode = 'https://www.easymenu.systems/menu/' + menu_id + '/' + campanyName.replace(/\s+/g, '');
+            const qrCodeDataUrl = await QRCode.toDataURL(toQrcode);
+            const base64Data = qrCodeDataUrl.replace(/^data:image\/png;base64,/, '');
+            const qrCodeBuffer = Buffer.from(base64Data, 'base64');
+            const qrCodeResult = await db.query(
+                "UPDATE menus SET qr_code = $1 WHERE menu_id = $2",
+                [qrCodeBuffer, menu_id]
+              );
+
+            return result;
+        }
+        return false;
     } catch (err) {
         console.error('Error generating or inserting QR code:', err);
         throw err;
@@ -118,10 +124,13 @@ export async function insertItem(db, category_id, item_name, description, price,
 }
 
 export async function getItemsByCategory(db, category_id) {
-    const result = await db.query("SELECT * FROM items WHERE category_id = $1",
-        [category_id]);
+    const result = await db.query(
+        "SELECT * FROM items WHERE category_id = $1 ORDER BY priority DESC",
+        [category_id]
+    );
     return result.rows;
 }
+
 
 export async function getDesignByMenuId(db, menu_id) {
     const result = await db.query("SELECT * FROM designs WHERE menu_id = $1",
@@ -139,7 +148,7 @@ export async function updateColoInDesign(db, menu_id, color) {
 }
 
 export async function updateLangauge(db, langauge, menu_id) {
-    const result = await db.query("UPDATE menus SET menu_langauge = $1 WHERE menu_id = $2",
+    const result = await db.query("UPDATE menus SET menu_language = $1 WHERE menu_id = $2",
         [langauge, menu_id]);
     if (result.rowCount > 0) {
         return true;
@@ -188,7 +197,6 @@ export async function getCategoriesByMenuId(db, menu_id) {
 export async function updateCategoryPriority(db, category_id, priority) {
     const result = await db.query("UPDATE categories SET priority = $1 WHERE category_id = $2",
         [priority, category_id]);
-        console.log(result);
     if (result.rowCount > 0) {
         return true;
     }
@@ -196,7 +204,7 @@ export async function updateCategoryPriority(db, category_id, priority) {
 }
 
 export async function updateItemPriority(db, item_id, priority) {
-    const result = await db.query("UPDATE items SET priority = $1 WHERE id = $2",
+    const result = await db.query("UPDATE items SET priority = $1 WHERE item_id = $2",
         [priority, item_id]);
     if (result.rowCount > 0) {
         return true;
