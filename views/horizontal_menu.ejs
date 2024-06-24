@@ -7,6 +7,56 @@
     <title>Jankoia Restaurant Menu</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/horizontalmenu.css">
+    <style>
+        /* Add this CSS to your horizontalmenu.css file */
+/* Add this CSS to your horizontalmenu.css file */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
+    padding-top: 60px; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4); 
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+    box-sizing: border-box;
+}
+
+.modal-content img {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    object-fit: cover;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+    </style>
 </head>
 
 <body>
@@ -19,7 +69,7 @@
         <div>
             <div class="col scrollmenu">
                 <% categories.forEach(function(category) { %>
-                <a href="#<%= category.category_id %>" ><%= category.category_name %></a>
+                <a href="#<%= category.category_id %>"><%= category.category_name %></a>
                 <% }); %>
             </div>
             <div class="col items" style="text-align: center; margin-top:30px;">
@@ -28,12 +78,12 @@
                     <div style="text-align: left; margin-top: 20px;">
                         <div>
                             <% category.items.forEach(function(item) { %>
-                                <div class="custom-card">
+                                <div class="custom-card" onclick="openModal('<%= item.item_name %>', '<%= item.price %> <%= currency %>', '<%= item.description %>', '<%= item.image %>')">
                                     <img src="<%= item.image %>" alt="<%= item.item_name %>">
                                     <div class="card-content">
                                         <h5><%= item.item_name %></h5>
                                         <div class="price"><%= item.price %> <%= currency %></div>
-                                        <div class="description"><%= item.description %></div>
+                                          <div class="description"><%= item.description.length > 120 ? item.description.substring(0, 120) + '...' : item.description %></div>
                                     </div>
                                 </div>
                             <% }); %>
@@ -43,7 +93,42 @@
             </div>
         </div>
     </div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <img id="modalImage" src="" alt="" style="width:100%;">
+            <h2 id="modalItemName"></h2>
+            <div id="modalPrice"></div>
+            <p id="modalDescription"></p>
+        </div>
+    </div>
+
     <script src="/js/bootstrap.min.js"></script>
+    <script>
+        // JavaScript to handle the modal
+        var modal = document.getElementById("myModal");
+        var span = document.getElementsByClassName("close")[0];
+
+        function openModal(name, price, description, image) {
+            document.getElementById("modalItemName").innerText = name;
+            document.getElementById("modalPrice").innerText = price;
+            document.getElementById("modalDescription").innerText = description;
+            document.getElementById("modalImage").src = image;
+            modal.style.display = "block";
+        }
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 </body>
 
 </html>
