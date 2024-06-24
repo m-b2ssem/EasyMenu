@@ -113,35 +113,47 @@ creation of the database
 CREATE TABLE users (
   user_id SERIAL PRIMARY KEY,
   company_name VARCHAR(50) NOT NULL,
-  email VARCHAR(100) UNIQUE NOT NULL,
+  email VARCHAR(254) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
- //many to one
 
 CREATE TABLE menus (
   menu_id SERIAL PRIMARY KEY,
   user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
   menu_name VARCHAR(100) NOT NULL,
   menu_language VARCHAR(50) NOT NULL,
-  background_image_path VARCHAR(255),
   qr_code BYTEA,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  menu_logo BYTEA,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-//many to one
+CREATE TABLE designs (
+  design_id SERIAL PRIMARY KEY,
+  menu_id INT REFERENCES menus(menu_id) ON DELETE CASCADE,
+  category_orientation VARCHAR(50) NOT NULL CHECK (category_orientation IN ('horizontal', 'vertical')),
+  background_color VARCHAR(100) NOT NULL, -- Assuming the color is stored in hex format (e.g., #FFFFFF)
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
 
 CREATE TABLE categories (
   category_id SERIAL PRIMARY KEY,
   user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
   menu_id INT REFERENCES menus(menu_id) ON DELETE CASCADE,
   category_name VARCHAR(100) NOT NULL,
-  priority INT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  priority INT NOT NULL DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-//many to one
+
 
 CREATE TABLE items (
   item_id SERIAL PRIMARY KEY,
@@ -150,10 +162,17 @@ CREATE TABLE items (
   item_name VARCHAR(100) NOT NULL,
   description TEXT,
   price DECIMAL(10, 2) NOT NULL,
-	image BYTEA,
-  priority INT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  image BYTEA,
+  priority INT NOT NULL DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_menus_user_id ON menus(user_id);
+CREATE INDEX idx_categories_user_id ON categories(user_id);
+CREATE INDEX idx_items_user_id ON items(user_id);
+
 
 // many to one
 
@@ -172,16 +191,6 @@ CREATE TABLE subscription_plans (
   UNIQUE(user_id)
 );
 
-
-
-CREATE TABLE designs (
-  design_id SERIAL PRIMARY KEY,
-  menu_id INT REFERENCES menus(menu_id) ON DELETE CASCADE,
-  category_orientation VARCHAR(50) NOT NULL CHECK (category_orientation IN ('horizontal', 'vertical')),
-  background_color VARCHAR(100) NOT NULL, -- Assuming the color is stored in hex format (e.g., #FFFFFF)
-  background_image BYTEA,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
 CREATE TABLE payment_sessions (
   session_id SERIAL PRIMARY KEY,

@@ -47,7 +47,7 @@ config();
 const app = express();
 
 app.use(session({
-  secret: 'ROPQWJFJ',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: { 
@@ -56,14 +56,22 @@ app.use(session({
 }));
 
 const db = new pg.Client({
-  user: "postgres",
-  host: "localhost",
-  database: "easymenu",
-  password: "1234",
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_DATABASE,
+  password: process.env.DB_PASSWORD,
   port: 5432,
 });
 
-db.connect();  // const app = express();
+db.connect((err) => {
+  if (err) {
+    console.error('Connection error', err.stack);
+  } else {
+    console.log('Connected to the database');
+  }
+});
+
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 app.use(express.json());

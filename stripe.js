@@ -1,4 +1,4 @@
-app.post("/checkout", async (req, res) => {
+/*app.post("/checkout", async (req, res) => {
     const { id, amount } = req.body;
   
     try {
@@ -81,5 +81,5 @@ app.post("/checkout", async (req, res) => {
         console.error("An error occurred while retrieving the Stripe session:", error);
         return res.send("fail");
     }
-  });
+  });*/
   

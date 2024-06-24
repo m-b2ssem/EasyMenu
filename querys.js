@@ -104,10 +104,9 @@ export async function getUserIdByGategoryId(db, category_id) {
 export async function insertItem(db, category_id, item_name, description, price, image, item_priority) {
     try {
         const user_id = await getUserIdByGategoryId(db, category_id);
-        const priority = item_priority + 1;
         const result = await db.query(
-            "INSERT INTO items (category_id, item_name, description, price, image ,priority, user_id) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *",
-            [category_id, item_name, description, price, image, priority, user_id]);
+            "INSERT INTO items (user_id, category_id, item_name, description, price, image) VALUES($1, $2, $3, $4, $5, $6) RETURNING *",
+            [user_id, category_id, item_name, description, price, image]);
         if (result.rows.length > 0) {
             return true;
         }
@@ -168,13 +167,9 @@ export async function findHeighestPriorityInCategory(db, menu_id) {
 }
 
 export async function insertCategory(db, menu_id, category_name, user_id) {
-    let priority = await findHeighestPriorityInCategory(db, menu_id);
-    if (priority === null) {
-        priority = 1;
-    }
     const result = await db.query(
-        "INSERT INTO categories (menu_id, category_name, priority, user_id) VALUES($1, $2, $3, $4) RETURNING *",
-        [menu_id, category_name, priority, user_id]);
+        "INSERT INTO categories (menu_id, category_name, user_id) VALUES($1, $2, $3) RETURNING *",
+        [menu_id, category_name, user_id]);
     if (result.rows.length > 0) {
         return true;
     } 
