@@ -7,23 +7,25 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Adjusted language list with ISO 639-1 codes where available
 export function createLangaugeList(language) {
     const allLanguages = [
-        { name: 'English' },
-        { name: 'عربي' },
-        { name: 'Deutsch' },
-        { name: 'Türkçe' },
-        { name: 'Español' }
+        { name: 'English', code: 'en' },
+        { name: 'عربي', code: 'ar' }, // Arabic
+        { name: 'Deutsch', code: 'de' }, // German
+        { name: 'Türkçe', code: 'tr' }, // Turkish
+        { name: 'Español', code: 'es' } // Spanish
     ];
 
     const primaryLanguage = allLanguages.find(lang => lang.name === language);
     if (!primaryLanguage) {
-        return allLanguages; // or return an empty array or throw an error if the input language is not found.
+        return allLanguages; // Return all languages if the input language is not found
     }
 
     const otherLanguages = allLanguages.filter(lang => lang.name !== language);
     return [primaryLanguage, ...otherLanguages];
 }
+
 
 
 export async function convertArrayBufferToBase64(buffer) {

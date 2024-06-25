@@ -76,7 +76,7 @@ export async function insertDesign(db, menu_id) {
 
 
 export async function getMenuById(db, id) {
-    const result = await db.query("SELECT * FROM menus WHERE user_id = $1",
+    const result = await db.query("SELECT * FROM menus WHERE menu_id = $1",
         [id]);
     if (result.rows.length > 0) {
         return result.rows;
@@ -284,8 +284,6 @@ export async function getCategoriesWithItems(db, menu_id) {
             });
         }
     }
-
-    console.log(result);
     return result;
 }
 

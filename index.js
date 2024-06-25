@@ -107,10 +107,11 @@ app.get('/register', (req, res) => {
 app.get('/menu/:menuid/:res', async (req, res) => {
   const menuid = req.params.menuid;
 
-  //const langauges = await createLangaugeList(menu.menu_language);
+  const result = await getMenuById(db, menuid);
+  const menu = result[0];
+  const language = await createLangaugeList(menu.menu_language);
   let categories = await getCategoriesWithItems(db, menuid);
   let logo = await getLogoImage(db, menuid);
-  console.log(logo);
   if (!logo) {
     logo = 'http://www.easymenu.systems/images/logo.png';
   }
@@ -122,7 +123,12 @@ app.get('/menu/:menuid/:res', async (req, res) => {
   }
   const backgroundImage = 'http://www.easymenu.systems/images/background.jpg';
   const currency = '€';
-  res.render('horizontal_menu.ejs', {'categories': categories, 'backgroundImage': logo, 'currency': currency});
+  res.render('horizontal_menu.ejs', {
+    'categories': categories,
+    'backgroundImage': logo,
+    'currency': currency,
+    'language': language
+  });
 });
 
 
