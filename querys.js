@@ -75,7 +75,17 @@ export async function insertDesign(db, menu_id) {
 }
 
 
-export async function getMenuById(db, id) {
+export async function getMenuByUserId(db, id) {
+    const result = await db.query("SELECT * FROM menus WHERE user_id = $1",
+        [id]);
+    if (result.rows.length > 0) {
+        return result.rows;
+    } else {
+        return false;
+    }
+}
+
+export async function getMenuByMenuId(db, id) {
     const result = await db.query("SELECT * FROM menus WHERE menu_id = $1",
         [id]);
     if (result.rows.length > 0) {
@@ -186,7 +196,7 @@ export async function insertCategory(db, menu_id, category_name, user_id) {
 }
 
 export async function getCategoriesByMenuId(db, menu_id) {
-    const result = await db.query("SELECT * FROM categories WHERE menu_id = $1",
+    const result = await db.query("SELECT * FROM categories WHERE menu_id = $1 ORDER BY priority DESC",
         [menu_id]);
     if (result.rows.length > 0) {
         return result.rows;
@@ -254,7 +264,7 @@ export async function getCategoriesWithItems(db, menu_id) {
         return null;
     }
     
-    categories.sort((a, b) => b.priority - a.priority);
+    //categories.sort((a, b) => b.priority - a.priority);
 
     const result = [];
 
@@ -262,7 +272,7 @@ export async function getCategoriesWithItems(db, menu_id) {
         const items = await getItemsByCategory(db, category.category_id);
         
         if (items.length > 0) {
-            items.sort((a, b) => a.priority - b.priority);
+            //items.sort((a, b) => a.priority - b.priority);
 
             const items_list = await Promise.all(items.map(async item => {
                 const image = await 'data:image/png;base64,' + await convertArrayBufferToBase64(item.image);
@@ -284,6 +294,7 @@ export async function getCategoriesWithItems(db, menu_id) {
             });
         }
     }
+    console.log(result);
     return result;
 }
 

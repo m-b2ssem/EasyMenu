@@ -13,7 +13,6 @@ import {
   insertUser,
   insertMenu,
   insertDesign,
-  getMenuById,
   deleteItem,
   findHeighestPriority,
   insertItem,
@@ -32,7 +31,9 @@ import {
   getLogoImage,
   updateItemPriority,
   selectUserById,
-  updatePassword
+  updatePassword,
+  getMenuByUserId,
+  getMenuByMenuId,
 } from './querys.js';
 import {createLangaugeList, convertArrayBufferToBase64, cehckSizeandConvertTOBytea} from './helperFunctions.js';
 import passport from 'passport';
@@ -107,7 +108,7 @@ app.get('/register', (req, res) => {
 app.get('/menu/:menuid/:res', async (req, res) => {
   const menuid = req.params.menuid;
 
-  const result = await getMenuById(db, menuid);
+  const result = await getMenuByMenuId(db, menuid);
   const menu = result[0];
   const language = await createLangaugeList(menu.menu_language);
   let categories = await getCategoriesWithItems(db, menuid);
@@ -137,12 +138,14 @@ app.get('/menu/:menuid/:res', async (req, res) => {
 
 
 
+
 app.get('/management/menu/:userid', async (req, res) => {
   const urlid = parseInt(req.params.userid);
   if (req.isAuthenticated()) {
     if (urlid === req.user.user_id) {
-      const menus = await getMenuById(db ,req.user.user_id);
+      const menus = await getMenuByUserId(db ,urlid);
       const menu = menus[0];
+
       const menu_name = 'http://www.easymenu.systems/menu/' + menu.menu_id +'/'+ menu.menu_name.replace(/\s+/g, '');;
       const langauges = await createLangaugeList(menu.menu_language);
       const image = await 'data:image/png;base64,' + await convertArrayBufferToBase64(menu.qr_code);
@@ -215,7 +218,7 @@ app.get('/management/category/:userid', async (req, res) => {
   if (req.isAuthenticated()) {
     if (urlid === req.user.user_id) {
       const categories = await getCategoriesByUserId(db, req.user.user_id);
-      const menus = await getMenuById(db ,req.user.user_id);
+      const menus = await getMenuByUserId(db ,urlid);
       res.render('categories', {'user': user, 'categories': categories, 'year': new Date().getFullYear(), 'menus': menus});
     } else {
       res.redirect('/login');
@@ -260,9 +263,7 @@ app.get('/get-categories', async (req, res) => {
   res.json({categories});
 });
 
-
-// update the order in the database
-app.post('/reorder-items', async(req, res) => {
+app.post('/reorder-categories', async(req, res) => {
   const order = req.body.order;
 
   let priority = 1;
@@ -272,6 +273,29 @@ app.post('/reorder-items', async(req, res) => {
   console.log(reversedCategoriesIds);
   try {
     for (const id of reversedCategoriesIds) {
+      // update the priority of the category
+      await updateCategoryPriority(db ,id, priority);
+      priority++;
+    }
+    res.json({ success: true });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+});
+
+
+// update the order in the database
+app.post('/reorder-items', async(req, res) => {
+  const order = req.body.order;
+
+  let priority = 1;
+
+
+  const reversedItemsIds = order.slice().reverse();
+  console.log(reversedItemsIds);
+  try {
+    for (const id of reversedItemsIds) {
       // update the priority of the category
       await updateItemPriority(db ,id, priority);
       priority++;
