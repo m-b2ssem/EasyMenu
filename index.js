@@ -131,6 +131,9 @@ app.get('/menu/:menuid/:res', async (req, res) => {
   });
 });
 
+/*.VIpgJd-ZVi9od-ORHb-OEVmcd{
+  display:none!important
+}*/
 
 
 
