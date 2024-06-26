@@ -105,6 +105,12 @@ export async function deleteItem(db, id) {
     return false;
 }
 
+export async function getItemByItemId(db, id) {
+    const result = await db.query("SELECT * FROM items WHERE item_id = $1",
+        [id]);
+    return result.rows[0];
+}
+
 export async function findHeighestPriority(db, category_id) {
     const result = await db.query("SELECT MAX(priority) FROM items WHERE category_id = $1",
         [category_id]);
@@ -222,9 +228,17 @@ export async function updateItemPriority(db, item_id, priority) {
     return false;
 }
 
-export async function updateItem(db, item_id, item_name, description, price, image) {
-    const result = await db.query("UPDATE items SET item_name = $1, description = $2, price = $3, image = $4 WHERE id = $5",
-        [item_name, description, price, image, item_id]);
+export async function updateItem(db, category_id, item_name, description, price, image, item_id) {
+    if (image === null) {
+        const result = await db.query("UPDATE items SET item_name = $1, description = $2, price = $3, category_id = $4 WHERE item_id = $5",
+            [item_name, description, price, category_id, item_id]);
+        if (result.rowCount > 0) {
+            return true;
+        }
+        return false;
+    }
+    const result = await db.query("UPDATE items SET item_name = $1, description = $2, price = $3, image = $4, category_id = $5 WHERE item_id = $6",
+        [item_name, description, price, image, category_id, item_id]);
     if (result.rowCount > 0) {
         return true;
     }

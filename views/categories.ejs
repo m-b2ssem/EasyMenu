@@ -405,7 +405,13 @@
          $('form[action="/add-category"]').on('submit', function (e) {
             if ($('#menuId').val() === "") {
                 e.preventDefault();
-                alert('Please choose a menu before submitting the form.');
+                alert('Please Select a menu');
+            }
+        });
+        $('form[action="/deletecategory"]').on('submit', function (e) {
+            if ($('#categoryId').val() === "") {
+                e.preventDefault();
+                alert('Please Select an Category to delete');
             }
         });
     });

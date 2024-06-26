@@ -34,6 +34,8 @@ import {
   updatePassword,
   getMenuByUserId,
   getMenuByMenuId,
+  getItemByItemId,
+  updateItem
 } from './querys.js';
 import {createLangaugeList, convertArrayBufferToBase64, cehckSizeandConvertTOBytea} from './helperFunctions.js';
 import passport from 'passport';
@@ -311,6 +313,8 @@ app.post('/reorder-items', async(req, res) => {
 
 
 
+
+
 // to do. I need to delete the chosse item from the database
 app.post('/deleteitem', async(req, res) => {
   const itemId = parseInt(req.body.itemId);
@@ -353,10 +357,53 @@ app.post('/additem', upload.single('image'), async (req, res) => {
   });
 
 
+
+  const update_item = multer();
+app.post('/update-item', update_item.single('image'), async (req, res) => {
+  let { itemName, price, description, categoryId, itemId } = req.body;
+  const file = req.file;
+  if (!itemName || !price || !description || !categoryId) {
+    return res.json({ success: false, message: 'Please fill all fields.'});
+  }
+  if (file) {
+    const buffer = await cehckSizeandConvertTOBytea(file);
+    if (!buffer) {
+      return res.json({ success: false, message: 'Image is too large.'});
+    }
+    categoryId = parseInt(categoryId);
+    const intPrice = parseFloat(price);
+    const update = await updateItem(db, categoryId, itemName, description, intPrice, buffer, itemId);
+    if (!update) {
+      return res.json({ success: false, message: 'Something went wrong, please try again.'});
+    }
+  }
+  else
+  {
+    categoryId = parseInt(categoryId);
+    const intPrice = parseFloat(price);
+    const update = await updateItem(db, categoryId, itemName, description, intPrice, null, itemId);
+    if (!update) {
+      return res.json({ success: false, message: 'Something went wrong, please try again.'});
+    }
+  }
+  
+  res.json({ success: true });
+  });
+
+
 app.get('/get-items', async (req, res) => {
   const category_id = req.query.categoryId; // Access query parameter
   const items = await getItemsByCategory(db, category_id);
   res.json({items});
+});
+
+app.get('/get-item', async (req, res) => {
+  const itemId = parseInt(req.query.itemId);
+  const item = await getItemByItemId(db, itemId);
+  if (!item) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  res.json({item});
 });
 
 

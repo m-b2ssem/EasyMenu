@@ -50,6 +50,59 @@
 
 <body id="page-top">
 
+<!-- Update Item Modal -->
+<div class="modal fade" id="updateItemModal" tabindex="-1" aria-labelledby="updateItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateItemModalLabel">Update Item</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="updateItemForm" onsubmit="updateItem(event)">
+                <div class="modal-body">
+                    <input type="hidden" name="itemId" id="updateItemId">
+                    <div class="form-group">
+                        <label for="updateItemName">Item Name</label>
+                        <input type="text" class="form-control" id="updateItemName" name="itemName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="updateItemPrice">Item Price</label>
+                        <input type="text" class="form-control" id="updateItemPrice" name="price" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="updateItemDescription">Item Description</label>
+                        <input type="text" class="form-control" id="updateItemDescription" name="description" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="updateItemCategory">Choose Category</label>
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" aria-expanded="false" id="updateItemCategory" data-bs-toggle="dropdown" type="button">Choose Category</button>
+                            <input type="hidden" name="categoryId" id="updateCategoryId">
+                            <div class="dropdown-menu setCategoryForUpdate">
+                                <% categories.forEach(categry => { %>
+                                    <a class="dropdown-item" id="<%= categry.category_id %>" href="#">
+                                        <%= categry.category_name %>
+                                    </a>
+                                <% }) %>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="updateItemImage">Item Image <br/> *let it empty if you want to user the old image*</label>
+                        <input type="file" class="form-control" id="updateItemImage" name="image" accept="image/*">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Update Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
     <!-- Page Wrapper -->
     <div id="wrapper">
 
@@ -209,11 +262,11 @@
                 <div class="container-fluid">
                     <div style="border-bottom-style: solid;">
                         <div style="position: relative;display: flex;text-align: center;margin: 10px;">
-                            <div class="col" style="text-align: center;position: relative;display: block;"><label class="col-form-label">here you can delete the selected item <br> or deactive it</label></div>
+                            <div class="col" style="text-align: center;position: relative;display: block;"><label class="col-form-label">here you can delete  or update the selected item <br> or deactive it</label></div>
                         </div>
                         <div style="position: relative;display: flex;text-align: center;margin: 10px;margin-bottom: 30px;">
                             <div class="col" style="text-align: center;position: relative;display: block;">
-                                <form action="/deleteitem" method="post">
+                                <form action="/deleteitem" method="post" >
                                     <div class="dropdown" style="text-align: right;display: inline;margin-right: 18px;">
                                         <button class="btn btn-primary dropdown-toggle" aria-expanded="false"
                                             data-bs-toggle="dropdown" id="deleteitem"  name="item" type="button">Items </button>
@@ -227,10 +280,12 @@
                                         </div>
                                     </div>
                                     <input type="hidden" name="itemId"  id="itemId" />
-                                    <button class="btn btn-primary" type="submit" style="text-align: right;">Delete</button>
+                                    <button class="btn btn-primary" type="button" id="updateButton" style="text-align: right;">Update</button>
+                                    <button class="btn btn-primary"  type=submit style="text-align: right;">Delete</button>
                                 </form>
                             </div>
                         </div>
+                    </div>
                     </div>
                     <form onsubmit="upload(event)">
                         <!-- your form fields -->
@@ -382,6 +437,31 @@
                 $('#categoryId').val(selectedId);
             });
 
+            $('#updateButton').on('click', function () {
+                    var item_id = $('#itemId').val();
+                    if (item_id === "") {
+                        alert('Please select an item to update');
+                        return;
+                    }
+                    
+                    fetch('/get-item?itemId=' + item_id)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data.item);
+                            $('#updateItemId').val(data.item.item_id);
+                            $('#updateItemName').val(data.item.item_name);
+                            $('#updateItemPrice').val(data.item.price);
+                            $('#updateItemDescription').val(data.item.description);
+                            //make it better by fetching the category name
+                            
+                            $('#updateItemModal').modal('show');
+                        }).catch(error => {
+                            alert('Failed to fetch item details, please try again');
+                            console.error('Error fetching item:', error);
+                        });
+                });
+
+
             $('.deleteitem a').on('click', function () {
                 // Get the text of the clicked item
                 var selectedText = $(this).text();
@@ -391,6 +471,17 @@
                 
                 $('#itemId').val(selectedId);
             });
+        
+
+            $('.setCategoryForUpdate a').on('click', function () {
+                // Get the text of the clicked item
+                var selectedText = $(this).text();
+                var selectedId = $(this).attr('id');
+                // Update the dropdown button text
+                $('#updateItemCategory').text(selectedText);
+                $('#updateCategoryId').val(selectedId);
+            });
+
 
             // Event listener for dropdown items
             $('.orderItems a').on('click', function () {
@@ -424,6 +515,13 @@
                     });
             });
 
+            $('form[action="/deleteitem"]').on('submit', function (e) {
+            if ($('#itemId').val() === "") {
+                e.preventDefault();
+                alert('Please Select an Item ');
+            }
+            });
+
 
             $("#sortable").sortable({
                 update: function (event, ui) {
@@ -449,6 +547,39 @@
             });
             $("#sortable").disableSelection();
         });
+    </script>
+
+    
+    <script>
+        async function updateItem(event) {
+            event.preventDefault();
+            const form = event.target;
+            if (!document.getElementById('updateCategoryId').value) {
+            event.preventDefault();
+            alert('Please choose a category.');
+            return;
+            }
+            const formData = new FormData(form);
+            console.log('Form data:', formData);
+            console.log('Form data:', form);
+            try {
+                const response = await fetch('/update-item', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Item updated successfully');
+                    form.reset();
+                    location.reload();
+                } else {
+                    alert('Failed to add item please try again');
+                }
+                console.log(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
     </script>
 
     <script>
