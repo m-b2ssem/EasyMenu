@@ -262,109 +262,110 @@
                 <div class="container-fluid">
                     <div style="border-bottom-style: solid;">
                         <div style="position: relative;display: flex;text-align: center;margin: 10px;">
-                            <div class="col" style="text-align: center;position: relative;display: block;"><label class="col-form-label">here you can delete  or update the selected item <br> or deactive it</label></div>
+                            <div class="col" style="text-align: center;position: relative;display: block;">
+                                <label class="col-form-label">Here you can delete or update the selected item</label>
+                            </div>
                         </div>
                         <div style="position: relative;display: flex;text-align: center;margin: 10px;margin-bottom: 30px;">
                             <div class="col" style="text-align: center;position: relative;display: block;">
-                                <form action="/deleteitem" method="post" >
-                                    <div class="dropdown" style="text-align: right;display: inline;margin-right: 18px;">
+                                <form action="/deleteitem" method="post">
+                                    <div class="dropdown" style="text-align: center;display: inline;margin-right: 18px;">
                                         <button class="btn btn-primary dropdown-toggle" aria-expanded="false"
-                                            data-bs-toggle="dropdown" id="deleteitem"  name="item" type="button">Items </button>
-                                            
+                                            data-bs-toggle="dropdown" id="deleteitem" name="item" type="button">Items </button>
                                         <div class="dropdown-menu deleteitem">
                                             <% items.forEach(item=> { %>
                                                 <a class="dropdown-item" id="<%= item.item_id %>" href="#">
                                                     <%= item.item_name %>
                                                 </a>
-                                                <% }) %>
+                                            <% }) %>
                                         </div>
                                     </div>
-                                    <input type="hidden" name="itemId"  id="itemId" />
-                                    <button class="btn btn-primary" type="button" id="updateButton" style="text-align: right;">Update</button>
-                                    <button class="btn btn-primary"  type=submit style="text-align: right;">Delete</button>
+                                    <input type="hidden" name="itemId" id="itemId" />
+                                    <div style="text-align: center;">
+                                        <button class="btn btn-primary" type="button" id="updateButton" style="margin: 10px;">Update</button>
+                                        <button class="btn btn-primary" type="submit" style="margin: 10px;">Delete</button>
+                                    </div>
                                 </form>
                             </div>
                         </div>
                     </div>
+                </div>
+                <form onsubmit="upload(event)">
+                    <!-- your form fields -->
+                    <div style="position: relative;margin-top: 15px;">
+                        <div class="col" style="text-align: center;"><label class="col-form-label"
+                                style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Item
+                                Name</label></div>
+                        <div class="col" style="text-align: center;"><input required name="itemName" type="text"
+                                style="border-radius: 8px;box-shadow: 1px 1px 5px var(--bs-blue);" /></div>
                     </div>
-                    <form onsubmit="upload(event)">
-                        <!-- your form fields -->
-                        <div style="position: relative;margin-top: 15px;">
-                            <div class="col" style="text-align: center;"><label class="col-form-label"
-                                    style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Item
-                                    Name</label></div>
-                            <div class="col" style="text-align: center;"><input required name="itemName" type="text"
-                                    style="border-radius: 8px;box-shadow: 1px 1px 5px var(--bs-blue);" /></div>
-                        </div>
-                        <div style="position: relative;margin-top: 15px;">
-                            <div class="col" style="text-align: center;"><label class="col-form-label"
-                                    style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Item
-                                    Price</label></div>
-                            <div class="col" style="text-align: center;"><input required name="price" type="text"
-                                    style="border-radius: 8px;box-shadow: 1px 1px 5px var(--bs-blue);" /></div>
-                        </div>
-                        <div style="position: relative;margin-top: 15px;">
-                            <div class="col" style="text-align: center;"><label class="col-form-label"
-                                    style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Item
-                                    Description</label></div>
-                            <div class="col" style="text-align: center;"><input required name="description" type="text"
-                                    style="border-radius: 8px;box-shadow: 1px 1px 5px var(--bs-blue);" /></div>
-                        </div>
-                        <div style="position: relative;margin-top: 15px;">
-                            <div class="col" style="text-align: center;"><label class="col-form-label"
-                                    style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Choose
-                                    Gategry</label></div>
-                            <div class="col" style="text-align: center;">
-                                <div class="dropdown"><button class="btn btn-primary dropdown-toggle" aria-expanded="false"
-                                        id="setcategory" data-bs-toggle="dropdown" type="button">Choose Categry </button>
-                                    <input type="hidden" name="categoryId" id="categoryId" />
-                                    <div class="dropdown-menu setcategory" required>
-                                        <% categories.forEach(categry=> { %>
-                                            <a class="dropdown-item" id="<%= categry.category_id %>" href="#">
-                                                <%= categry.category_name %>
-                                            </a>
-                                            <% }) %>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="position: relative;margin-top: 15px;">
-                            <div class="col" style="text-align: center;"><label class="col-form-label"
-                                    style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Item
-                                    Image</label></div>
-                            <div class="col" style="text-align: center;"><input required name="image" type="file" accept="image/*" 
-                                    style="border-radius: 4px;border-width: 0px;position: relative;" /></div>
-                        </div>
-                        <div
-                            style="position: relative;margin-top: 40px;text-align: center;color: var(--bs-btn-disabled-color);">
-                            <button class="btn btn-primary" type="submit"
-                                style="background: rgb(42,208,28);position: relative;filter: brightness(96%) contrast(93%);backdrop-filter: blur(46px);transform: perspective(0px) translate(0px);">Add
-                                Item</button>
-                    </form>
-
-                    <div style="border-bottom-style: solid; "></div>
-                    <div class="centered-container" style="margin-top: 60px; margin-bottom: 60px;">
-                        <label>Drag and Drop to set the order of the Categories.</label>
-                        <div class="col" style="text-align: center; margin-bottom: 10px;">
-                            <div class="dropdown">
-                                <button class="btn btn-primary dropdown-toggle" aria-expanded="false" id="orderItems"
-                                    data-bs-toggle="dropdown" type="button">Choose Categry</button>
-                                <div class="dropdown-menu orderItems">
+                    <div style="position: relative;margin-top: 15px;">
+                        <div class="col" style="text-align: center;"><label class="col-form-label"
+                                style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Item
+                                Price</label></div>
+                        <div class="col" style="text-align: center;"><input required name="price" type="text"
+                                style="border-radius: 8px;box-shadow: 1px 1px 5px var(--bs-blue);" /></div>
+                    </div>
+                    <div style="position: relative;margin-top: 15px;">
+                        <div class="col" style="text-align: center;"><label class="col-form-label"
+                                style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Item
+                                Description</label></div>
+                        <div class="col" style="text-align: center;"><input required name="description" type="text"
+                                style="border-radius: 8px;box-shadow: 1px 1px 5px var(--bs-blue);" /></div>
+                    </div>
+                    <div style="position: relative;margin-top: 15px;">
+                        <div class="col" style="text-align: center;"><label class="col-form-label"
+                                style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Choose
+                                Category</label></div>
+                        <div class="col" style="text-align: center;">
+                            <div class="dropdown"><button class="btn btn-primary dropdown-toggle" aria-expanded="false"
+                                    id="setcategory" data-bs-toggle="dropdown" type="button">Choose Category</button>
+                                <input type="hidden" name="categoryId" id="categoryId" />
+                                <div class="dropdown-menu setcategory" required>
                                     <% categories.forEach(categry=> { %>
                                         <a class="dropdown-item" id="<%= categry.category_id %>" href="#">
                                             <%= categry.category_name %>
                                         </a>
-                                        <% }) %>
+                                    <% }) %>
                                 </div>
                             </div>
                         </div>
-                        <ul id="sortable" class="sortable-list">
-                        </ul>
                     </div>
+                    <div style="position: relative;margin-top: 15px;">
+                        <div class="col" style="text-align: center;"><label class="col-form-label"
+                                style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Item
+                                Image</label></div>
+                        <div class="col" style="text-align: center;"><input required name="image" type="file" accept="image/*"
+                                style="border-radius: 4px;border-width: 0px;position: relative;" /></div>
+                    </div>
+                    <div style="position: relative;margin-top: 40px;text-align: center;color: var(--bs-btn-disabled-color);">
+                        <button class="btn btn-primary" type="submit"
+                            style="background: rgb(42,208,28);position: relative;filter: brightness(96%) contrast(93%);backdrop-filter: blur(46px);transform: perspective(0px) translate(0px);">Add
+                            Item</button>
+                </form>
+
+                <div style="border-bottom-style: solid;"></div>
+                <div class="centered-container" style="margin-top: 60px; margin-bottom: 60px;">
+                    <label>Drag and Drop to set the order of the Categories.</label>
+                    <div class="col" style="text-align: center; margin-bottom: 10px;">
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" aria-expanded="false" id="orderItems"
+                                data-bs-toggle="dropdown" type="button">Choose Category</button>
+                            <div class="dropdown-menu orderItems">
+                                <% categories.forEach(categry=> { %>
+                                    <a class="dropdown-item" id="<%= categry.category_id %>" href="#">
+                                        <%= categry.category_name %>
+                                    </a>
+                                <% }) %>
+                            </div>
+                        </div>
+                    </div>
+                    <ul id="sortable" class="sortable-list">
+                    </ul>
+                </div>
                 </div>
                 <!-- /.container-fluid -->
-
-            </div>
+                </div>
             <!-- End of Main Content -->
 
             <!-- Footer -->
