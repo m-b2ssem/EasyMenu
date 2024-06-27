@@ -111,6 +111,15 @@ export async function getItemByItemId(db, id) {
     return result.rows[0];
 }
 
+export async function updateItemStatus(db, item_id, status) {
+    const result = await db.query("UPDATE items SET item_status = $1 WHERE item_id = $2",
+        [status, item_id]);
+    if (result.rowCount > 0) {
+        return true;
+    }
+    return false;
+}
+
 export async function findHeighestPriority(db, category_id) {
     const result = await db.query("SELECT MAX(priority) FROM items WHERE category_id = $1",
         [category_id]);
@@ -148,12 +157,6 @@ export async function getItemsByCategory(db, category_id) {
 }
 
 
-export async function getDesignByMenuId(db, menu_id) {
-    const result = await db.query("SELECT * FROM designs WHERE menu_id = $1",
-        [menu_id]);
-    return result.rows[0];
-}
-
 export async function updateColoInDesign(db, menu_id, color) {
     const result = await db.query("UPDATE designs SET background_color = $1 WHERE menu_id = $2",
         [color, menu_id]);
@@ -183,6 +186,12 @@ export async function getCategoriesByUserId(db, user_id) {
     const result = await db.query("SELECT * FROM categories WHERE user_id = $1",
         [user_id]);
     return result.rows;
+}
+
+export async function getCategoryByCategoryId(db, category_id) {
+    const result = await db.query("SELECT * FROM categories WHERE category_id = $1",
+        [category_id]);
+    return result.rows[0];
 }
 
 export async function findHeighestPriorityInCategory(db, menu_id) {
@@ -261,6 +270,12 @@ export async function deleteMenu(db, id) {
         return true;
     }
     return false;
+}
+
+export async function getDesignByMenuId(db, menu_id) {
+    const result = await db.query("SELECT * FROM designs WHERE menu_id = $1",
+        [menu_id]);
+    return result.rows[0];
 }
 
 export async function deleteCategory(db, id) {

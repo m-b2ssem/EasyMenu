@@ -35,7 +35,9 @@ import {
   getMenuByUserId,
   getMenuByMenuId,
   getItemByItemId,
-  updateItem
+  updateItem,
+  getCategoryByCategoryId,
+  updateItemStatus
 } from './querys.js';
 import {createLangaugeList, convertArrayBufferToBase64, cehckSizeandConvertTOBytea} from './helperFunctions.js';
 import passport from 'passport';
@@ -112,6 +114,7 @@ app.get('/menu/:menuid/:res', async (req, res) => {
 
   const result = await getMenuByMenuId(db, menuid);
   const menu = result[0];
+  const menu_design = await getDesignByMenuId(db, menuid);
   const language = await createLangaugeList(menu.menu_language);
   let categories = await getCategoriesWithItems(db, menuid);
   let logo = await getLogoImage(db, menuid);
@@ -126,13 +129,16 @@ app.get('/menu/:menuid/:res', async (req, res) => {
   }
   const backgroundImage = 'http://www.easymenu.systems/images/background.jpg';
   const currency = '€';
+  const bachground_color = menu_design.background_color;
   res.render('horizontal_menu.ejs', {
     'categories': categories,
     'backgroundImage': logo,
     'currency': currency,
-    'language': language
+    'language': language,
+    'background_color': bachground_color
   });
 });
+
 
 /*.VIpgJd-ZVi9od-ORHb-OEVmcd{
   display:none!important
@@ -310,6 +316,26 @@ app.post('/reorder-items', async(req, res) => {
 });
 
 
+app.get('/get-item-status', async (req, res) => {
+  const itemId = parseInt(req.query.itemId);
+  const item = await getItemByItemId(db, itemId);
+  if (!item) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  res.json({item});
+});
+
+app.post('/update-item-status', async(req, res) => {
+  const itemId = parseInt(req.body.itemId);
+  const status = req.body.status;
+  const result = await updateItemStatus(db, itemId, status);
+  if (!result) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  res.json({ success: true });
+});
+
+
 
 
 
@@ -404,6 +430,15 @@ app.get('/get-item', async (req, res) => {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
   res.json({item});
+});
+
+app.get('/get-category-name', async (req, res) => {
+  const categoryId = parseInt(req.query.categoryId);
+  const category = await getCategoryByCategoryId(db, categoryId);
+  if (!category) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  res.json({category});
 });
 
 

@@ -92,6 +92,26 @@ body.modal-open .scrollmenu {
 body{
     top:0!important
 }
+  div.scrollmenu a:hover {
+    background-color: <%= background_color %>;;
+    color: white;
+  }
+
+  div.scrollmenu a.nav-link.active {
+    background-color: <%= background_color %>;;
+    color: white;
+}
+
+  .link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px; /* Adjust this value to move the border up or down */
+    border-bottom: 2px solid <%= background_color %>;
+    transform: scaleX(4); /* Adjust this value to change the length of the border */
+    transform-origin: center; /* Keep the scaling centered */
+  }
     </style>
 </head>
 
