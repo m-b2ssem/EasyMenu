@@ -149,20 +149,9 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item active">
-                <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
-                    aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>Management</span>
-                </a>
-                <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Components:</h6>
-                        <a class="collapse-item" href="/management/menu/<%= user.user_id %>">Menues</a>
-                        <a class="collapse-item" href="/management/category/<%= user.user_id %>">Categories</a>
-                        <a class="collapse-item active" href="/management/items/<%= user.user_id %>">Items</a>
-                    </div>
-                </div>
+                <a class="nav-link" href="/management/menu/<%= user.user_id %>"><i class="fas fa-fw fa-cog"></i><span>Menus</span></a>
+                <a class="nav-link" href="/management/category/<%= user.user_id %>"><i class="fas fa-fw fa-cog"></i><span>Categories</span></a>
+                <a class="nav-link" href="/management/items/<%= user.user_id %>"><i class="fas fa-fw fa-cog"></i><span>Items</span></a>
             </li>
 
         </ul>
@@ -220,7 +209,7 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-                    <div style="border-bottom-style: solid;">
+                    <div>
                         <div style="position: relative;display: flex;text-align: center;margin: 10px;">
                             <div class="col" style="text-align: center;position: relative;display: block;">
                                 <label class="col-form-label">Here you can delete or update the selected item</label>
@@ -252,6 +241,7 @@
                             </div>
                         </div>
                     </div>
+                    <div style="border-bottom-style: solid; margin:40px auto; width: 40%; text-align: center;"></div>
                 </div>
                 <form onsubmit="upload(event)">
                     <!-- your form fields -->
@@ -307,7 +297,7 @@
                             Item</button>
                 </form>
 
-                <div style="border-bottom-style: solid;"></div>
+                <div style="border-bottom-style: solid; margin:40px auto; width: 40%; text-align: center;"></div>
                 <div class="centered-container" style="margin-top: 60px; margin-bottom: 60px;">
                     <label>Drag and Drop to set the order of the Categories.</label>
                     <div class="col" style="text-align: center; margin-bottom: 10px;">
@@ -617,6 +607,7 @@
                 if (data.success) {
                     alert('Item added successfully');
                     form.reset();
+
                 } else {
                     alert('Failed to add item please try again');
                 }

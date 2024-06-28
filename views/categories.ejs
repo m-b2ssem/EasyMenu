@@ -113,18 +113,9 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item active">
-                <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>Management</span>
-                </a>
-                <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Components:</h6>
-                        <a class="collapse-item" href="/management/menu/<%= user.user_id %>">Menues</a>
-                        <a class="collapse-item active" href="/management/Category/<%= user.user_id %>">Categories</a>
-                        <a class="collapse-item" href="/management/items/<%= user.user_id %>">Items</a>
-                    </div>
-                </div>
+                <a class="nav-link" href="/management/menu/<%= user.user_id %>"><i class="fas fa-fw fa-cog"></i><span>Menus</span></a>
+                <a class="nav-link" href="/management/category/<%= user.user_id %>"><i class="fas fa-fw fa-cog"></i><span>Categories</span></a>
+                <a class="nav-link" href="/management/items/<%= user.user_id %>"><i class="fas fa-fw fa-cog"></i><span>Items</span></a>
             </li>
 
         </ul>
@@ -227,8 +218,8 @@
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                <div class="container-fluid centered-container" style="border-bottom-style: solid;">
-                    <div style="border-bottom-style: solid;">
+                <div class="container-fluid centered-container"">
+                    <div>
                         <div class="centered-container" style="margin: 10px;">
                             <div class="col">
                                 <label class="col-form-label">Here you can delete the selected Categories <br> or deactivate it</label>
@@ -257,6 +248,7 @@
                             </div>
                         </div>
                     </div>
+                    <div style="border-bottom-style: solid; margin:40px auto; width: 40%; text-align: center;"></div>
                     <form action="/add-category" method="post">
                         <div style="position: relative; margin-top: 15px;">
                             <div class="col" style="text-align: center;"><label class="col-form-label" style="position: relative;">Category Name</label></div>
@@ -281,7 +273,7 @@
                             <button class="btn btn-primary" type="submit" style="background: rgb(42,208,28); filter: brightness(96%) contrast(93%); backdrop-filter: blur(46px); transform: perspective(0px) translate(0px);">Add Category</button>
                         </div>
                     </form>
-                    <div style="border-bottom-style: solid; width: 350px;"></div>
+                    <div style="border-bottom-style: solid; margin:40px auto; width: 40%; text-align: center;"></div>
                     <div class="centered-container" style="margin-top: 60px; margin-bottom: 60px;">
                         <label>Drag and Drop to set the order of the Categories.</label>
                         <div class="col" style="text-align: center; margin-bottom: 10px;">
