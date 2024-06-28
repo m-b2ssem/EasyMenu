@@ -155,8 +155,10 @@ app.get('/management/menu/:userid', async (req, res) => {
     if (urlid === req.user.user_id) {
       const menus = await getMenuByUserId(db ,urlid);
       const menu = menus[0];
+      let name_of_menu =  menu.menu_name.replace(/\s+/g, '');
+      name_of_menu = name_of_menu.toLowerCase();
 
-      const menu_name = 'http://www.easymenu.systems/menu/' + menu.menu_id +'/'+ menu.menu_name.replace(/\s+/g, '');;
+      const menu_name = 'http://www.easymenu.systems/menu/' + menu.menu_id +'/' + name_of_menu;
       const langauges = await createLangaugeList(menu.menu_language);
       const image = await 'data:image/png;base64,' + await convertArrayBufferToBase64(menu.qr_code);
       const menuDesign = await getDesignByMenuId(db, menu.menu_id);
