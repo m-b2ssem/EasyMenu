@@ -148,12 +148,6 @@ app.get('/menu/:menuid/:res', async (req, res) => {
 
 
 
-/*.VIpgJd-ZVi9od-ORHb-OEVmcd{
-  display:none!important
-}*/
-
-
-
 
 app.get('/management/menu/:userid', async (req, res) => {
   const urlid = parseInt(req.params.userid);
