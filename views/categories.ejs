@@ -17,6 +17,11 @@
 
     <!-- Custom styles for this template-->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+            <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Toggle CSS -->
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+
     <link href="/css/sb-admin-2.min.css" rel="stylesheet">
     <style>
         .sortable-list {
@@ -47,6 +52,32 @@
 </head>
 
 <body id="page-top">
+<!-- Update Modal-->
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateModalLabel">Update Category Name</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="updateCategoryForm">
+                    <div class="form-group">
+                        <label for="newCategoryName">New Category Name</label>
+                        <input type="text" class="form-control" id="newCategoryName" name="newCategoryName" required>
+                        <input type="hidden" id="updateCategoryId" name="categoryId">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary" id="confirmUpdateButton" type="button">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
 
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -67,10 +98,9 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" href="dashboard.html">
+                <!--<a class="nav-link" href="dashboard.html">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
+                    <span>Dashboard</span></a>-->
             </li>
 
             <!-- Divider -->
@@ -216,7 +246,13 @@
                                             <% }); %>
                                         </div>
                                     </div>
-                                    <button class="btn btn-primary" type="submit">Delete</button>
+                                    <div class="centered-row">
+                                        <button class="btn btn-primary" id="updateButton" type="button" style="margin: 10px;">Update</button>
+                                        <button class="btn btn-primary" type="submit" style="margin: 10px;">Delete</button>
+                                        <div id="statusContainer" style="text-align: center; ">
+                                            <input type="checkbox" id="toggleStatus" data-toggle="toggle" data-on="Active" data-off="Deactiv" data-onstyle="primary" data-offstyle="danger">
+                                        </div>
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -324,8 +360,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Bootstrap Toggle JS -->
+        <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
 <script>
     $(document).ready(function () {
+        $('#statusContainer').hide()
         // Event listener for dropdown items
         $('.deleteButton a').on('click', function () {
             // Get the text of the clicked item
@@ -335,6 +375,42 @@
             $('#deleteButton').text(selectedText);
             // Update the dropdown button data-id attribute
             $('#categoryId').val(selectedId);
+
+            fetch('/get-category-status?categoryId=' + selectedId)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        if (data.category.category_status === true) {
+                            $('#toggleStatus').bootstrapToggle('on');
+                        } else {
+                            $('#toggleStatus').bootstrapToggle('off');
+                        }
+                        document.getElementById('statusContainer').style.display = 'block';
+                        $('#toggleStatus').change(function () {
+                            var status = $(this).prop('checked');
+                            var categoryId = $('#itemId').val();
+
+                            if (itemId === "") {
+                                alert('Please select a Category to update');
+                                return;
+                            }
+                            fetch('/update-category-status', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ categoryId: categoryId, status: status }),
+                            }).then(response => response.json())
+                                .then(data => {
+                                    console.log('Success:', data);
+                                }).catch((error) => {
+                                    alert('Failed, please try again')
+                                    console.error('Error:', error);
+                                });
+                        });
+                    }).catch(error => {
+                        console.error('Error fetching item status:', error);
+                    });
         });
 
         $('.addCategory a').on('click', function () {
@@ -413,6 +489,49 @@
                 e.preventDefault();
                 alert('Please Select an Category to delete');
             }
+        });
+
+            // Show modal when Update button is clicked
+        $('#updateButton').on('click', function (e) {
+            // Check if a category is selected
+            var selectedCategoryName = $('#deleteButton').text();
+            var selectedCategoryId = $('#categoryId').val();
+            if (selectedCategoryId === "") {
+                alert('Please Select a Category to update');
+            } else {
+                // Set the selected category name in the modal input
+                $('#newCategoryName').val(selectedCategoryName);
+                $('#updateCategoryId').val(selectedCategoryId);
+                $('#updateModal').modal('show');
+            }
+        });
+
+            // Handle the confirmation of the update
+        $('#confirmUpdateButton').on('click', function () {
+            var newCategoryName = $('#newCategoryName').val();
+            var categoryId = $('#updateCategoryId').val();
+            // Send the updated category name to your backend
+            fetch('/update-category', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ categoryId: categoryId, newCategoryName: newCategoryName })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Category updated successfully!');
+                    location.reload(); // Reload the page to reflect changes
+                } else {
+                    alert('Failed to update category.');
+                }
+                $('#updateModal').modal('hide');
+            }).catch((error) => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+                $('#updateModal').modal('hide');
+            });
         });
     });
 </script>

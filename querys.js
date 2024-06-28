@@ -287,23 +287,30 @@ export async function deleteCategory(db, id) {
     return false;
 }
 
+export async function updateCategoryName(db, category_id, category_name) {
+    const result = await db.query("UPDATE categories SET category_name = $1 WHERE category_id = $2",
+        [category_name, category_id]);
+    if (result.rowCount > 0) {
+        return true;
+    }
+    return false;
+}
+
 export async function getCategoriesWithItems(db, menu_id) {
     let categories = await getCategoriesByMenuId(db, menu_id);
     if (categories === null) {
         return null;
     }
-    
-    //categories.sort((a, b) => b.priority - a.priority);
 
     const result = [];
 
     for (const category of categories) {
         const items = await getItemsByCategory(db, category.category_id);
         
-        if (items.length > 0) {
-            //items.sort((a, b) => a.priority - b.priority);
+        if (items.length > 0 ) {
 
-            const items_list = await Promise.all(items.map(async item => {
+            const activeItems = items.filter(item => item.item_status !== false);
+            const items_list = await Promise.all(activeItems.map(async item => {
                 const image = await 'data:image/png;base64,' + await convertArrayBufferToBase64(item.image);
                 return {
                     item_name: item.item_name,
@@ -315,12 +322,15 @@ export async function getCategoriesWithItems(db, menu_id) {
                 };
             }));
 
-            result.push({
-                category_name: category.category_name,
-                priority: category.priority,
-                category_id: category.category_id,
-                items: items_list
-            });
+            if (items_list.length > 0 && category.category_status !== false)
+            {
+                result.push({
+                    category_name: category.category_name,
+                    priority: category.priority,
+                    category_id: category.category_id,
+                    items: items_list
+                });
+            }
         }
     }
     console.log(result);

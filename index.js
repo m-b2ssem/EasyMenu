@@ -37,7 +37,8 @@ import {
   getItemByItemId,
   updateItem,
   getCategoryByCategoryId,
-  updateItemStatus
+  updateItemStatus,
+  updateCategoryName
 } from './querys.js';
 import {createLangaugeList, convertArrayBufferToBase64, cehckSizeandConvertTOBytea} from './helperFunctions.js';
 import passport from 'passport';
@@ -113,7 +114,13 @@ app.get('/menu/:menuid/:res', async (req, res) => {
   const menuid = req.params.menuid;
 
   const result = await getMenuByMenuId(db, menuid);
+  if (!result) {
+    return res.json({ success: false, message: 'menu doesnt exict.'});
+  }
   const menu = result[0];
+  if (!menu) {
+    return res.json({ success: false, message: 'menu doesnt exict.'});
+  }
   const menu_design = await getDesignByMenuId(db, menuid);
   const language = await createLangaugeList(menu.menu_language);
   let categories = await getCategoriesWithItems(db, menuid);
@@ -138,6 +145,7 @@ app.get('/menu/:menuid/:res', async (req, res) => {
     'background_color': bachground_color
   });
 });
+
 
 
 /*.VIpgJd-ZVi9od-ORHb-OEVmcd{
@@ -256,7 +264,15 @@ app.post('/deletecategory', async (req, res) => {
   res.redirect('/management/category/' + req.user.user_id);
 });
 
+app.post('/update-category', async (req, res) => {
+  const {categoryId, newCategoryName} = req.body;
 
+  const result = await updateCategoryName(db, categoryId, newCategoryName);
+  if (!result) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  res.json({ success: true });
+});
 
 
 // get all categories from the database by menu id and return them as JSON
@@ -269,6 +285,16 @@ app.get('/get-categories', async (req, res) => {
 
   categories = await categories.sort((a, b) => b.priority - a.priority);
   res.json({categories});
+});
+
+
+app.get('/get-category-status', async (req, res) => {
+  const categoryId = parseInt(req.query.categoryId);
+  const category = await getCategoryByCategoryId(db, categoryId);
+  if (!category) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  res.json({category});
 });
 
 app.post('/reorder-categories', async(req, res) => {
@@ -476,6 +502,7 @@ app.get('/management/profile/:user_id', async (req, res) => {
     res.redirect('/login');
   }
 });
+
 
 
 

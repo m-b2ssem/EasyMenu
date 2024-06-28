@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { name } from 'ejs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -14,7 +15,11 @@ export function createLangaugeList(language) {
         { name: 'عربي', code: 'ar' }, // Arabic
         { name: 'Deutsch', code: 'de' }, // German
         { name: 'Türkçe', code: 'tr' }, // Turkish
-        { name: 'Español', code: 'es' } // Spanish
+        { name: 'Español', code: 'es' }, // Spanish
+        {name: 'français', code: 'fr'}, // French
+        {name: 'italiano', code: 'it'}, // Italian
+        {name: '日本語', code: 'ja'}, // Japanese
+        {name: 'Slovak', code: 'sk'}, // Slovak
     ];
 
     const primaryLanguage = allLanguages.find(lang => lang.name === language);
