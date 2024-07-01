@@ -333,7 +333,6 @@ export async function getCategoriesWithItems(db, menu_id) {
             }
         }
     }
-    console.log(result);
     return result;
 }
 

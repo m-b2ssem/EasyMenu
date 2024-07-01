@@ -49,8 +49,6 @@ import multer from 'multer';
 import { get } from 'http';
 
 
-
-
 let stripe_key = process.env.STRIPE_KEY;
 const stripe = new Stripe(stripe_key);
 config();
@@ -94,7 +92,9 @@ app.use(passport.session());
 const PORT = process.env.PORT;  // const PORT = 3000;
 const saltRounds = 10;
 
-
+app.get('/test', (req, res) => {
+  res.sendFile(path.join(__dirname, 'test.html'));
+})
 
 
 app.get('/', (req, res) => {

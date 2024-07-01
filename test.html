@@ -1,14 +1,147 @@
-<form onsubmit="upload(event)">
-    <!-- your form fields -->
-    <div style="position: relative;margin-top: 15px;">
-        <div class="col" style="text-align: center;"><label class="col-form-label"
-                style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">Menu Logo</label></div>
-        <div class="col" style="text-align: center;"><input required name="image" type="file" accept="image/*" 
-                style="border-radius: 4px;border-width: 0px;position: relative;" /></div>
-    </div>
-    <div
-        style="position: relative;margin-top: 40px;text-align: center;color: var(--bs-btn-disabled-color);">
-        <button class="btn btn-primary" type="submit"
-            style="background: rgb(42,208,28);position: relative;filter: brightness(96%) contrast(93%);backdrop-filter: blur(46px);transform: perspective(0px) translate(0px);">Add
-            Upload Image</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Google Translate</title>
+    <style>
+        #custom_translate_container {
+            background-color: #f1f1f1;
+            border-radius: 8px;
+            padding: 10px;
+            max-width: 300px;
+            margin: 0 auto;
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #custom_translate_container #google_translate_element {
+            display: inline-block;
+        }
+
+        .goog-te-gadget-simple {
+            border: none !important;
+            background-color: #4CAF50 !important;
+            color: white !important;
+            border-radius: 4px !important;
+            padding: 5px 10px !important;
+            font-size: 14px !important;
+            cursor: pointer !important;
+            text-transform: uppercase;
+        }
+
+        .goog-te-gadget-simple a {
+            color: white !important;
+            text-decoration: none !important;
+        }
+
+        .goog-te-gadget-simple .goog-te-menu-value span {
+            display: none;
+        }
+
+        .goog-te-gadget-simple .goog-te-menu-value span:first-child {
+            display: inline-block;
+        }
+
+        .goog-te-gadget-simple .goog-te-menu-value {
+            padding: 0 !important;
+        }
+
+        .goog-te-gadget-icon {
+            display: none !important;
+        }
+
+        .goog-te-banner-frame.skiptranslate {
+            display: none !important;
+        }
+
+        body {
+            top: 0 !important;
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="custom_translate_container">
+    <div id="google_translate_element"></div>
+</div>
+
+<script>
+(function() {
+    console.log("Loading Google Translate script");
+    var e = document.createElement("script");
+    e.type = "text/javascript";
+    e.async = true;
+    e.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+    var a = document.getElementsByTagName("script")[0];
+    a.parentNode.insertBefore(e, a);
+})();
+
+function googleTranslateElementInit() {
+    console.log("Initializing Google Translate Element");
+    new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'es,fr,de,it,ja,zh-CN,ar,ru',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+    }, 'google_translate_element');
+}
+
+function applyCustomStyles() {
+    console.log("Applying custom styles");
+    var iframe = document.querySelector('iframe.VIpgJd-ZVi9od-xl07Ob-OEVmcd');
+    if (iframe) {
+        var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        console.log(iframeDoc);
+        var style = document.createElement('style');
+        style.textContent = `
+            .VIpgJd-ZVi9od-vH1Gmf {
+                width: 300px !important;
+            }
+
+            .goog-te-menu2 {
+                max-width: 300px !important;
+                overflow: hidden !important;
+                border: 1px solid #ddd !important;
+                border-radius: 8px !important;
+                background-color: #fff !important;
+            }
+
+            .goog-te-menu2-item div,
+            .goog-te-menu2-item-selected {
+                padding: 10px !important;
+                font-size: 14px !important;
+                color: #333 !important;
+                background-color: #fff !important;
+            }
+
+            .indicator{
+                display: none !important;
+            }
+
+                    .VIpgJd-ZVi9od-vH1Gmf-ibnC6b-gk6SMd {
+            display: none !important;
+        }
+
+            .goog-te-menu2-item div:hover,
+            .goog-te-menu2-item-selected {
+                background-color: #4CAF50 !important;
+                color: white !important;
+            }
+        `;
+        iframeDoc.head.appendChild(style);
+    } else {
+        console.log("Iframe not found, retrying...");
+        setTimeout(applyCustomStyles, 500);
+    }
+}
+
+// Wait for the iframe to load and then apply styles
+window.addEventListener('load', function() {
+    setTimeout(applyCustomStyles, 500);
+});
+</script>
+
+</body>
+</html>

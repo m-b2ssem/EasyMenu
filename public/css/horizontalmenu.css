@@ -29,7 +29,7 @@ div.scrollmenu::-webkit-scrollbar {
     display: inline-block;
     color: black;
     text-align: center;
-    padding: 14px;
+    padding: 7px 14px;
     padding-left: 0px, 10px, 0px, 10px;
     text-decoration: none;
     border-radius: 8px;
