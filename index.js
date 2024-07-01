@@ -9,6 +9,7 @@ import pg from 'pg';
 import session from 'express-session';
 import { 
   selectUserByEmail,
+  getUserIdByMenuId,
   checkIfUserExist,
   insertUser,
   insertMenu,
@@ -121,6 +122,8 @@ app.get('/menu/:menuid/:res', async (req, res) => {
   if (!menu) {
     return res.json({ success: false, message: 'menu doesnt exict.'});
   }
+  let user = await selectUserById(db, menu.user_id);
+  user = user.rows[0];
   const menu_design = await getDesignByMenuId(db, menuid);
   const language = await createLangaugeList(menu.menu_language);
   let categories = await getCategoriesWithItems(db, menuid);
@@ -142,7 +145,8 @@ app.get('/menu/:menuid/:res', async (req, res) => {
     'backgroundImage': logo,
     'currency': currency,
     'language': language,
-    'background_color': bachground_color
+    'background_color': bachground_color,
+    'user': user
   });
 });
 

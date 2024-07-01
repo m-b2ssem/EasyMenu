@@ -311,7 +311,7 @@ export async function getCategoriesWithItems(db, menu_id) {
 
             const activeItems = items.filter(item => item.item_status !== false);
             const items_list = await Promise.all(activeItems.map(async item => {
-                const image = await 'data:image/png;base64,' + await convertArrayBufferToBase64(item.image);
+                const image =  'data:image/png;base64,' + await convertArrayBufferToBase64(item.image);
                 return {
                     item_name: item.item_name,
                     description: item.description,
@@ -359,4 +359,11 @@ export async function updatePassword(db, user_id, hash) {
         return true;
     }
     return false;
+}
+
+
+export async function getUserIdByMenuId(db, menu_id) {
+    const result = await db.query("SELECT user_id FROM menus WHERE menu_id = $1",
+        [menu_id]);
+    return result.rows[0];
 }
