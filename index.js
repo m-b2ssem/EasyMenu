@@ -585,9 +585,10 @@ app.post('/create-checkout-session', async (req, res) => {
   if (req.isAuthenticated()){
     console.log('subscription: ', subscription, userId);
     try {
+      const  stringUserId = userId.toString();
       const sessionStripe = await stripe.checkout.sessions.create({
-        success_url: "http://localhost:8080/success/" + userId + "/" + subscription,
-        cancel_url: "http://localhost:8080",
+        success_url: "http://easymenu.systems/success/" + userId + "/" + subscription,
+        cancel_url: "http://easymenu.systems/management/profile/"+ userId,
         line_items: [
           {
             price: process.env.PRICE_ID,
@@ -596,10 +597,11 @@ app.post('/create-checkout-session', async (req, res) => {
         ],
         mode: "subscription",
       });
+      console.log(sessionStripe);
       const plan = await selectSubscrptionPlanByUserId(db, userId);
       const response_1 = await selectSubscrptionByUserId(db, userId);
       if (response_1){
-        await updateSubscription(db, userId, sessionStripe.id,null,null,null, false);
+        await updateSubscription(db, userId, null, sessionStripe.id,null,null,null, false);
       }
       else{
         const result = await insertSubscription(db, plan.plan_id, userId, sessionStripe.id);
@@ -614,6 +616,7 @@ app.post('/create-checkout-session', async (req, res) => {
     }
   }
 });
+
 
 app.get('/success/:userId/:subscription', async (req, res) => {
   const userId = parseInt(req.params.userId);
