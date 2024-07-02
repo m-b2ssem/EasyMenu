@@ -60,3 +60,17 @@ export async function cehckSizeandConvertTOBytea(file) {
     }
 }
 
+export async function  formatDate(date) {
+    const pad = (num, size) => String(num).padStart(size, '0');
+
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1, 2); // Months are zero-indexed
+    const day = pad(date.getDate(), 2);
+    const hours = pad(date.getHours(), 2);
+    const minutes = pad(date.getMinutes(), 2);
+    const seconds = pad(date.getSeconds(), 2);
+    const milliseconds = pad(date.getMilliseconds(), 3);
+    const microseconds = '000'; // JavaScript Date object does not support microseconds
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}${microseconds}`;
+}

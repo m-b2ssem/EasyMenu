@@ -394,9 +394,9 @@ export async function selectSubscrptionByUserId(db, user_id) {
     return result.rows[0];
 }
 
-export async function updateSubscription(db, user_id, stripe_session_id) {
-    const result = await db.query("UPDATE subscriptions SET stripe_session_id = $1 WHERE user_id = $2",
-        [stripe_session_id, user_id]);
+export async function updateSubscription(db, user_id, stripe_customer_id,stripe_session_id, start_date, end_date, status, paid) {
+    const result = await db.query("UPDATE subscriptions SET stripe_session_id = $1, start_date = $2, end_date = $3, status = $4, paid = $5, stripe_customer_id = $6 WHERE user_id = $7",
+        [stripe_session_id, start_date, end_date, status, paid, stripe_customer_id, user_id]);
     if (result.rowCount > 0) {
         return true;
     }

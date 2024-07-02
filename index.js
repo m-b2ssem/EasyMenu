@@ -46,7 +46,7 @@ import {
   selectSubscrptionByUserId,
   updateSubscription,
 } from './querys.js';
-import {createLangaugeList, convertArrayBufferToBase64, cehckSizeandConvertTOBytea} from './helperFunctions.js';
+import {createLangaugeList, convertArrayBufferToBase64, cehckSizeandConvertTOBytea, formatDate} from './helperFunctions.js';
 import {sendEmail} from './sendEmail.js';
 import passport from 'passport';
 import { Strategy } from 'passport-local';
@@ -599,7 +599,7 @@ app.post('/create-checkout-session', async (req, res) => {
       const plan = await selectSubscrptionPlanByUserId(db, userId);
       const response_1 = await selectSubscrptionByUserId(db, userId);
       if (response_1){
-        await updateSubscription(db, userId, sessionStripe.id);
+        await updateSubscription(db, userId, sessionStripe.id,null,null,null, false);
       }
       else{
         const result = await insertSubscription(db, plan.plan_id, userId, sessionStripe.id);
@@ -620,7 +620,6 @@ app.get('/success/:userId/:subscription', async (req, res) => {
   const subscription = req.params.subscription;
 
   const response = await selectSubscrptionByUserId(db, userId);
-  console.log("response: ", response);
   const user = await selectUserById(db, userId);
 
   if (!response.stripe_session_id) {
@@ -630,18 +629,22 @@ app.get('/success/:userId/:subscription', async (req, res) => {
       'year': new Date().getFullYear(),
       'message': 'Something went wrong, please try again.'
     });
-  }
-
-  try {
-    const session = await stripe.checkout.sessions.retrieve(response.stripe_session_id);
-    console.log("session: ", session);
-  } catch (error) {
-    return res.render('profile.ejs', {
-      'user': user.rows[0],
-      'subscription_plan': 'none',
-      'year': new Date().getFullYear(),
-      'message': 'Something went wrong, please try again.'
-    });
+  }else{
+    try {
+      const session = await stripe.checkout.sessions.retrieve(response.stripe_session_id);
+      if (session.payment_status === 'paid' && session.status === 'complete'){
+        const customer_id = session.customer;
+        const today = new Date();
+        let futureDate = new Date(today);
+        futureDate.setDate(today.getDate() + 35); // Add 35 days
+        const start_date = await formatDate(today);
+        const end_date = await formatDate(futureDate);
+        const paid = true;
+        const respone_2 = await updateSubscription(db, userId, customer_id, session.id, start_date, end_date, 'activ', paid);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 });
 
