@@ -139,20 +139,22 @@
                     <div style="border-bottom-style: solid; padding: 20px;">
                         <h3>User Information</h3>
                         <p><strong>Email:</strong> <%= user.email %></p>
-                        <p><strong>Company Name:</strong> <%= user.company_name %></p>
-                        <p><strong>Current Subscription:</strong> <%= user.subscription %></p>
+                        <p><strong>Company Name: </strong> <%= user.company_name %></p>
+                        <p><strong>Current Subscription: </strong> <%= subscription_plan.plan_name %></p>
+                        <p><strong>Total Durations : </strong> <%= subscription_plan.duration_days %> days</p>
+                        <p><strong>Status : </strong> <%= subscription_plan.status %></p>
                     </div>
 
                     <!-- Change Subscription Section -->
                     <div style="border-bottom-style: solid; padding: 20px;">
                         <h3>Change Subscription</h3>
-                        <form action="/change-subscription" method="post">
+                        <form onsubmit="changeSubscrption(event)">
                             <div class="form-group">
                                 <label for="subscription">Select Subscription:</label>
                                 <select class="form-control" id="subscription" name="subscription">
                                     <option value="basic">Basic</option>
-                                    <option value="standard">Standard</option>
-                                    <option value="premium">Premium</option>
+                                    <!--<option value="standard">Standard</option>
+                                    <option value="premium">Premium</option>-->
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-primary">Change Subscription</button>
@@ -214,7 +216,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2020</span>
+                        <span>Copyright &copy; Your Website <%= year %></span>
                     </div>
                 </div>
             </footer>
@@ -295,6 +297,29 @@
             errorLabel.style.display = 'block';
         }
     }
+
+    async function changeSubscrption(event) {
+        event.preventDefault();
+        const subscription = document.getElementById('subscription').value;
+        const userId = '<%= user.user_id %>';
+        console.log(subscription);
+
+        try {
+            const response = await fetch('/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ subscription, userId })
+            });
+
+            const { url } = await response.json();
+            window.location = url;
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
 </script>
 
 </body>

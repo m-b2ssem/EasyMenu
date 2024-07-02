@@ -180,6 +180,7 @@ CREATE TABLE subscription_plans (
   plan_id SERIAL PRIMARY KEY,
   plan_name VARCHAR(100) NOT NULL,
   user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+  subscription_id VARCHAR(50) UNIQUE NOT NULL,
   price DECIMAL(10, 2) NOT NULL,
   duration_days INT NOT NULL, -- Duration of the subscription in days
   start_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

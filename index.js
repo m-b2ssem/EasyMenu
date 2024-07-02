@@ -17,6 +17,7 @@ import {
   deleteItem,
   findHeighestPriority,
   insertItem,
+  insertSubscriptionPlan,
   getItemsByCategory,
   getDesignByMenuId,
   updateColoInDesign,
@@ -39,9 +40,14 @@ import {
   updateItem,
   getCategoryByCategoryId,
   updateItemStatus,
-  updateCategoryName
+  updateCategoryName,
+  selectSubscrptionPlanByUserId,
+  insertSubscription,
+  selectSubscrptionByUserId,
+  updateSubscription,
 } from './querys.js';
 import {createLangaugeList, convertArrayBufferToBase64, cehckSizeandConvertTOBytea} from './helperFunctions.js';
+import {sendEmail} from './sendEmail.js';
 import passport from 'passport';
 import { Strategy } from 'passport-local';
 import bcrypt from 'bcrypt';
@@ -122,6 +128,16 @@ app.get('/menu/:menuid/:res', async (req, res) => {
   if (!menu) {
     return res.json({ success: false, message: 'menu doesnt exict.'});
   }
+  const response = await selectSubscrptionPlanByUserId(db, menu.user_id);
+  const createdAt = new Date(response.created_at);
+  const expirationDate = new Date(createdAt);
+  expirationDate.setDate(expirationDate.getDate() + response.duration_days);
+  const today = new Date();
+  const isPlanValid = expirationDate > today;
+
+//implament it later to display just when the plan is valid
+
+
   let user = await selectUserById(db, menu.user_id);
   user = user.rows[0];
   const menu_design = await getDesignByMenuId(db, menuid);
@@ -489,8 +505,28 @@ app.get('/management/profile/:user_id', async (req, res) => {
     const user_id = parseInt(req.params.user_id);
     const result = await selectUserById(db, user_id);
     if (result.rows.length > 0) {
+      let subscription_plan = await selectSubscrptionPlanByUserId(db, user_id);
+
+      const createdAt = new Date(subscription_plan.created_at);
+      const expirationDate = new Date(createdAt);
+      expirationDate.setDate(expirationDate.getDate() + subscription_plan.duration_days);
+      const today = new Date();
+      const isPlanValid = expirationDate > today;
+      if (isPlanValid) {
+        subscription_plan.status = 'active';
+      }
+      else {
+        subscription_plan.status = 'expired';
+      }
+      if (subscription_plan.plan_name === 'free_trial') {
+        subscription_plan.plan_name = 'free trial';
+      }
+
       const user = result.rows[0];
-      res.render('profile.ejs', {'user': user, 'year': new Date().getFullYear()});
+      res.render('profile.ejs', {
+        'user': user,
+        'subscription_plan': subscription_plan,
+        'year': new Date().getFullYear()});
     }    
     else
     {
@@ -542,6 +578,75 @@ app.post('/change-pass', async (req, res) => {
 
 
 
+// stripe subscription
+
+app.post('/create-checkout-session', async (req, res) => {
+  const { subscription, userId } = req.body;
+  if (req.isAuthenticated()){
+    console.log('subscription: ', subscription, userId);
+    try {
+      const sessionStripe = await stripe.checkout.sessions.create({
+        success_url: "http://localhost:8080/success/" + userId + "/" + subscription,
+        cancel_url: "http://localhost:8080",
+        line_items: [
+          {
+            price: process.env.PRICE_ID,
+            quantity: 1,
+          },
+        ],
+        mode: "subscription",
+      });
+      const plan = await selectSubscrptionPlanByUserId(db, userId);
+      const response_1 = await selectSubscrptionByUserId(db, userId);
+      if (response_1){
+        await updateSubscription(db, userId, sessionStripe.id);
+      }
+      else{
+        const result = await insertSubscription(db, plan.plan_id, userId, sessionStripe.id);
+      }
+  
+
+  
+      return res.json({ url: sessionStripe.url });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ error: error.message });
+    }
+  }
+});
+
+app.get('/success/:userId/:subscription', async (req, res) => {
+  const userId = parseInt(req.params.userId);
+  const subscription = req.params.subscription;
+
+  const response = await selectSubscrptionByUserId(db, userId);
+  console.log("response: ", response);
+  const user = await selectUserById(db, userId);
+
+  if (!response.stripe_session_id) {
+    return res.render('profile.ejs', {
+      'user': user.rows[0],
+      'subscription_plan': 'none',
+      'year': new Date().getFullYear(),
+      'message': 'Something went wrong, please try again.'
+    });
+  }
+
+  try {
+    const session = await stripe.checkout.sessions.retrieve(response.stripe_session_id);
+    console.log("session: ", session);
+  } catch (error) {
+    return res.render('profile.ejs', {
+      'user': user.rows[0],
+      'subscription_plan': 'none',
+      'year': new Date().getFullYear(),
+      'message': 'Something went wrong, please try again.'
+    });
+  }
+});
+
+
+
 app.post('/register', async (req, res) => {
   const { campanyName, email, password } = req.body;
 
@@ -561,6 +666,8 @@ app.post('/register', async (req, res) => {
         const result = await insertUser(db, campanyName, lowerCaseEmail, hash);
         const result_2 = await insertMenu(db, result.rows[0].user_id, campanyName);
         const result_3 = await insertDesign(db, result_2.rows[0].menu_id);
+        const result_4 = await insertSubscriptionPlan(db, 'free_trial', result.rows[0].user_id, 0, 30);
+        //const result_5 = await insertSubscription()
         const result_user = result.rows[0];
 
         req.login(result_user, (err) => {

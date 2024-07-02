@@ -367,3 +367,38 @@ export async function getUserIdByMenuId(db, menu_id) {
         [menu_id]);
     return result.rows[0];
 }
+
+export async function insertSubscriptionPlan(db, plan_name, user_id, price, duration_days) {
+    const result = await db.query("INSERT INTO subscription_plans (plan_name, user_id, price, duration_days) VALUES($1, $2, $3, $4) RETURNING *",
+        [plan_name, user_id, price, duration_days]);
+    return result;
+}
+
+
+export async function selectSubscrptionPlanByUserId(db, user_id) {
+    const result = await db.query("SELECT * FROM subscription_plans WHERE user_id = $1",
+        [user_id]);
+    return result.rows[0];
+}
+
+export async function insertSubscription(db, plan_id, user_id, stripe_session_id) {
+    const result = await db.query("INSERT INTO subscriptions (plan_id, user_id, stripe_session_id) VALUES($1, $2, $3) RETURNING *",
+        [plan_id, user_id, stripe_session_id]);
+    return result;
+}
+
+
+export async function selectSubscrptionByUserId(db, user_id) {
+    const result = await db.query("SELECT * FROM subscriptions WHERE user_id = $1",
+        [user_id]);
+    return result.rows[0];
+}
+
+export async function updateSubscription(db, user_id, stripe_session_id) {
+    const result = await db.query("UPDATE subscriptions SET stripe_session_id = $1 WHERE user_id = $2",
+        [stripe_session_id, user_id]);
+    if (result.rowCount > 0) {
+        return true;
+    }
+    return false;
+}

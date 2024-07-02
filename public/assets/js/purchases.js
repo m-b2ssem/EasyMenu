@@ -35,22 +35,22 @@ function handleSubscription(event, subscriptionType) {
     .catch(err => console.error(err));
 }
 
-document.addEventListener('DOMContentLoaded', (event) => {
-    const purchaseButton12  = document.getElementById('purchase12');
-    const purchaseButton25 = document.getElementById('purchase25');
-    const purchaseButton50 = document.getElementById('purchase50');
-    const trailerButton = document.getElementById('trailerButton');
+function submitForm(event, planId) {
+    event.preventDefault();
 
-    if (purchaseButton12) {
-        purchaseButton12.addEventListener('click', (event) => handleSubscription(event, '12'));
+    if (!planId) {
+        return;
+    }else if (planId == 'free') {
+        window.location = '/login';
+    }else if ( planId == 'basic') {
+        fetch('/subscribe', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include', // Include cookies in the request
+            body: JSON.stringify({ planId })
+        });
     }
-    if (purchaseButton25) {
-        purchaseButton25.addEventListener('click', (event) => handleSubscription(event, '25'));
-    }
-    if (purchaseButton50) {
-        purchaseButton50.addEventListener('click', (event) => handleSubscription(event, '50'));
-    }
-    if (trailerButton) {
-        trailerButton.addEventListener('click', (event) => handleSubscription(event, 'trail'));
-    }
-});
+  }
+
