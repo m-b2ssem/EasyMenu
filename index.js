@@ -45,6 +45,7 @@ import {
   insertSubscription,
   selectSubscrptionByUserId,
   updateSubscription,
+  deleteAccount,
 } from './querys.js';
 import {createLangaugeList, convertArrayBufferToBase64, cehckSizeandConvertTOBytea, formatDate} from './helperFunctions.js';
 import {sendEmail} from './sendEmail.js';
@@ -128,6 +129,7 @@ app.get('/menu/:menuid/:res', async (req, res) => {
   if (!menu) {
     return res.json({ success: false, message: 'menu doesnt exict.'});
   }
+
   const response = await selectSubscrptionPlanByUserId(db, menu.user_id);
   const createdAt = new Date(response.created_at);
   const expirationDate = new Date(createdAt);
@@ -396,7 +398,6 @@ app.post('/deleteitem', async(req, res) => {
 
 
 
-
 // to do. I need to add  item to the database
 
 const upload = multer();
@@ -587,8 +588,8 @@ app.post('/create-checkout-session', async (req, res) => {
     try {
       const  stringUserId = userId.toString();
       const sessionStripe = await stripe.checkout.sessions.create({
-        success_url: "http://easymenu.systems/success/" + userId + "/" + subscription,
-        cancel_url: "http://easymenu.systems/management/profile/"+ userId,
+        success_url: "http://easymenu.eu/success/" + userId + "/" + subscription,
+        cancel_url: "http://easymenu.eu/management/profile/"+ userId,
         line_items: [
           {
             price: process.env.PRICE_ID,
@@ -597,7 +598,6 @@ app.post('/create-checkout-session', async (req, res) => {
         ],
         mode: "subscription",
       });
-      console.log(sessionStripe);
       const plan = await selectSubscrptionPlanByUserId(db, userId);
       const response_1 = await selectSubscrptionByUserId(db, userId);
       if (response_1){
@@ -649,6 +649,27 @@ app.get('/success/:userId/:subscription', async (req, res) => {
       console.log(error);
     }
   }
+});
+
+
+app.post('/delete-account', async (req, res) => {
+  const { userId } = req.body;
+  console.log(userId);
+
+
+  const subscription = await selectSubscrptionByUserId(db, userId);
+  if (subscription.stripe_customer_id) {
+    try {
+      await stripe.customers.del(subscription.stripe_customer_id);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const result = await deleteAccount(db, userId);
+  if (!result) {
+    return res.json({ success: false });
+  }
+  res.json({ success: true });
 });
 
 
@@ -723,7 +744,7 @@ passport.use(
           }
         }); 
       } else {
-        return cb("User not found.");
+        return cb(null, false);
       }
     } catch (error) {
       cb(error);

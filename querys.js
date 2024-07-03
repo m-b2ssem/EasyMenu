@@ -402,3 +402,12 @@ export async function updateSubscription(db, user_id, stripe_customer_id,stripe_
     }
     return false;
 }
+
+export async function deleteAccount(db, user_id) {
+    const result = await db.query("DELETE FROM users WHERE user_id = $1",
+        [user_id]);
+    if (result.rowCount > 0) {
+        return true;
+    }
+    return false;
+}

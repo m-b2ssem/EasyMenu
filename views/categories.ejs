@@ -52,6 +52,32 @@
 </head>
 
 <body id="page-top">
+
+  <!-- ***** Preloader Start ***** -->
+  <div id="js-preloader" class="js-preloader">
+    <div class="preloader-inner">
+      <span class="dot"></span>
+      <div class="dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </div>
+  <!-- ***** Preloader End ***** -->
+
+  <!-- ***** Header Area Start ***** -->
+  <link rel="alternate" hreflang="en" href="https://easymenu.systems">
+<link rel="alternate" hreflang="de" href="https://de.easymenu.systems">
+<script type="text/javascript" src="https://cdn.weglot.com/weglot.min.js"></script>
+<script>
+    Weglot.initialize({
+        api_key: 'wg_ccdc61525b763853033f4669bd1f972d2'
+    });
+</script>
+
+
+
 <!-- Update Modal-->
 <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -113,6 +139,7 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item active">
+                <a class="nav-link" href="/management/profile/<%= user.user_id %>"><i class="fas fa-fw fa-cog"></i><span>Profile</span></a>
                 <a class="nav-link" href="/management/menu/<%= user.user_id %>"><i class="fas fa-fw fa-cog"></i><span>Menus</span></a>
                 <a class="nav-link" href="/management/category/<%= user.user_id %>"><i class="fas fa-fw fa-cog"></i><span>Categories</span></a>
                 <a class="nav-link" href="/management/items/<%= user.user_id %>"><i class="fas fa-fw fa-cog"></i><span>Items</span></a>
