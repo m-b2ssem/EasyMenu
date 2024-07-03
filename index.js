@@ -147,7 +147,7 @@ app.get('/menu/:menuid/:res', async (req, res) => {
   let categories = await getCategoriesWithItems(db, menuid);
   let logo = await getLogoImage(db, menuid);
   if (!logo) {
-    logo = 'http://www.easymenus.eu/images/logo.png';
+    logo = path.join(__dirname, '/public/img/mainlogo.jpg');
   }
   else{
     logo = 'data:image/png;base64,' + await convertArrayBufferToBase64(logo);
@@ -155,7 +155,6 @@ app.get('/menu/:menuid/:res', async (req, res) => {
   if (!categories) {
     categories = [];
   }
-  const backgroundImage = 'http://www.easymenus.eu/images/background.jpg';
   const currency = '€';
   const bachground_color = menu_design.background_color;
   res.render('horizontal_menu.ejs', {
