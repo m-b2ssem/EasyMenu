@@ -41,7 +41,7 @@ export async function insertMenu(db, user_id, campanyName) {
         );
         if (result.rows.length > 0) {
             const menu_id = result.rows[0].menu_id;
-            const toQrcode = 'https://www.easymenu.systems/menu/' + menu_id + '/' + campanyName.replace(/\s+/g, '');
+            const toQrcode = 'https://www.easymenus.eu/menu/' + menu_id + '/' + campanyName.replace(/\s+/g, '');
             const qrCodeDataUrl = await QRCode.toDataURL(toQrcode);
             const base64Data = qrCodeDataUrl.replace(/^data:image\/png;base64,/, '');
             const qrCodeBuffer = Buffer.from(base64Data, 'base64');
