@@ -147,7 +147,7 @@ app.get('/menu/:menuid/:res', async (req, res) => {
   let categories = await getCategoriesWithItems(db, menuid);
   let logo = await getLogoImage(db, menuid);
   if (!logo) {
-    logo = path.join(__dirname, '/public/img/mainlogo.jpg');
+    logo ='https://easymenus.eu/img/mainlogo.jpg';
   }
   else{
     logo = 'data:image/png;base64,' + await convertArrayBufferToBase64(logo);
