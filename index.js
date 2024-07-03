@@ -180,7 +180,7 @@ app.get('/management/menu/:userid', async (req, res) => {
       let name_of_menu =  menu.menu_name.replace(/\s+/g, '');
       name_of_menu = name_of_menu.toLowerCase();
 
-      const menu_name = 'http://www.easymenus.eu/menu/' + menu.menu_id +'/' + name_of_menu;
+      const menu_name = 'https://www.easymenus.eu/menu/' + menu.menu_id +'/' + name_of_menu;
       const langauges = await createLangaugeList(menu.menu_language);
       const image = await 'data:image/png;base64,' + await convertArrayBufferToBase64(menu.qr_code);
       const menuDesign = await getDesignByMenuId(db, menu.menu_id);
