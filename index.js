@@ -142,8 +142,7 @@ app.post('/forgot-password', async (req, res) => {
     await updateResetPassword(db, lowerCaseEmail, token, resetPasswordExpires);
 
     const resetLink = `http://easymenus.eu/reset-password?token=${token}`;
-    let registerTemplate = fs.readFileSync(path.join(__dirname, '/public/pages/email-template.html'), 'utf8');
-    registerTemplate = registerTemplate.replace('%company_name%', "There");
+    let registerTemplate = fs.readFileSync(path.join(__dirname, '/public/pages/forgot-password-template.html'), 'utf8');
     registerTemplate = registerTemplate.replace('%link%', resetLink);
 
     await sendEmail(lowerCaseEmail, 'Reset your password', registerTemplate);
@@ -789,11 +788,9 @@ app.post('/register', async (req, res) => {
         const result_2 = await insertMenu(db, result.rows[0].user_id, campanyName);
         const result_3 = await insertDesign(db, result_2.rows[0].menu_id);
         const result_4 = await insertSubscriptionPlan(db, 'free_trial', result.rows[0].user_id, 0, 30);
-        let registerTemplate = fs.readFileSync(path.join(__dirname, '/public/pages/email-template.html'), 'utf8');
-        registerTemplate = registerTemplate.replace('%link%', ' ');
-        registerTemplate = registerTemplate.replace('%%company_name%%', campanyName);
+        let registerTemplate = fs.readFileSync(path.join(__dirname, '/public/pages/register-template.html'), 'utf8');
 
-        await sendEmail(lowerCaseEmail, 'Welcome to Easy Menu', registerTemplate);
+        await sendEmail(lowerCaseEmail, 'Welcome to Easy Menu – Your Registration is Complete!', registerTemplate);
         const result_user = result.rows[0];
 
         req.login(result_user, (err) => {
@@ -807,6 +804,11 @@ app.post('/register', async (req, res) => {
       }
     });
   }
+});
+
+app.get('/zz', async (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/pages/forgot-password-template.html'));
+
 });
 
 
