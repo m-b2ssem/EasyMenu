@@ -1,9 +1,12 @@
 import axios from 'axios';
 import { config } from 'dotenv';
+import nodemailer from 'nodemailer';
+import crypto from 'crypto';
+import { Template } from 'ejs';
 
 config();
 
-export async function sendEmail(name, email, subject, message) {
+/*export async function sendEmail(name, email, subject, message) {
     const data = JSON.stringify({
       "Messages": [{
         "From": {"Email": "basemmahdi1997@gmail.com", "Name": "Easy Menu"},
@@ -29,5 +32,36 @@ export async function sendEmail(name, email, subject, message) {
         console.log('erroei is ', error);
       });
   
-  }
+  }*/ 
 
+      // Configure Nodemailer
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'youreasymenus@gmail.com',
+    pass: 'jlss bbuv ycyp zlrr'
+  }
+});
+
+export async function sendEmail(email, subject, template) {
+  const mailOptions = {
+    from: 'youreasymenus@gmail.com',
+    to: email,
+    subject: subject,
+    html: template,
+  };
+
+  transporter.sendMail(mailOptions, function(error, info) {
+    if (error) {
+      console.log(error);
+    }
+  });
+}
+
+
+
+
+
+export async function generateResetToken() {
+  return crypto.randomBytes(32).toString('hex');
+}

@@ -33,7 +33,6 @@ import {
   getLogoImage,
   updateItemPriority,
   selectUserById,
-  updatePassword,
   getMenuByUserId,
   getMenuByMenuId,
   getItemByItemId,
@@ -46,15 +45,17 @@ import {
   selectSubscrptionByUserId,
   updateSubscription,
   deleteAccount,
+  updateResetPassword,
+  selectUserByToken,
+  updatePassword,
 } from './querys.js';
 import {createLangaugeList, convertArrayBufferToBase64, cehckSizeandConvertTOBytea, formatDate} from './helperFunctions.js';
-import {sendEmail} from './sendEmail.js';
+import {sendEmail, generateResetToken} from './sendEmail.js';
 import passport from 'passport';
 import { Strategy } from 'passport-local';
 import bcrypt from 'bcrypt';
-import { user, backgroundImage, currency } from './test.js';
 import multer from 'multer';
-import { get } from 'http';
+import  fs  from 'fs';
 
 
 let stripe_key = process.env.STRIPE_KEY;
@@ -102,21 +103,116 @@ const saltRounds = 10;
 
 app.get('/test', (req, res) => {
   res.sendFile(path.join(__dirname, 'test.html'));
-})
+});
 
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/pages/index.html'));
-})
+});
 
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/pages/login_page.html'));
-})
+});
 
 app.get('/register', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/pages/register_page.html'));
-})
+});
 
+app.get('/forgot-password', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/pages/forgot-password.html'));
+});
+
+app.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+  const lowerCaseEmail = email.toLowerCase();
+
+  try {
+    const user = await selectUserByEmail(db, lowerCaseEmail);
+
+    if (!user) {
+      return res.render('message.ejs', { message: 'something went wrong, please try again',
+        link: '/forgot-password',
+        name: 'forgot password'
+       });
+    }
+
+    const token = await generateResetToken();
+    const resetPasswordExpires = new Date(Date.now() + 3600000); // Token expires in 1 hour
+
+    await updateResetPassword(db, lowerCaseEmail, token, resetPasswordExpires);
+
+    const resetLink = `http://easymenus.eu/reset-password?token=${token}`;
+    let registerTemplate = fs.readFileSync(path.join(__dirname, '/public/pages/email-template.html'), 'utf8');
+    registerTemplate = registerTemplate.replace('%company_name%', "There");
+    registerTemplate = registerTemplate.replace('%link%', resetLink);
+
+    await sendEmail(lowerCaseEmail, 'Reset your password', registerTemplate);
+    return res.render('message.ejs', { message: 'Email was sent to reset your password. Please check your email.',
+      link: '/login',
+      name: 'login'
+     });
+  } catch (error) {
+    console.error(error);
+    return res.render('message.ejs', { message: 'something went wrong, please try again',
+      link: '/forgot-password',
+      name: 'forgot password'
+     });
+  }
+});
+
+app.get('/reset-password', async (req, res) => {
+  const token = req.query.token;
+  const user = await selectUserByToken(db, token);
+  const now = new Date(Date.now());
+  const expire = user.reset_password_expires < now;
+
+  if (!user || expire) {
+    return res.render('reset-password.ejs', { token, expire} );
+  }
+
+  res.render('reset-password.ejs', { token, expire} );
+});
+
+
+app.post('/reset-password', async (req, res) => {
+  const { token, password } = req.body;
+  const now = new Date(Date.now());
+  const user = await selectUserByToken(db, token);
+  const expire = user.reset_password_expires < now;
+  
+
+  if (!user || expire) {
+    return res.render('message.ejs', { message: 'The time to reset the password has expired. Please try again.',
+      link: '/forgot-password',
+      name: 'forgot password'
+     });
+  }
+
+  bcrypt.hash(password, saltRounds, async (err, hash) => {
+    if (err) {
+      return res.render('message.ejs', { message: 'The time to reset the password has expired. Please try again.',
+        link: '/forgot-password',
+        name: 'forgot password'
+       });
+    } else {
+      try {
+        const result = await updatePassword(db, user.user_id, hash);
+      if (!result) {
+        return res.render('message.ejs', { message: 'Password has not been reset. Please try again.',
+          link: '/forgot-password',
+          name: 'forgot password'
+         });
+      }
+      return res.render('message.ejs', { message: 'Password has been reset. Please login.',
+        link: '/login',
+        name: 'login'
+       });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  });
+});
 
 app.get('/menu/:menuid/:res', async (req, res) => {
   const menuid = req.params.menuid;
@@ -693,7 +789,11 @@ app.post('/register', async (req, res) => {
         const result_2 = await insertMenu(db, result.rows[0].user_id, campanyName);
         const result_3 = await insertDesign(db, result_2.rows[0].menu_id);
         const result_4 = await insertSubscriptionPlan(db, 'free_trial', result.rows[0].user_id, 0, 30);
-        //const result_5 = await insertSubscription()
+        let registerTemplate = fs.readFileSync(path.join(__dirname, '/public/pages/email-template.html'), 'utf8');
+        registerTemplate = registerTemplate.replace('%link%', ' ');
+        registerTemplate = registerTemplate.replace('%%company_name%%', campanyName);
+
+        await sendEmail(lowerCaseEmail, 'Welcome to Easy Menu', registerTemplate);
         const result_user = result.rows[0];
 
         req.login(result_user, (err) => {

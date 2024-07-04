@@ -352,16 +352,6 @@ export async function getLogoImage(db, menu_id) {
 }
 
 
-export async function updatePassword(db, user_id, hash) {
-    const result = await db.query("UPDATE users SET password = $1 WHERE user_id = $2",
-        [hash, user_id]);
-    if (result.rowCount > 0) {
-        return true;
-    }
-    return false;
-}
-
-
 export async function getUserIdByMenuId(db, menu_id) {
     const result = await db.query("SELECT user_id FROM menus WHERE menu_id = $1",
         [menu_id]);
@@ -406,6 +396,31 @@ export async function updateSubscription(db, user_id, stripe_customer_id,stripe_
 export async function deleteAccount(db, user_id) {
     const result = await db.query("DELETE FROM users WHERE user_id = $1",
         [user_id]);
+    if (result.rowCount > 0) {
+        return true;
+    }
+    return false;
+}
+
+export async function updateResetPassword(db, email, token, resetPasswordExpires) {
+    
+    const result = await db.query("UPDATE users SET reset_password_token = $1, reset_password_expires = $2 WHERE email = $3",
+        [token, resetPasswordExpires, email]);
+    if (result.rowCount > 0) {
+        return true;
+    }
+    return false;
+}
+
+export async function selectUserByToken(db, token){
+    const result = await db.query("SELECT * FROM users WHERE reset_password_token = $1",
+        [token]);
+    return result.rows[0];
+}
+
+export async function updatePassword(db, user_id, hash) {
+    const result = await db.query("UPDATE users SET password = $1 WHERE user_id = $2",
+        [hash, user_id]);
     if (result.rowCount > 0) {
         return true;
     }
