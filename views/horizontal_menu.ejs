@@ -84,6 +84,14 @@
             border: 1px solid #ddd !important;
         }
 
+        .goog-te-gadget span{
+                display: none !important;
+            } 
+            .goog-te-gadget{
+                font-size: 0px !important;
+            }
+
+
         .goog-te-gadget-simple a {
             color: black !important;
             text-decoration: none !important;
@@ -140,11 +148,15 @@
         .VIpgJd-ZVi9od-xl07Ob-OEVmcd {
             border-radius: 8px !important;
         }
+        .goog-te-menu-value {
+            max-height: 200px; /* Adjust the max height as needed */
+            overflow-y: auto;
+        }
 
         @media (max-width: 600px) {
             /* Adjust this value according to your phone size breakpoint */
             .link::after {
-                border-bottom: 0.5px solid <%= background_color %>;
+                border-bottom: 1.5px solid <%= background_color %>;
             }
         }
     </style>
@@ -168,8 +180,7 @@
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({
                 pageLanguage: '<%= language[0].code %>',
-                includedLanguages: '<%= language[0].code %>,<%= language[1].code %>,<%= language[2].code %>,<%= language[3].code %>,<%= language[4].code %>,<%= language[5].code %>,<%= language[6].code %>,<%= language[7].code %>,<%= language[8].code %>',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+                includedLanguages: '',
             }, 'google_translate_element');
         }
     </script>
@@ -277,6 +288,12 @@
             VIpgJd-ZVi9od-vH1Gmf-ibnC6b div:hover {
                 background-color: #f1f1f1;
             }
+
+            .VIpgJd-ZVi9od-l4eHX-hSRGPd{
+                display: none !important;
+            }
+
+
         `;
                 iframeDoc.head.appendChild(style);
                 var iframeee = iframeDoc.querySelector('.VIpgJd-ZVi9od-vH1Gmf-ibnC6b');
