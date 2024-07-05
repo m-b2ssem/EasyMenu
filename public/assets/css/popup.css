@@ -1,0 +1,38 @@
+/* Cookie Consent Popup Styles */
+.cookie-consent-popup {
+    display: none; /* Hidden by default */
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 1000;
+  }
+  
+  .popup-content {
+    max-width: 300px;
+  }
+  
+  h2 {
+    margin-top: 0;
+  }
+  
+  .buttons {
+    margin-top: 10px;
+  }
+  
+  button {
+    margin-right: 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  

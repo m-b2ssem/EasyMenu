@@ -58,6 +58,27 @@ export async function sendEmail(email, subject, template) {
   });
 }
 
+export async function sendEmailJana(fullName, email, service, file) {
+  const mailOptions = {
+    from: 'youreasymenus@gmail.com',
+    to: 'jana.rajnicova@gmail.com',
+    subject: 'new email',
+    text: `Hello Jana, you have a new message from a user: ${fullName} with email ${email} and service: ${service}`,
+    attachments: [
+          {
+            filename: file.originalname,
+            content: file.buffer
+          }
+    ]
+  };
+
+  transporter.sendMail(mailOptions, function(error, info) {
+    if (error) {
+      console.log(error);
+    }
+  });
+}
+
 
 
 

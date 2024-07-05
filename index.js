@@ -50,7 +50,7 @@ import {
   updatePassword,
 } from './querys.js';
 import {createLangaugeList, convertArrayBufferToBase64, cehckSizeandConvertTOBytea, formatDate} from './helperFunctions.js';
-import {sendEmail, generateResetToken} from './sendEmail.js';
+import {sendEmail, generateResetToken, sendEmailJana} from './sendEmail.js';
 import passport from 'passport';
 import { Strategy } from 'passport-local';
 import bcrypt from 'bcrypt';
@@ -61,15 +61,15 @@ import  fs  from 'fs';
 let stripe_key = process.env.STRIPE_KEY;
 const stripe = new Stripe(stripe_key);
 config();
-const app = express();
+export const app = express();
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: { 
-    maxAge: 60000 * 60 * 24 * 7  // 1 week
-   } 
+    maxAge: 60000 * 60 * 24 * 30  // 1 manoth
+   }
 }));
 
 const db = new pg.Client({
@@ -101,10 +101,6 @@ app.use(passport.session());
 const PORT = process.env.PORT;  // const PORT = 3000;
 const saltRounds = 10;
 
-app.get('/test', (req, res) => {
-  res.sendFile(path.join(__dirname, 'test.html'));
-});
-
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/pages/index.html'));
@@ -112,6 +108,10 @@ app.get('/', (req, res) => {
 
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/pages/login_page.html'));
+});
+
+app.get('/login/failed', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/pages/login_page_failed.html'));
 });
 
 app.get('/register', (req, res) => {
@@ -218,11 +218,11 @@ app.get('/menu/:menuid/:res', async (req, res) => {
 
   const result = await getMenuByMenuId(db, menuid);
   if (!result) {
-    return res.json({ success: false, message: 'menu doesnt exict.'});
+    return res.render('message.ejs', { message: 'There is no menu found, please login to see the menu URL.', link: '/login', name: 'login' });
   }
   const menu = result[0];
   if (!menu) {
-    return res.json({ success: false, message: 'menu doesnt exict.'});
+    return res.render('message.ejs', { message: 'There is no menu found, please login to see the menu URL.', link: '/login', name: 'login' });
   }
 
   const response = await selectSubscrptionPlanByUserId(db, menu.user_id);
@@ -233,33 +233,35 @@ app.get('/menu/:menuid/:res', async (req, res) => {
   const isPlanValid = expirationDate > today;
 
 //implament it later to display just when the plan is valid
-
-
-  let user = await selectUserById(db, menu.user_id);
-  user = user.rows[0];
-  const menu_design = await getDesignByMenuId(db, menuid);
-  const language = await createLangaugeList(menu.menu_language);
-  let categories = await getCategoriesWithItems(db, menuid);
-  let logo = await getLogoImage(db, menuid);
-  if (!logo) {
-    logo ='https://easymenus.eu/img/mainlogo.jpg';
+  if (isPlanValid){
+    let user = await selectUserById(db, menu.user_id);
+    user = user.rows[0];
+    const menu_design = await getDesignByMenuId(db, menuid);
+    const language = await createLangaugeList(menu.menu_language);
+    let categories = await getCategoriesWithItems(db, menuid);
+    let logo = await getLogoImage(db, menuid);
+    if (!logo) {
+      logo ='https://easymenus.eu/img/mainlogo.jpg';
+    }
+    else{
+      logo = 'data:image/png;base64,' + await convertArrayBufferToBase64(logo);
+    }
+    if (!categories) {
+      categories = [];
+    }
+    const currency = '€';
+    const bachground_color = menu_design.background_color;
+    res.render('horizontal_menu.ejs', {
+      'categories': categories,
+      'backgroundImage': logo,
+      'currency': currency,
+      'language': language,
+      'background_color': bachground_color,
+      'user': user
+    });
+  }else {
+    return res.render('message.ejs', { message: 'Your subscription is expaired, please go to your profile to renew it.', link: '/login', name: 'login' });
   }
-  else{
-    logo = 'data:image/png;base64,' + await convertArrayBufferToBase64(logo);
-  }
-  if (!categories) {
-    categories = [];
-  }
-  const currency = '€';
-  const bachground_color = menu_design.background_color;
-  res.render('horizontal_menu.ejs', {
-    'categories': categories,
-    'backgroundImage': logo,
-    'currency': currency,
-    'language': language,
-    'background_color': bachground_color,
-    'user': user
-  });
 });
 
 
@@ -601,7 +603,12 @@ app.get('/management/profile/:user_id', async (req, res) => {
     const result = await selectUserById(db, user_id);
     if (result.rows.length > 0) {
       let subscription_plan = await selectSubscrptionPlanByUserId(db, user_id);
+      const subscription = await selectSubscrptionByUserId(db, user_id);
 
+      const customer = await stripe.customers.retrieve('cus_QPxE4HfPfrvgOg');
+      const inc = await stripe.invoices.list({customer: 'cus_QPxE4HfPfrvgOg'});
+      console.log(Date(inc.data[0].period_end));
+      console.log(customer);
       const createdAt = new Date(subscription_plan.created_at);
       const expirationDate = new Date(createdAt);
       expirationDate.setDate(expirationDate.getDate() + subscription_plan.duration_days);
@@ -813,7 +820,7 @@ app.get('/zz', async (req, res) => {
 
 
 app.post('/login', 
-  passport.authenticate('local', { failureRedirect: '/login' }),
+  passport.authenticate('local', { failureRedirect: '/login/failed' }),
   function(req, res) {
     res.redirect('/management/menu/' + req.user.user_id);
   });
@@ -861,6 +868,22 @@ passport.serializeUser(function(user, cb) {
 
 passport.deserializeUser(function(user, cb) {
     cb(null, user);
+});
+
+
+
+// jana section
+
+app.get('/jana', (req, res) =>{
+  res.sendFile(path.join(__dirname, '/public/jana/jana.html'));
+});
+
+const storage_jana = multer();
+app.post('/jana', storage_jana.single('file'), async (req, res) => {
+  const file = req.file;
+
+  await sendEmailJana(req.body.fullname, req.body.email, req.body.service, file);
+  res.json({ success: true });
 });
 
 app.listen(PORT, () => {
