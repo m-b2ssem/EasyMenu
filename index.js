@@ -102,6 +102,10 @@ const PORT = process.env.PORT;  // const PORT = 3000;
 const saltRounds = 10;
 
 
+app.get('/tt', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/pages/cookies.html'));
+});
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/pages/index.html'));
 });
