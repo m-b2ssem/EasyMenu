@@ -138,7 +138,6 @@
             right: 0;
             bottom: -2px;
             /* Adjust this value to move the border up or down */
-            border-bottom: 2px solid <%= background_color %>;
             transform: scaleX(4);
             /* Adjust this value to change the length of the border */
             transform-origin: center;
@@ -155,9 +154,7 @@
 
         @media (max-width: 600px) {
             /* Adjust this value according to your phone size breakpoint */
-            .link::after {
-                border-bottom: 1.5px solid <%= background_color %>;
-            }
+
         }
     </style>
 </head>
@@ -201,6 +198,7 @@
             <div class="col items" style="text-align: center; margin-top:30px;">
                 <% categories.forEach(function (category) { %>
                     <a id="<%= category.category_id %>" class="link" style="position: relative;"><%= category.category_name %></a>
+                    <div style="border-bottom: 2px solid <%= background_color %>; width: 50%; text-align: center; margin:auto;"></div>
                     <div style="text-align: left; margin-top: 20px;">
                         <div>
                             <% category.items.forEach(function (item) { %>

@@ -1,46 +1,341 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Word File Character Counter</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
-  <style>
-    h1 {
-      font-size: 20px;
-      margin-top: 24px;
-      margin-bottom: 24px;
-    }
+<html data-bs-theme="light" lang="sk">
 
-    img {
-      height: 60px;
-    }
-  </style>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Untitled</title>
+    <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=ABeeZee&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cormorant+Garamond&amp;display=swap">
+
+    <style>
+      :root, [data-bs-theme=light] {
+  --bs-body-bg: rgb(255,255,255);
+  --bs-body-bg-rgb: 255,255,255;
+  --bs-body-font-family: 'Cormorant Garamond', serif;
+}
+*, *:before, *:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+input:focus, select:focus, textarea:focus, button:focus {
+  outline: none;
+}
+
+.drop {
+  width: 90%;
+  height: 220px;
+  border: 3px dashed #DADFE3;
+  border-radius: 15px;
+  overflow: hidden;
+  text-align: center;
+  background: transparent;
+  -webkit-transition: all 0.5s ease-out;
+  -moz-transition: all 0.5s ease-out;
+  transition: all 0.5s ease-out;
+  margin-top: 0px;
+  margin-right: auto;
+  margin-left: auto;
+  margin-bottom: 10px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.drop .cont {
+  width: 500px;
+  height: 170px;
+  color: #8E99A5;
+  -webkit-transition: all 0.5s ease-out;
+  -moz-transition: all 0.5s ease-out;
+  transition: all 0.5s ease-out;
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.drop .cont i {
+  font-size: 40px;
+  color: #787e85;
+  position: relative;
+}
+
+.drop .cont .tit {
+  font-size: 30px;
+  text-transform: uppercase;
+  font-weight: 900;
+}
+
+.drop .cont .desc {
+  color: #787e85;
+  font-size: 18px;
+}
+
+.drop .cont .browse {
+  margin: 10px 25%;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  background: #00c993;
+}
+
+.drop input {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  background: red;
+  opacity: 0;
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+#list {
+  width: 100%;
+  text-align: left;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.dashed_upload {
+  height: 200px;
+}
+
+
+    </style>
 </head>
-<body>
-<div class="col-md-6 offset-md-3 mt-5">
-  <h1>Submit your form</h1>
-  <form id="form" action="/jana" method="POST" enctype="multipart/form-data">
-    <div class="form-group">
-      <label for="exampleInputName">Full Name</label>
-      <input type="text" name="fullname" class="form-control" id="exampleInputName" placeholder="Enter your name and surname" required>
+
+<body style="font-family: 'Cormorant Garamond', serif;">
+    <div class="container">
+        <form id="serviceForm">
+            <section style="--bs-body-bg: #f8f7f7;background: #eeeeee;border-style: none;border-radius: 6px;">
+                <div style="margin: 40px;position: relative;--bs-body-bg: #e13535;margin-top: 40px;padding: 30px;">
+                    <div class="row">
+                        <div class="col"><label class="col-form-label" style="position: relative;border-bottom-style: solid;border-bottom-color: rgb(0,0,0);"><strong>Kontaktné údaje</strong></label></div>
+                    </div>
+                    <div class="row" style="margin-top: 20px;">
+                        <div class="col"><label class="col-form-label" style="font-size: 14px;">Prejavili ste záujem o posudok rukopisu. Po jeho obdržaní by som sa s Vami rada skontaktovala. Prosím, zanechajte mi na Vás kontakt a spätne sa Vám ozvem.</label></div>
+                    </div>
+                    <div class="row" style="margin-top: 20px;">
+                        <div class="col"><label class="form-label" style="font-size: 14px;">Meno a priezvisko:</label><input class="form-control" name="name" required type="text" style="background: rgb(249,244,244);border-bottom-style: solid;"></div>
+                    </div>
+                    <div class="row" style="margin-top: 20px;">
+                        <div class="col"><label class="form-label" style="font-size: 14px;">Email:</label><input class="form-control" type="email" name="email" required style="background: rgb(249,244,244);border-bottom-style: solid;"></div>
+                    </div>
+                    <div class="row" style="margin-top: 20px;">
+                        <div class="col"><label class="form-label" style="font-size: 14px;">Telefónne číslo:</label><input class="form-control"  name="phone" type="tel"  style="background: rgb(249,244,244);border-bottom-style: solid;"></div>
+                    </div>
+                </div>
+            </section><select class="form-select" id="serviceSelect" name="service" style="text-align: center;">
+              <option value="" disabled selected>vyberte si službu</option>
+              <optgroup label="Služby">
+                    <option value="1" >posúdenie rukopisu</option>
+                    <option value="2">redigovanie textu</option>
+                    <option value="3">korektúra textu</option>
+                    <option value="4">promo knihy</option>
+                </optgroup>
+            </select>
+            <div id="service1" class="service-section" style="display: none;">
+                <section style="--bs-body-bg: #f8f7f7;background: #eeeeee;border-style: none;border-radius: 6px;">
+                    <div style="margin: 40px;position: relative;--bs-body-bg: #e13535;margin-top: 40px;padding: 30px;">
+                        <div class="row">
+                            <div class="col"><label class="col-form-label" style="position: relative;border-bottom-style: solid;border-bottom-color: rgb(0,0,0);"><strong>Informácie o rukopise</strong></label></div>
+                        </div>
+                        <div class="row" style="margin-top: 20px;">
+                            <div class="col"><label class="col-form-label" style="font-size: 14px;">Aby sme Vám vedeli poskytnúť komplexnú spätnú väzbu, potrebujeme sa Vás spýtať niekoľko otázok, ktoré nám v tom pomôžu.</label></div>
+                        </div>
+                        <div class="row" style="margin-top: 20px;position: relative;">
+                            <div class="col" style="position: relative;display: inline;"><label class="form-label" style="font-size: 16px;width: auto;position: relative;display: inline;font-weight: bold;">Názov rukopisu</label><span style="position: static;display: block;font-size: 14px;padding-top: 10px;padding-bottom: 10px;">Tento názov môžete, samozrejme, ešte kedykoľvek pred publikovaním zmeniť. Nám táto informácia slúži na ľahšiu orientáciu medzi ostatnými rukopismi i na vytvorenie si kompletného obrazu o Vašej knihe.Text</span><input class="form-control" type="text" name="nazov" style="background: rgb(249,244,244);border-bottom-style: solid;"></div>
+                        </div>
+                        <div class="row" style="margin-top: 20px;position: relative;">
+                            <div class="col" style="position: relative;display: inline;"><label class="form-label" style="font-size: 16px;width: auto;position: relative;display: inline;font-weight: bold;">Čo je hlavou myšlienkou Vašej knihy?</label><span style="position: static;display: block;font-size: 14px;padding-top: 10px;padding-bottom: 10px;">Niekedy sa stáva, že sa hlavná myšlienka v deji stratí alebo ju prekryjú iné, ktoré sa prirodzene vynorili v procese písania. My si dáme záležať na tom, aby bol Váš odkaz jasný a pre čitateľa prístupný. Vo svojej odpovedi sa môžete rozpísať.</span><input class="form-control" type="text" name="myslienka" style="background: rgb(249,244,244);border-bottom-style: solid;"></div>
+                        </div>
+                        <div class="row" style="margin-top: 20px;position: relative;">
+                            <div class="col" style="position: relative;display: inline;"><label class="form-label" style="font-size: 16px;width: auto;position: relative;display: inline;font-weight: bold;">Máte svoju cieľovú skupinu? Akú?</label><span style="position: static;display: block;font-size: 14px;padding-top: 10px;padding-bottom: 10px;">Bez cieľovej skupiny nemáte komu knihu predávať. Je potrebné, aby sa Váš zámer zhodoval so stavom Vášho rukopisu. V tejto otázke prihliadajte na tému, ktorej ste sa venovali, na vek samotných postáv, na zložitosť Vášho autorského prejavu a pod. Vo svojej odpovedi sa môžete rozpísať.</span><input class="form-control" type="text" name="target" style="background: rgb(249,244,244);border-bottom-style: solid;"></div>
+                        </div>
+                        <div class="row" style="margin-top: 20px;position: relative;">
+                            <div class="col" style="position: relative;display: inline;"><label class="form-label" style="font-size: 16px;width: auto;position: relative;display: inline;font-weight: bold;">O čom si ako autor/-ka myslíte, že je Vaša silná stránka a o čom si myslíte, že Vám robí problém?</label><span style="position: static;display: block;font-size: 14px;padding-top: 10px;padding-bottom: 10px;">Silné stránky treba podporiť a slabým stránkam sa treba vyvarovať, resp. na nich zapracovať. Medzi Vaše silné/slabé stránky môžu patriť napr. písanie dialógov, charaktery postáv, opisy, navodenie atmosféry a pod. Vo svojej odpovedi sa môžete rozpísať.</span><input class="form-control" type="text" name="sebareflexia" style="background: rgb(249,244,244);border-bottom-style: solid;"></div>
+                        </div>
+                        <div class="row" style="margin-top: 20px;position: relative;">
+                            <div class="col" style="position: relative;display: inline;"><label class="form-label" style="font-size: 16px;width: auto;position: relative;display: inline;font-weight: bold;">Aký je rozsah Vášho rukopisu?</label><span style="position: static;display: block;font-size: 14px;padding-top: 10px;padding-bottom: 10px;">Rozsah rukopisu sa ráta v normostranách, teda v počte znakov na jednu stranu (jedna normostrana sa rovná 1 800 znakom). Ak na otázku neviete odpovedať, urobím to za Vás.</span><input class="form-control" type="text" name="rozsah" style="background: rgb(249,244,244);border-bottom-style: solid;"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div id="service2" class="service-section" style="display: none;">
+                <section style="--bs-body-bg: #f8f7f7;background: #eeeeee;border-style: none;border-radius: 6px;">
+                    <div style="margin: 40px;position: relative;--bs-body-bg: #e13535;margin-top: 40px;padding: 30px;">
+                        <div class="row">
+                            <div class="col"><label class="col-form-label" style="position: relative;border-bottom-style: solid;border-bottom-color: rgb(0,0,0);">Informácie o dokumente</label></div>
+                        </div>
+                        <div class="row" style="margin-top: 20px;position: relative;">
+                            <div class="col" style="position: relative;display: inline;">
+                                <div>
+                                    <fieldset><label class="form-label" style="font-size: 16px;width: auto;position: relative;display: inline;font-weight: bold;"><span style="font-weight: normal !important; color: rgb(32, 33, 36); background-color: rgb(241, 243, 244);">O aký typ textu ide?</span></label>
+                                        <div class="custom-control custom-radio" style="margin-top: 20px;"><input type="radio" id="customRadio1" class="custom-control-input" name="beletria"  style="margin-right: 10px;"><label class="form-label custom-control-label" for="customRadio1">Beletristický text</label></div>
+                                        <div class="custom-control custom-radio" style="margin-top: 0px;"><input type="radio" id="customRadio2" class="custom-control-input" name="odborny"  style="margin-right: 10px;"><label class="form-label custom-control-label" for="customRadio2">Vedecký/odborný text</label></div>
+                                        <div class="custom-control custom-radio" style="margin-top: 0px;"><input type="radio" id="customRadio3" class="custom-control-input" name="skolsky"  style="margin-right: 10px;"><label class="form-label custom-control-label" for="customRadio3">Školská/záverečná práca</label></div>
+                                        <div class="custom-control custom-radio" style="margin-top: 0px;"><input type="radio" id="customRadio4" class="custom-control-input" name="ine"  style="margin-right: 10px;"><label class="form-label custom-control-label" for="customRadio4">Iné</label></div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 20px;position: relative;">
+                            <div class="col" style="position: relative;display: inline;"><label class="form-label" style="font-size: 16px;width: auto;position: relative;display: inline;font-weight: bold;">Je niečo, čo by som o Vašom texte mala vedieť?</label><span style="position: static;display: block;font-size: 14px;padding-top: 10px;padding-bottom: 10px;">V odpovedi môžete uviesť napr. tému, posolstvo, vedecké zameranie či informáciu o Vašej cieľovej skupine a pod.</span><input class="form-control" name="detail" type="text" style="background: rgb(249,244,244);border-bottom-style: solid;"></div>
+                        </div>
+                        <div class="row" style="margin-top: 20px;position: relative;">
+                            <div class="col" style="position: relative;display: inline;"><label class="form-label" style="font-size: 16px;width: auto;position: relative;display: inline;font-weight: bold;">Aký je rozsah Vášho textu?</label><span style="position: static;display: block;font-size: 14px;padding-top: 10px;padding-bottom: 10px;">Rozsah rukopisu sa ráta v normostranách, teda v počte znakov na jednu stranu (jedna normostrana sa rovná 1 800 znakom). Ak na otázku neviete odpovedať, urobím to za Vás.</span><input class="form-control" type="text" name="rozsah" style="background: rgb(249,244,244);border-bottom-style: solid;"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div id="service3" class="service-section" style="display: none;">
+                <section style="--bs-body-bg: #f8f7f7;background: #eeeeee;border-style: none;border-radius: 6px;">
+                    <div style="margin: 40px;position: relative;--bs-body-bg: #e13535;margin-top: 40px;padding: 30px;">
+                        <div class="row">
+                            <div class="col"><label class="col-form-label" style="position: relative;border-bottom-style: solid;border-bottom-color: rgb(0,0,0);">Informácie o dokumente</label></div>
+                        </div>
+                        <div class="row" style="margin-top: 20px;position: relative;">
+                            <div class="col" style="position: relative;display: inline;">
+                                <div>
+                                    <fieldset><label class="form-label" style="font-size: 16px;width: auto;position: relative;display: inline;font-weight: bold;"><span style="font-weight: normal !important; color: rgb(32, 33, 36); background-color: rgb(241, 243, 244);">O aký typ textu ide?</span></label>
+                                        <div class="custom-control custom-radio" style="margin-top: 20px;"><input type="radio" id="customRadio5" class="custom-control-input" name="beletria"  style="margin-right: 10px;"><label class="form-label custom-control-label" for="customRadio5">Beletristický text</label></div>
+                                        <div class="custom-control custom-radio" style="margin-top: 0px;"><input type="radio" id="customRadio6" class="custom-control-input" name="odborny" style="margin-right: 10px;"><label class="form-label custom-control-label" for="customRadio6">Vedecký/odborný text</label></div>
+                                        <div class="custom-control custom-radio" style="margin-top: 0px;"><input type="radio" id="customRadio7" class="custom-control-input" name="skolska"  style="margin-right: 10px;"><label class="form-label custom-control-label" for="customRadio7">Školská/záverečná práca</label></div>
+                                        <div class="custom-control custom-radio" style="margin-top: 0px;"><input type="radio" id="customRadio8" class="custom-control-input" name="ine" style="margin-right: 10px;"><label class="form-label custom-control-label" for="customRadio8">Iné</label></div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 20px;position: relative;">
+                            <div class="col" style="position: relative;display: inline;"><label class="form-label" style="font-size: 16px;width: auto;position: relative;display: inline;font-weight: bold;"><span style="font-weight: normal !important; color: rgb(32, 33, 36); background-color: rgb(241, 243, 244);">V prípade, že máte záujem o korektúru školskej/záverečnej práce, prosím, zašlite mi i smernicu písania záverečných prác Vašej školy.</span></label><input class="form-control" type="text" name="smernica" style="background: rgb(249,244,244);border-bottom-style: solid;"></div>
+                        </div>
+                        <div class="row" style="margin-top: 20px;position: relative;">
+                            <div class="col" style="position: relative;display: inline;"><label class="form-label" style="font-size: 16px;width: auto;position: relative;display: inline;font-weight: bold;">Aký je rozsah Vášho textu?</label><span style="position: static;display: block;font-size: 14px;padding-top: 10px;padding-bottom: 10px;">Rozsah rukopisu sa ráta v normostranách, teda v počte znakov na jednu stranu (jedna normostrana sa rovná 1 800 znakom). Ak na otázku neviete odpovedať, urobím to za Vás.</span><input class="form-control" type="text" name="rozsah" style="background: rgb(249,244,244);border-bottom-style: solid;"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div id="service4"  class="service-section" style="display: none;">
+              <section style="--bs-body-bg: #f8f7f7;background: #eeeeee;border-style: none;border-radius: 6px;">
+                  <div style="margin: 40px;position: relative;--bs-body-bg: #e13535;margin-top: 40px;padding: 30px;">
+                      <div class="row">
+                          <div class="col"><label class="col-form-label" style="position: relative;border-bottom-style: solid;border-bottom-color: rgb(0,0,0);">Informácie o knihe</label></div>
+                      </div>
+                      
+                      <div class="row" style="margin-top: 20px;position: relative;">
+                          <div class="col" style="position: relative;display: inline;"><label class="form-label" style="font-size: 16px;width: auto;position: relative;display: inline;font-weight: bold;"></label>Názov knihy
+                            <input class="form-control" type="text" name="nazov" style="background: rgb(249,244,244);border-bottom-style: solid;"></div>
+                      </div>
+                      <div class="row" style="margin-top: 20px;position: relative;">
+                          <div class="col" style="position: relative;display: inline;"><label class="form-label" style="font-size: 16px;width: auto;position: relative;display: inline;">ISBN knihy</label><input class="form-control" type="text" name="ISBN" style="background: rgb(249,244,244);border-bottom-style: solid;"></div>
+                      </div>
+                      <div class="row" style="margin-top: 20px;position: relative;">
+                        <div class="col" style="position: relative;display: inline;">
+                            <div>
+                                <fieldset><label class="form-label" style="font-size: 16px;width: auto;position: relative;display: inline;font-weight: bold;"><span style="font-weight: normal !important; color: rgb(32, 33, 36); background-color: rgb(241, 243, 244);">O ktorú službu máte záujem?</span></label>
+                                    <div class="custom-control custom-radio" style="margin-top: 20px;"><input type="radio" id="customRadio9" class="custom-control-input" name="anotacia"  style="margin-right: 10px;"><label class="form-label custom-control-label" for="customRadio9">Príspevok na sociálnych sieťach s anotáciou knihy</label></div>
+                                    <div class="custom-control custom-radio" style="margin-top: 0px;"><input type="radio" id="customRadio10" class="custom-control-input" name="recenzia"  style="margin-right: 10px;"><label class="form-label custom-control-label" for="customRadio10">Recenzia knihy na sociálnych sieťach</label></div>
+                                  </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+              </section>
+          </div>
+            <section style="--bs-body-bg: #f8f7f7;background: #eeeeee;border-style: none;border-radius: 6px;">
+                <div style="margin: 40px;position: relative;--bs-body-bg: #e13535;margin-top: 40px;padding: 30px;text-align: center;">
+                    <div class="dashed_upload"><div class="wrapper">
+        <div class="drop">
+          <div class="cont">
+            <i class="fa fa-cloud-upload"></i>
+            <div class="tit">
+              Drag & Drop
+            </div>
+            <div class="desc">
+              or 
+            </div>
+            <div class="browse">
+              click here to browse
+            </div>
+          </div>
+          <output id="list"></output><input id="files" multiple required  name="manuscript_file" type="file" />
+        </div>
+      </div>
+  <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+
+  </div>
+                </div>
+            </section>
+            
+            <div style="text-align: center;margin-bottom: 10px;">
+              
+              <button class="btn btn-primary" type="submit" style="text-align: center;background: rgb(255,255,255);color: rgb(0,0,0);border-style: solid;border-color: rgb(0,0,0);">ODOSLAŤ</button>
+            </div>
+            <div style="text-align: center;margin-bottom: 80px;">
+              <label id="wrong" style="display: none; font-size: 20px;" ></label>
+            </div>
+        </form>
     </div>
-    <div class="form-group">
-      <label for="exampleInputEmail1">Email address</label>
-      <input type="email" name="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email" required>
-    </div>
-    <div class="form-group">
-      <label for="exampleInputService">Service</label>
-      <input type="text" name="service" class="form-control" id="exampleInputService" placeholder="Enter service" required>
-    </div>
-    <div class="form-group mt-3">
-      <label class="mr-2">Upload your word file:</label>
-      <input type="file" id="fileInput" name="file" required>
-    </div>
-    <!-- Hidden honeypot input to prevent spams -->
-    <input type="hidden" name="_gotcha" style="display:none !important">
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
-  <div id="result" class="mt-3"></div>
-</div>
+    
+    <script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+      document.getElementById('serviceSelect').addEventListener('change', function () {
+            var serviceSections = document.querySelectorAll('.service-section');
+            serviceSections.forEach(function (section) {
+                section.style.display = 'none';
+            });
+            var selectedService = this.value;
+            if (selectedService) {
+                document.getElementById('service' + selectedService).style.display = 'block';
+            }
+        });
+      
+        document.getElementById('serviceForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const selectedFile = formData.get('manuscript_file');
+
+
+            fetch('/jana', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success === true ){
+                  const messageLabel = document.getElementById('wrong');
+                  messageLabel.innerText = data.message;
+                  messageLabel.style.display = 'block';
+                  messageLabel.style.color = 'green';
+                }else{
+                  const messageLabel = document.getElementById('wrong');
+                  messageLabel.innerText = data.message;
+                  messageLabel.style.display = 'block';
+                  messageLabel.style.color = 'red';
+                }
+            })
+            .catch((error) => {
+              const messageLabel = document.getElementById('wrong');
+                  messageLabel.innerText = 'Niečo sa pokazilo. Prosím, skúste to ešte raz.';
+                  messageLabel.style.display = 'block';
+                  messageLabel.style.color = 'red';
+            });
+        });
+    </script>
 </body>
+
 </html>

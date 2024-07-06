@@ -144,11 +144,11 @@ app.post('/forgot-password', async (req, res) => {
     const resetPasswordExpires = new Date(Date.now() + 3600000); // Token expires in 1 hour
 
     await updateResetPassword(db, lowerCaseEmail, token, resetPasswordExpires);
-
     const resetLink = `http://easymenus.eu/reset-password?token=${token}`;
     let registerTemplate = fs.readFileSync(path.join(__dirname, '/public/pages/forgot-password-template.html'), 'utf8');
     registerTemplate = registerTemplate.replace('%link%', resetLink);
 
+  
     await sendEmail(lowerCaseEmail, 'Reset your password', registerTemplate);
     return res.render('message.ejs', { message: 'Email was sent to reset your password. Please check your email.',
       link: '/login',
@@ -883,14 +883,25 @@ app.get('/jana', (req, res) =>{
 });
 
 const storage_jana = multer();
-app.post('/jana', storage_jana.single('file'), async (req, res) => {
+app.post('/jana', storage_jana.single('manuscript_file'), async (req, res) => {
   const file = req.file;
+  const body = req.body;
 
-  await sendEmailJana(req.body.fullname, req.body.email, req.body.service, file);
-  res.json({ success: true });
+  if (body.service === '4' && !body.ISBN){
+    return res.json({success: false, message: 'Prosím, vyplňte pole s ISBN.'})
+  }
+  console.log(file);
+  if (!file.originalname.includes('.docx')){
+    return res.json({success: false, message: 'Prosím, dokument nahrávajte iba vo formáte MS Word.'})
+  }
+
+  const bodyString = JSON.stringify(body, null, 2);
+
+  await sendEmailJana(bodyString, file);
+  res.json({ success: true,  message: 'Váš formulár bol úspešne vyplnený.' });
 });
 
 app.listen(PORT, () => {
   console.log('Server is running on http://localhost: ' + PORT);
-})
+});
 
