@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title> <%= user.company_name %> </title>
+    <title><%= user.company_name %></title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/horizontalmenu.css">
     <style>
@@ -84,12 +84,13 @@
             border: 1px solid #ddd !important;
         }
 
-        .goog-te-gadget span{
-                display: none !important;
-            } 
-            .goog-te-gadget{
-                font-size: 0px !important;
-            }
+        .goog-te-gadget span {
+            display: none !important;
+        }
+
+        .goog-te-gadget {
+            font-size: 0px !important;
+        }
 
 
         .goog-te-gadget-simple a {
@@ -120,6 +121,7 @@
         }
 
         body {
+            position: relative !important;
             top: 0 !important
         }
 
@@ -147,8 +149,10 @@
         .VIpgJd-ZVi9od-xl07Ob-OEVmcd {
             border-radius: 8px !important;
         }
+
         .goog-te-menu-value {
-            max-height: 200px; /* Adjust the max height as needed */
+            max-height: 200px;
+            /* Adjust the max height as needed */
             overflow-y: auto;
         }
 
@@ -159,7 +163,7 @@
     </style>
 </head>
 
-<body data-bs-spy="scroll" data-bs-target=".scrollmenu" data-bs-offset="50">
+<body data-bs-spy="scroll" data-bs-target="#categories-list" data-bs-offset="50">
     <!-- Google Translate Script -->
     <script>
         (function () {
@@ -190,40 +194,49 @@
     </div>
     <div class="container" style="padding-top:40px; padding-bottom:60px;">
         <div>
-            <div class="col scrollmenu">
+            <div class="col scrollmenu" id="categories-list">
                 <% categories.forEach(function (category) { %>
-                    <a class="nav-link" href="#<%= category.category_id %>"><%= category.category_name %></a>
+                    <a class="nav-link" href="#category-<%= category.category_id %>"><%= category.category_name %></a>
                 <% }); %>
             </div>
             <div class="col items" style="text-align: center; margin-top:30px;">
                 <% categories.forEach(function (category) { %>
-                    <a id="<%= category.category_id %>" class="link" style="position: relative;"><%= category.category_name %></a>
-                    <div style="border-bottom: 2px solid <%= background_color %>; width: 50%; text-align: center; margin:auto;"></div>
-                    <div style="text-align: left; margin-top: 20px;">
-                        <div>
-                            <% category.items.forEach(function (item) { %>
-                                <div class="custom-card" onclick="openModal('<%= item.item_name %>', '<%= item.price %> <%= currency %>', '<%= item.description %>', '<%= item.image ? item.image : '/img/light_gray.jpg' %>')">
-                                    <% if (item.image) { %>
-                                        <img src="<%= item.image %>" alt="<%= item.item_name %>">
-                                    <% } else { %>
-                                        <img src="/img/light_gray.jpg" alt="light_gray photo">
-                                    <% } %>
-                                    <div class="card-content">
-                                        <h5><%= item.item_name %></h5>
-                                        <% if (item.food_type === 'Vegan') { %>
-                                            <div class="vegan-badge">
-                                                <img src="/img/vegan.jpg" style="max-width: 30px; max-height: 30px;" alt="">
-                                            </div>
-                                        <% } else if (item.food_type === 'Vegetarian'){ %>
-                                            <div class="vegan-badge">
-                                                <img src="/img/vegetarian.jpg" style="max-width: 30px; max-height: 30px;" alt="">
-                                            </div>
+                    <div id="category-<%= category.category_id %>">
+                        <a class="link" style="position: relative;"><%= category.category_name %></a>
+                        <div style="border-bottom: 2px solid <%= background_color %>; width: 50%; text-align: center; margin:auto;"></div>
+                        <div style="text-align: left; margin-top: 20px;">
+                            <div>
+                                <% category.items.forEach(function (item) { %>
+                                    <div class="custom-card" onclick="openModal('<%= item.item_name %>', '<%= item.price %> <%= currency %>', '<%= item.description %>', '<%= item.image ? item.image : '/img/light_gray.jpg' %>', '<%= item.allergies %>', '<%= item.food_type %>')">
+                                        <% if (item.image) { %>
+                                            <img src="<%= item.image %>" alt="<%= item.item_name %>">
+                                        <% } else { %>
+                                            <img src="/img/light_gray.jpg" alt="light_gray photo">
                                         <% } %>
-                                        <div class="price"><%= item.price %> <%= currency %></div>
-                                        <div class="description"><%= item.description.length > 120 ? item.description.substring(0, 120) + '...' : item.description %></div>
+                                        <div class="card-content">
+                                            <h5><%= item.item_name %></h5>
+                                            <% if (item.food_type === 'Vegan') { %>
+                                                <div class="vegan-badge">
+                                                    <img src="/img/vegan.jpg" style="max-width: 30px; max-height: 30px;" alt="">
+                                                </div>
+                                            <% } else if (item.food_type === 'Vegetarian') { %>
+                                                <div class="vegan-badge">
+                                                    <img src="/img/vegetarian.jpg" style="max-width: 30px; max-height: 30px;" alt="">
+                                                </div>
+                                            <% } %>
+                                            <div class="price"><%= item.price %> <%= currency %></div>
+                                            <div class="description"><%= item.description.length > 120 ? item.description.substring(0, 120) + '...' : item.description %></div>
+                                            <div class="allergy-letter">
+                                                <% if (item.allergies) { %>
+                                                    <% item.allergies.forEach(allergy => { %>
+                                                        (<%= allergy %>)
+                                                    <% }) %>
+                                                <% } %>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            <% }); %>
+                                <% }); %>
+                            </div>
                         </div>
                     </div>
                 <% }); %>
@@ -239,20 +252,78 @@
             <h2 id="modalItemName"></h2>
             <div id="modalPrice"></div>
             <p id="modalDescription"></p>
+            <div id="modalAllergy" class="allergy-info"></div>
+            <div id="modalFoodType" class="food-type-info">
+                <img id="modalFoodTypeImage" src="" alt="" style="max-width: 30px; max-height: 30px;">
+            </div>
         </div>
     </div>
 
-    <script src="/js/bootstrap.min.js"></script>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        var scrollSpy = new bootstrap.ScrollSpy(document.body, {
+            target: '#categories-list'
+        });
+
+        var dataSpyList = [].slice.call(document.querySelectorAll('[data-bs-spy="scroll"]'))
+        dataSpyList.forEach(function(dataSpyEl) {
+            bootstrap.ScrollSpy.getInstance(dataSpyEl).refresh()
+        });
+
+        var firstScrollSpyEl = document.querySelector('[data-bs-spy="scroll"]')
+        firstScrollSpyEl.addEventListener('activate.bs.scrollspy', function(event) {
+            event.relatedTarget.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center', // Center the element within the scroll menu
+                inline: 'center' // Ensure the inline axis is handled properly
+            });
+
+            var activeLink = event.relatedTarget;
+            var scrollmenu = document.getElementById('categories-list');
+            var scrollmenuWidth = scrollmenu.offsetWidth;
+            var activeLinkWidth = activeLink.offsetWidth;
+            var activeLinkOffsetLeft = activeLink.offsetLeft;
+
+            // Calculate the scroll position to center the active link
+            var scrollPosition = activeLinkOffsetLeft - (scrollmenuWidth / 2) + (activeLinkWidth / 2);
+            scrollmenu.scrollTo({
+                left: scrollPosition,
+                behavior: 'smooth'
+            });
+        });
+    </script>
+
     <script>
         // JavaScript to handle the modal
         var modal = document.getElementById("myModal");
         var span = document.getElementsByClassName("close")[0];
 
-        function openModal(name, price, description, image) {
+        function openModal(name, price, description, image, allergies, foodType) {
             document.getElementById("modalItemName").innerText = name;
             document.getElementById("modalPrice").innerText = price;
             document.getElementById("modalDescription").innerText = description;
             document.getElementById("modalImage").src = image;
+
+            if (allergies) {
+                document.getElementById("modalAllergy").innerText = allergies;
+            } else {
+                document.getElementById("modalAllergy").innerText = '';
+            }
+
+            var foodTypeImage = '';
+            if (foodType === 'Vegan') {
+                foodTypeImage = '/img/vegan.jpg';
+            } else if (foodType === 'Vegetarian') {
+                foodTypeImage = '/img/vegetarian.jpg';
+            } else {
+                foodTypeImage = ''; // No image for other types
+            }
+            document.getElementById("modalFoodTypeImage").src = foodTypeImage;
+
             modal.style.display = "block";
             document.body.classList.add("modal-open");
         }
@@ -272,7 +343,6 @@
 
     <script>
         function applyCustomStyles() {
-            console.log("Applying custom styles");
             var iframe = document.querySelector('iframe.VIpgJd-ZVi9od-xl07Ob-OEVmcd');
             if (iframe) {
                 var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
@@ -303,14 +373,10 @@
             .VIpgJd-ZVi9od-l4eHX-hSRGPd{
                 display: none !important;
             }
-
-
         `;
                 iframeDoc.head.appendChild(style);
                 var iframeee = iframeDoc.querySelector('.VIpgJd-ZVi9od-vH1Gmf-ibnC6b');
-                console.log(iframe);
             } else {
-                console.log("Iframe not found, retrying...");
                 setTimeout(applyCustomStyles, 500);
             }
         }

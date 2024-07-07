@@ -311,21 +311,29 @@ export async function getCategoriesWithItems(db, menu_id) {
 
             const activeItems = items.filter(item => item.item_status !== false);
             const items_list = await Promise.all(activeItems.map(async item => {
-                const image = null;
-                if (item.image){
-                    image =  'data:image/png;base64,' + await convertArrayBufferToBase64(item.image);
-                }
-                return {
-                    item_name: item.item_name,
-                    description: item.description,
-                    price: item.price,
-                    image: image,
-                    priority: item.priority,
-                    item_id: item.item_id,
-                    food_type: item.food_type
-                };
-            }));
+            let image = null;
+            let allergiesList = null;
+            if (item.allergies){
+                item.allergies = item.allergies.split(',');
+                allergiesList = item.allergies.map(allergy => {
+                    return allergy.trim();
+                });
+            }
+            if (item.image){
+                image =  'data:image/png;base64,' + await convertArrayBufferToBase64(item.image);
+            }
 
+            return {
+                item_name: item.item_name,
+                description: item.description,
+                price: item.price,
+                image: image,
+                priority: item.priority,
+                item_id: item.item_id,
+                food_type: item.food_type,
+                allergies: item.allergies
+            };
+            }));
             if (items_list.length > 0 && category.category_status !== false)
             {
                 result.push({

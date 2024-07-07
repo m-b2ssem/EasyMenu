@@ -78,7 +78,12 @@ div.scrollmenu::-webkit-scrollbar {
     font-size: 12px;
     color: #777;
   }
-
+  .custom-card .card-content .allergy-letter {
+    margin: 0;
+    font-size: 12px;
+    color: #777;
+  }
+  allergy-letter
 .items {
     background-color: rgba(245, 245, 245, 0.493);
     border-radius: 4px;

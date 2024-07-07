@@ -307,7 +307,6 @@ const storage = multer();
 app.post('/uplaod-logo-image', storage.single('image'), async (req, res) => {
   const file = req.file;
   const menu_id = req.body.menu_id;
-  console.log(file);
   const buffer = await cehckSizeandConvertTOBytea(file);
   if (!buffer) {
     return res.json({ success: false, message: 'Image is too large.'});
@@ -422,7 +421,6 @@ app.post('/reorder-categories', async(req, res) => {
 
 
   const reversedCategoriesIds = order.slice().reverse();
-  console.log(reversedCategoriesIds);
   try {
     for (const id of reversedCategoriesIds) {
       // update the priority of the category
@@ -445,7 +443,6 @@ app.post('/reorder-items', async(req, res) => {
 
 
   const reversedItemsIds = order.slice().reverse();
-  console.log(reversedItemsIds);
   try {
     for (const id of reversedItemsIds) {
       // update the priority of the category
@@ -504,7 +501,7 @@ const upload = multer();
 app.post('/additem', upload.single('image'), async (req, res) => {
   let { itemName, price, description, categoryId, allergies, foodType } = req.body;
   const file = req.file;
-  const buffer = null;
+  let buffer = null;
   let capitalisedAllergies = null;
 
   if (allergies){

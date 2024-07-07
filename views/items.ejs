@@ -652,6 +652,14 @@
             addButton.onclick = function() {
                 const value = input.value.trim();
                 if (value) {
+                    if (value.length > 1) {
+                        const message = document.getElementById('messageForAdd');
+                        message.innerText = 'Please enter only one letter for the allergy';
+                        message.style.display = 'block';
+                        message.style.color = 'red';
+                        message.scrollIntoView();
+                        return;
+                    }
                     const allergyList = document.getElementById('allergyList');
                     const allergyValues = document.getElementById('allergies');
                     const allergyLabel = document.createElement('span');
@@ -799,6 +807,14 @@
         addButton.onclick = function() {
             const value = input.value.trim();
             if (value) {
+                if (value.length > 1) {
+                    const message = document.getElementById('updateError');
+                    message.innerText = 'Please enter only one letter for the allergy';
+                    message.style.display = 'block';
+                    message.style.color = 'red';
+                    message.scrollIntoView();
+                    return;
+                }
                 addAllergyLabel(value, $('#updateAllergyList'));
                 updateAllergiesInput();
                 input.value = '';
@@ -827,7 +843,6 @@
                     body: formData
                 });
                 const data = await response.json();
-                console.log(data);
                 if (data.success) {
                     form.reset();
                     const message = document.getElementById('messageForUpdate');
