@@ -276,12 +276,6 @@
 
         var firstScrollSpyEl = document.querySelector('[data-bs-spy="scroll"]')
         firstScrollSpyEl.addEventListener('activate.bs.scrollspy', function(event) {
-            event.relatedTarget.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center', // Center the element within the scroll menu
-                inline: 'center' // Ensure the inline axis is handled properly
-            });
-
             var activeLink = event.relatedTarget;
             var scrollmenu = document.getElementById('categories-list');
             var scrollmenuWidth = scrollmenu.offsetWidth;
