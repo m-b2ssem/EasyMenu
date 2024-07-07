@@ -37,6 +37,7 @@ div.scrollmenu::-webkit-scrollbar {
   
   
   .custom-card {
+    position: relative;
     display: flex;
     align-items: center;
     padding: 15px;
@@ -89,3 +90,9 @@ div.scrollmenu::-webkit-scrollbar {
     position: relative;
   }
   
+  .vegan-badge {
+    position: absolute;
+    top: 20px;
+    right: 8px;
+    /* Adjust the size of the image or add padding as needed */
+}

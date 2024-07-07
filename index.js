@@ -502,26 +502,32 @@ app.post('/deleteitem', async(req, res) => {
 
 const upload = multer();
 app.post('/additem', upload.single('image'), async (req, res) => {
-  let { itemName, price, description, categoryId } = req.body;
+  let { itemName, price, description, categoryId, allergies, foodType } = req.body;
   const file = req.file;
-  if (!file) {
-    return res.json({ success: false, message: 'Please upload an image.'});
+  const buffer = null;
+  let capitalisedAllergies = null;
+
+  if (allergies){
+    capitalisedAllergies = allergies.toUpperCase();
   }
   if (!itemName || !price || !description || !categoryId) {
     return res.json({ success: false, message: 'Please fill all fields.'});
   }
-  const buffer = await cehckSizeandConvertTOBytea(file);
-  if (!buffer) {
-    return res.json({ success: false, message: 'Image is too large.'});
+  if (file) {
+    buffer = await cehckSizeandConvertTOBytea(file);
+    if (!buffer) {
+      return res.json({ success: false, message: 'Image is too large.'});
+    }
   }
   categoryId = parseInt(categoryId);
-  const priority = await findHeighestPriority(db, categoryId);
   const intPrice = parseFloat(price);
-  const inserted = await insertItem(db, categoryId, itemName, description, intPrice, buffer, priority);
+  if (isNaN(intPrice)  || intPrice === undefined){
+    return res.json({ success: false, message: 'Please enter a valid number in the Prise filed'});
+  }
+  const inserted = await insertItem(db, categoryId, itemName, description, intPrice, buffer, foodType, capitalisedAllergies);
   if (!inserted) {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
-  
   res.json({ success: true });
   });
 
@@ -529,10 +535,14 @@ app.post('/additem', upload.single('image'), async (req, res) => {
 
   const update_item = multer();
 app.post('/update-item', update_item.single('image'), async (req, res) => {
-  let { itemName, price, description, categoryId, itemId } = req.body;
+  let { itemName, price, description, categoryId, itemId, foodType, allergies } = req.body;
   const file = req.file;
+  let capitalisedAllergies = null;
   if (!itemName || !price || !description || !categoryId) {
     return res.json({ success: false, message: 'Please fill all fields.'});
+  }
+  if (allergies){
+    capitalisedAllergies =  allergies.toUpperCase();
   }
   if (file) {
     const buffer = await cehckSizeandConvertTOBytea(file);
@@ -541,7 +551,10 @@ app.post('/update-item', update_item.single('image'), async (req, res) => {
     }
     categoryId = parseInt(categoryId);
     const intPrice = parseFloat(price);
-    const update = await updateItem(db, categoryId, itemName, description, intPrice, buffer, itemId);
+    if (isNaN(intPrice)  || intPrice === undefined){
+      return res.json({ success: false, message: 'Please enter a valid number in the Prise filed'});
+    }
+    const update = await updateItem(db, categoryId, itemName, description, intPrice, buffer, itemId,foodType, capitalisedAllergies);
     if (!update) {
       return res.json({ success: false, message: 'Something went wrong, please try again.'});
     }
@@ -550,12 +563,14 @@ app.post('/update-item', update_item.single('image'), async (req, res) => {
   {
     categoryId = parseInt(categoryId);
     const intPrice = parseFloat(price);
-    const update = await updateItem(db, categoryId, itemName, description, intPrice, null, itemId);
+    if (isNaN(intPrice)  || intPrice === undefined){
+      return res.json({ success: false, message: 'Please enter a valid number in the Prise filed'});
+    }
+    const update = await updateItem(db, categoryId, itemName, description, intPrice, null, itemId, foodType, capitalisedAllergies);
     if (!update) {
       return res.json({ success: false, message: 'Something went wrong, please try again.'});
     }
   }
-  
   res.json({ success: true });
   });
 

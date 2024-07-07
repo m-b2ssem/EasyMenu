@@ -132,12 +132,12 @@ export async function getUserIdByGategoryId(db, category_id) {
     return result.rows[0].user_id;
 }
 
-export async function insertItem(db, category_id, item_name, description, price, image, item_priority) {
+export async function insertItem(db, category_id, item_name, description, price, image, foodType, allergies) {
     try {
         const user_id = await getUserIdByGategoryId(db, category_id);
         const result = await db.query(
-            "INSERT INTO items (user_id, category_id, item_name, description, price, image) VALUES($1, $2, $3, $4, $5, $6) RETURNING *",
-            [user_id, category_id, item_name, description, price, image]);
+            "INSERT INTO items (user_id, category_id, item_name, description, price, image, food_type, allergies) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
+            [user_id, category_id, item_name, description, price, image, foodType, allergies]);
         if (result.rows.length > 0) {
             return true;
         }
@@ -237,17 +237,17 @@ export async function updateItemPriority(db, item_id, priority) {
     return false;
 }
 
-export async function updateItem(db, category_id, item_name, description, price, image, item_id) {
+export async function updateItem(db, category_id, item_name, description, price, image, item_id, foodType, capitalisedAllergies) {
     if (image === null) {
-        const result = await db.query("UPDATE items SET item_name = $1, description = $2, price = $3, category_id = $4 WHERE item_id = $5",
-            [item_name, description, price, category_id, item_id]);
+        const result = await db.query("UPDATE items SET item_name = $1, description = $2, price = $3, category_id = $4, food_type = $5, allergies = $6 WHERE item_id = $7",
+            [item_name, description, price, category_id, foodType, capitalisedAllergies, item_id]);
         if (result.rowCount > 0) {
             return true;
         }
         return false;
     }
-    const result = await db.query("UPDATE items SET item_name = $1, description = $2, price = $3, image = $4, category_id = $5 WHERE item_id = $6",
-        [item_name, description, price, image, category_id, item_id]);
+    const result = await db.query("UPDATE items SET item_name = $1, description = $2, price = $3, image = $4, category_id = $5, food_type = $6, allergies= $7 WHERE item_id = $8",
+        [item_name, description, price, image, category_id, foodType, capitalisedAllergies, item_id]);
     if (result.rowCount > 0) {
         return true;
     }
@@ -311,14 +311,18 @@ export async function getCategoriesWithItems(db, menu_id) {
 
             const activeItems = items.filter(item => item.item_status !== false);
             const items_list = await Promise.all(activeItems.map(async item => {
-                const image =  'data:image/png;base64,' + await convertArrayBufferToBase64(item.image);
+                const image = null;
+                if (item.image){
+                    image =  'data:image/png;base64,' + await convertArrayBufferToBase64(item.image);
+                }
                 return {
                     item_name: item.item_name,
                     description: item.description,
                     price: item.price,
                     image: image,
                     priority: item.priority,
-                    item_id: item.item_id
+                    item_id: item.item_id,
+                    food_type: item.food_type
                 };
             }));
 

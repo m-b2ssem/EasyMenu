@@ -1,8 +1,7 @@
-import axios from 'axios';
+
 import { config } from 'dotenv';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
-import { Template } from 'ejs';
 
 config();
 
