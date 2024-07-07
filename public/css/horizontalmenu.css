@@ -101,3 +101,149 @@ div.scrollmenu::-webkit-scrollbar {
     right: 8px;
     /* Adjust the size of the image or add padding as needed */
 }
+
+        /* Add this CSS to your horizontalmenu.css file */
+        .modal {
+          display: none;
+          position: fixed;
+          z-index: 1;
+          padding-top: 60px;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          overflow: auto;
+          background-color: rgb(0, 0, 0);
+          background-color: rgba(0, 0, 0, 0.4);
+      }
+
+      .modal-content {
+          background-color: #fefefe;
+          margin: auto;
+          padding: 20px;
+          border: 1px solid #888;
+          width: 80%;
+          max-width: 600px;
+          box-sizing: border-box;
+      }
+
+      .modal-content img {
+          width: 100%;
+          height: auto;
+          max-height: 200px;
+          object-fit: cover;
+      }
+
+      .close {
+          color: #aaa;
+          float: right;
+          font-size: 28px;
+          font-weight: bold;
+      }
+
+      .close:hover,
+      .close:focus {
+          color: black;
+          text-decoration: none;
+          cursor: pointer;
+      }
+
+      /* New CSS to hide the sidebar when modal is active */
+      body.modal-open .scrollmenu {
+          display: none;
+      }
+
+      #google_translate_element {
+          position: fixed;
+          bottom: 20px;
+          /* Adjust as needed */
+          right: 20px;
+          /* Adjust as needed */
+          background-color: #fff;
+          padding: 10px 15px;
+          border-radius: 5px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          z-index: 9999;
+          cursor: pointer;
+      }
+
+      .goog-te-gadget-simple {
+          border: none !important;
+          color: black !important;
+          border-radius: 4px !important;
+          padding: 5px 10px !important;
+          font-size: 14px !important;
+          cursor: pointer !important;
+          text-transform: uppercase;
+          border: 1px solid #ddd !important;
+      }
+
+      .goog-te-gadget span {
+          display: none !important;
+      }
+
+      .goog-te-gadget {
+          font-size: 0px !important;
+      }
+
+
+      .goog-te-gadget-simple a {
+          color: black !important;
+          text-decoration: none !important;
+      }
+
+      #google_translate_element {
+          vertical-align: middle;
+      }
+
+      .goog-te-banner-frame.skiptranslate,
+      .goog-te-gadget-icon,
+      .goog-te-menu-value span {
+          display: none !important
+      }
+
+      .goog-te-menu-frame {
+          box-shadow: none !important
+      }
+
+      #goog-gt-tt {
+          display: none !important
+      }
+
+      .VIpgJd-ZVi9od-ORHb-OEVmcd {
+          display: none !important;
+      }
+
+      body {
+          position: relative !important;
+          top: 0 !important
+      }
+
+      
+      .link::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -2px;
+        /* Adjust this value to move the border up or down */
+        transform: scaleX(4);
+        /* Adjust this value to change the length of the border */
+        transform-origin: center;
+        /* Keep the scaling centered */
+    }
+
+    .VIpgJd-ZVi9od-xl07Ob-OEVmcd {
+        border-radius: 8px !important;
+    }
+
+    .goog-te-menu-value {
+        max-height: 200px;
+        /* Adjust the max height as needed */
+        overflow-y: auto;
+    }
+
+    @media (max-width: 600px) {
+        /* Adjust this value according to your phone size breakpoint */
+
+    }
