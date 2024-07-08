@@ -13,11 +13,13 @@
 
     <!-- Custom fonts for this template-->
     <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
 
     <!-- Custom styles for this template-->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-            <!-- Bootstrap CSS -->
+    <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Toggle CSS -->
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
@@ -48,66 +50,73 @@
             justify-content: center;
             text-align: center;
         }
+
         .dropdown-menu {
-    max-height: 200px; /* Adjust the height as needed */
-    overflow-y: auto;
-}
+            max-height: 200px;
+            /* Adjust the height as needed */
+            overflow-y: auto;
+        }
     </style>
 </head>
 
 <body id="page-top">
 
-  <!-- ***** Preloader Start ***** -->
-  <div id="js-preloader" class="js-preloader">
-    <div class="preloader-inner">
-      <span class="dot"></span>
-      <div class="dots">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-    </div>
-  </div>
-  <!-- ***** Preloader End ***** -->
-
-  <!-- ***** Header Area Start ***** -->
-  <link rel="alternate" hreflang="en" href="https://easymenus.eu">
-<link rel="alternate" hreflang="de" href="https://de.easymenus.eu">
-<script type="text/javascript" src="https://cdn.weglot.com/weglot.min.js"></script>
-<script>
-    Weglot.initialize({
-        api_key: 'wg_ccdc61525b763853033f4669bd1f972d2'
-    });
-</script>
-
-
-
-<!-- Update Modal-->
-<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="updateModalLabel">Update Category Name</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="updateCategoryForm">
-                    <div class="form-group">
-                        <label for="newCategoryName">New Category Name</label>
-                        <input type="text" class="form-control" id="newCategoryName" name="newCategoryName" required>
-                        <input type="hidden" id="updateCategoryId" name="categoryId">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-primary" id="confirmUpdateButton" type="button">Update</button>
+    <!-- ***** Preloader Start ***** -->
+    <div id="js-preloader" class="js-preloader">
+        <div class="preloader-inner">
+            <span class="dot"></span>
+            <div class="dots">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
         </div>
     </div>
-</div>
+    <!-- ***** Preloader End ***** -->
+
+    <!-- ***** Header Area Start ***** -->
+    <link rel="alternate" hreflang="en" href="https://easymenus.eu">
+    <link rel="alternate" hreflang="de" href="https://de.easymenus.eu">
+    <script type="text/javascript" src="https://cdn.weglot.com/weglot.min.js"></script>
+    <script>
+        Weglot.initialize({
+            api_key: 'wg_ccdc61525b763853033f4669bd1f972d2'
+        });
+    </script>
+
+
+
+    <!-- Update Modal-->
+    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateModalLabel">Update Category Name</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="updateCategoryForm">
+                        <div class="form-group">
+                            <label for="newCategoryName">New Category Name</label>
+                            <input type="text" class="form-control" id="newCategoryName" name="newCategoryName"
+                                required>
+                            <input type="hidden" id="updateCategoryId" name="categoryId">
+                        </div>
+                    </form>
+                    <div class="col" style="margin-top: 20px;">
+                        <label style="display: none;" id="messageForsection2"></label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary" id="confirmUpdateButton" type="button">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -143,10 +152,14 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item active">
-                <a class="nav-link" href="/management/profile/<%= user.user_id %>"><i class="fas fa-fw fa-cog"></i><span>Profile</span></a>
-                <a class="nav-link" href="/management/menu/<%= user.user_id %>"><i class="fas fa-fw fa-cog"></i><span>Menus</span></a>
-                <a class="nav-link" href="/management/category/<%= user.user_id %>"><i class="fas fa-fw fa-cog"></i><span>Categories</span></a>
-                <a class="nav-link" href="/management/items/<%= user.user_id %>"><i class="fas fa-fw fa-cog"></i><span>Items</span></a>
+                <a class="nav-link" href="/management/profile/<%= user.user_id %>"><i
+                        class="fas fa-fw fa-cog"></i><span>Profile</span></a>
+                <a class="nav-link" href="/management/menu/<%= user.user_id %>"><i
+                        class="fas fa-fw fa-cog"></i><span>Menus</span></a>
+                <a class="nav-link" href="/management/category/<%= user.user_id %>"><i
+                        class="fas fa-fw fa-cog"></i><span>Categories</span></a>
+                <a class="nav-link" href="/management/items/<%= user.user_id %>"><i
+                        class="fas fa-fw fa-cog"></i><span>Items</span></a>
             </li>
 
         </ul>
@@ -224,9 +237,10 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.company_name %></span>
-                                <img class="img-profile rounded-circle"
-                                    src="/img/undraw_profile.svg">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                                    <%= user.company_name %>
+                                </span>
+                                <img class="img-profile rounded-circle" src="/img/undraw_profile.svg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -251,94 +265,121 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid centered-container"">
                     <div>
-                        <div class="centered-container" style="margin: 10px;">
-                            <div class="col">
-                                <label class="col-form-label">Here you can delete the selected Categories <br> or deactivate it</label>
-                            </div>
-                        </div>
-                        <div class="centered-container" style="margin: 10px; margin-bottom: 30px;">
-                            <div class="col">
-                                <form action="/deletecategory" method="post">
-                                    <div class="dropdown" style="display: inline; margin-right: 18px;">
-                                        <button class="btn btn-primary dropdown-toggle deleteButtonClass" aria-expanded="false" name="category_id" id="deleteButton" data-bs-toggle="dropdown" type="button">Categories</button>
-                                        <input type="hidden" name="categoryId" id="categoryId" />
-                                        <div class="dropdown-menu deleteButton">
-                                            <% categories.forEach(function(category){ %>
-                                                <a class="dropdown-item " href="#" name="<%= category.category_name %>" id="<%= category.category_id %>"><%= category.category_name %></a>
-                                            <% }); %>
-                                        </div>
-                                    </div>
-                                    <div class="centered-row">
-                                        <button class="btn btn-primary" id="updateButton" type="button" style="margin: 10px;">Update</button>
-                                        <button class="btn btn-primary" type="submit" style="margin: 10px;">Delete</button>
-                                        <div id="statusContainer" style="text-align: center; ">
-                                            <input type="checkbox" id="toggleStatus" data-toggle="toggle" data-on="Active" data-off="Deactiv" data-onstyle="primary" data-offstyle="danger">
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+                        <div class=" centered-container" style="margin: 10px;">
+                    <div class="col">
+                        <label class="col-form-label">Here you can delete the selected Categories <br> or deactivate
+                            it</label>
                     </div>
-                    <div style="border-bottom-style: solid; margin:40px auto; width: 40%; text-align: center;"></div>
-                    <form action="/add-category" method="post">
-                        <div style="position: relative; margin-top: 15px;">
-                            <div class="col" style="text-align: center;"><label class="col-form-label" style="position: relative;">Category Name</label></div>
-                            <div class="col" style="text-align: center;"><input type="text" name="categoryName" style="border-radius: 8px; box-shadow: 1px 1px 5px var(--bs-blue);" /></div>
-                        </div>
-                        <div style="position: relative; margin-top: 15px;">
-                            <div class="col" style="text-align: center;"><label class="col-form-label" style="position: relative;">Choose a Menu to assign the Category to</label></div>
-                            <div class="col" style="text-align: center;">
-                                <div class="dropdown">
-                                    <button class="btn btn-primary dropdown-toggle" aria-expanded="false" id="addCategory" name="id" data-bs-toggle="dropdown" type="button">Choose Menu</button>
-                                    <input type="hidden" name="menuId" id="menuId" />
-                                    <div class="dropdown-menu addCategory" >
-                                        <% menus.forEach(function(menu){ %>
-                                        <a class="dropdown-item" href="#" data-id="<%= menu.menu_id %>" id="<%= menu.menu_id %>"><%= menu.menu_name %></a>
+                </div>
+                <div class="centered-container" style="margin: 10px; margin-bottom: 30px;">
+                    <div class="col">
+                        <form action="/deletecategory" method="post">
+                            <div class="dropdown" style="display: inline; margin-right: 18px;">
+                                <button class="btn btn-primary dropdown-toggle deleteButtonClass" aria-expanded="false"
+                                    name="category_id" id="deleteButton" data-bs-toggle="dropdown"
+                                    type="button">Categories</button>
+                                <input type="hidden" name="categoryId" id="categoryId" />
+                                <div class="dropdown-menu deleteButton">
+                                    <% categories.forEach(function(category){ %>
+                                        <a class="dropdown-item " href="#" name="<%= category.category_name %>"
+                                            id="<%= category.category_id %>">
+                                            <%= category.category_name %>
+                                        </a>
                                         <% }); %>
-                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="centered-container" style="margin-top: 40px; margin-bottom: 60px; color: var(--bs-btn-disabled-color);">
-                            <button class="btn btn-primary" type="submit" style="background: rgb(42,208,28); filter: brightness(96%) contrast(93%); backdrop-filter: blur(46px); transform: perspective(0px) translate(0px);">Add Category</button>
-                        </div>
-                    </form>
-                    <div style="border-bottom-style: solid; margin:40px auto; width: 40%; text-align: center;"></div>
-                    <div class="centered-container" style="margin-top: 60px; margin-bottom: 60px;">
-                        <label>Drag and Drop to set the order of the Categories.</label>
-                        <div class="col" style="text-align: center; margin-bottom: 10px;">
-                            <div class="dropdown">
-                                <button class="btn btn-primary dropdown-toggle" aria-expanded="false" id="orderCategory" data-bs-toggle="dropdown" type="button">Choose Menu</button>
-                                <div class="dropdown-menu orderCategory">
-                                    <% menus.forEach(function(menu){ %>
-                                        <a class="dropdown-item" href="#" name="<%= menu.menu_name %>" id="<%= menu.menu_id %>"><%= menu.menu_name %></a>
-                                    <% }); %>
+                            <div class="centered-row">
+                                <button class="btn btn-primary" id="updateButton" type="button"
+                                    style="margin: 10px;">Update</button>
+                                <button class="btn btn-primary" type="submit" style="margin: 10px;">Delete</button>
+                                <div id="statusContainer" style="text-align: center; ">
+                                    <input type="checkbox" id="toggleStatus" data-toggle="toggle" data-on="Active"
+                                        data-off="Deactiv" data-onstyle="primary" data-offstyle="danger">
                                 </div>
                             </div>
+                        </form>
+                        <div class="col" style="margin-top: 20px;">
+                            <label style="display: none;" id="messageForsection1"></label>
                         </div>
-                        <ul id="sortable" class="sortable-list">
-                        </ul>
                     </div>
-
                 </div>
-                <!-- /.container-fluid -->
-
             </div>
-            <!-- End of Main Content -->
-
-            <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Easy Menu <%= year %></span>
+            <div style="border-bottom-style: solid; margin:40px auto; width: 40%; text-align: center;"></div>
+            <form action="/add-category" method="post">
+                <div style="position: relative; margin-top: 15px;">
+                    <div class="col" style="text-align: center;"><label class="col-form-label"
+                            style="position: relative;">Category Name</label></div>
+                    <div class="col" style="text-align: center;"><input type="text" name="categoryName"
+                            style="border-radius: 8px; box-shadow: 1px 1px 5px var(--bs-blue);" /></div>
+                </div>
+                <div style="position: relative; margin-top: 15px;">
+                    <div class="col" style="text-align: center;"><label class="col-form-label"
+                            style="position: relative;">Choose a Menu to assign the Category to</label></div>
+                    <div class="col" style="text-align: center;">
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" aria-expanded="false" id="addCategory"
+                                name="id" data-bs-toggle="dropdown" type="button">Choose Menu</button>
+                            <input type="hidden" name="menuId" id="menuId" />
+                            <div class="dropdown-menu addCategory">
+                                <% menus.forEach(function(menu){ %>
+                                    <a class="dropdown-item" href="#" data-id="<%= menu.menu_id %>"
+                                        id="<%= menu.menu_id %>">
+                                        <%= menu.menu_name %>
+                                    </a>
+                                    <% }); %>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </footer>
-            <!-- End of Footer -->
+
+                <div class="centered-container"
+                    style="margin-top: 40px; margin-bottom: 60px; color: var(--bs-btn-disabled-color);">
+                    <button class="btn btn-primary" type="submit"
+                        style="background: rgb(42,208,28); filter: brightness(96%) contrast(93%); backdrop-filter: blur(46px); transform: perspective(0px) translate(0px);">Add
+                        Category</button>
+                </div>
+            </form>
+            <div class="col" style="margin-top: 20px;">
+                <label style="display: none;" id="messageForsection3"></label>
+            </div>
+            <div style="border-bottom-style: solid; margin:40px auto; width: 40%; text-align: center;"></div>
+            <div class="centered-container" style="margin-top: 60px; margin-bottom: 60px;">
+                <label>Drag and Drop to set the order of the Categories.</label>
+                <div class="col" style="text-align: center; margin-bottom: 10px;">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" aria-expanded="false" id="orderCategory"
+                            data-bs-toggle="dropdown" type="button">Choose Menu</button>
+                        <div class="dropdown-menu orderCategory">
+                            <% menus.forEach(function(menu){ %>
+                                <a class="dropdown-item" href="#" name="<%= menu.menu_name %>" id="<%= menu.menu_id %>">
+                                    <%= menu.menu_name %>
+                                </a>
+                                <% }); %>
+                        </div>
+                    </div>
+                </div>
+                <ul id="sortable" class="sortable-list">
+                </ul>
+            </div>
 
         </div>
-        <!-- End of Content Wrapper -->
+        <!-- /.container-fluid -->
+
+    </div>
+    <!-- End of Main Content -->
+
+    <!-- Footer -->
+    <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+                <span>Copyright &copy; Easy Menu <%= year %></span>
+            </div>
+        </div>
+    </footer>
+    <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
 
     </div>
     <!-- End of Page Wrapper -->
@@ -349,7 +390,8 @@
     </a>
 
     <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -380,29 +422,29 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Bootstrap Toggle JS -->
-        <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 
-<script>
-    $(document).ready(function () {
-        $('#statusContainer').hide()
-        // Event listener for dropdown items
-        $('.deleteButton a').on('click', function () {
-            // Get the text of the clicked item
-            var selectedText = $(this).text();
-            var selectedId = $(this).attr('id');
-            // Update the dropdown button text
-            $('#deleteButton').text(selectedText);
-            // Update the dropdown button data-id attribute
-            $('#categoryId').val(selectedId);
+    <script>
+        $(document).ready(function () {
+            $('#statusContainer').hide()
+            // Event listener for dropdown items
+            $('.deleteButton a').on('click', function () {
+                // Get the text of the clicked item
+                var selectedText = $(this).text();
+                var selectedId = $(this).attr('id');
+                // Update the dropdown button text
+                $('#deleteButton').text(selectedText);
+                // Update the dropdown button data-id attribute
+                $('#categoryId').val(selectedId);
 
-            fetch('/get-category-status?categoryId=' + selectedId)
+                fetch('/get-category-status?categoryId=' + selectedId)
                     .then(response => response.json())
                     .then(data => {
-                        console.log(data);
                         if (data.category.category_status === true) {
                             $('#toggleStatus').bootstrapToggle('on');
                         } else {
@@ -411,10 +453,10 @@
                         document.getElementById('statusContainer').style.display = 'block';
                         $('#toggleStatus').change(function () {
                             var status = $(this).prop('checked');
-                            var categoryId = $('#itemId').val();
+                            var categoryId = $('#categoryId').val();
 
-                            if (itemId === "") {
-                                alert('Please select a Category to update');
+                            if (categoryId === "") {
+                                somethingWrong('messageForsection1', 'Please select a Category to update');
                                 return;
                             }
                             fetch('/update-category-status', {
@@ -425,139 +467,154 @@
                                 body: JSON.stringify({ categoryId: categoryId, status: status }),
                             }).then(response => response.json())
                                 .then(data => {
+                                    success('messageForsection1', 'Category status updated successfully.');
                                     console.log('Success:', data);
                                 }).catch((error) => {
-                                    alert('Failed, please try again')
+                                    somethingWrong('messageForsection1', 'Failed to update category status.');
                                     console.error('Error:', error);
                                 });
                         });
                     }).catch(error => {
-                        console.error('Error fetching item status:', error);
+                        somethingWrong('messageForsection1', 'something went wrong please try again.');
                     });
-        });
-
-        $('.addCategory a').on('click', function () {
-            // Get the text of the clicked item
-            var selectedText = $(this).text();
-            var selectedId = $(this).attr('id');
-            // Update the dropdown button text
-            $('#addCategory').text(selectedText);
-            // Update the dropdown button data-id attribute
-            $('#menuId').val(selectedId);
-        });
-
-        $('.orderCategory a').on('click', function () {
-            
-            // Get the text of the clicked item
-            var selectedText = $(this).text();
-            var selectedId = $(this).attr('id');
-            // Update the dropdown button text
-            $('#orderCategory').text(selectedText);
-            // Update the dropdown button data-id attribute
-            $('#orderCategory').attr('data-id', selectedId);
-
-            // Fetch the categories for the selected menu
-            fetch('/get-categories?menuId=' + selectedId)
-            .then(response => response.json())
-            .then(data => {
-                var sortableList = $('#sortable');
-                sortableList.empty(); // Clear the existing list
-
-                // Populate the sortable list with fetched categories
-                data.categories.forEach(function(category) {
-                    var listItem = $('<li></li>')
-                        .attr('data-id', category.category_id)
-                        .text(category.category_name);
-                    sortableList.append(listItem);
-                });
-                
-                // Re-initialize sortable after dynamically adding items
-                $("#sortable").sortable("refresh");
-            }).catch(error => {
-                alert('something went wrong!, please try again.');
-                console.error('Error fetching categories:', error);
             });
-        });
 
-        $("#sortable").sortable({
-            update: function (event, ui) {
-                var sortedIDs = $("#sortable").sortable("toArray", { attribute: "data-id" });
-                console.log(sortedIDs);
-                // Send sortedIDs to your backend to update the priority/order
-                // Example using fetch API:
-                fetch('/reorder-categories', {
+            function somethingWrong(elementId, messageToSend) {
+                const message = document.getElementById(elementId);
+                message.innerText = messageToSend;
+                message.style.display = 'block';
+                message.style.color = 'red';
+            }
+
+            function success(elementId, messageToSend) {
+                const message = document.getElementById(elementId);
+                message.innerText = messageToSend;
+                message.style.display = 'block';
+                message.style.color = 'green';
+            }
+
+            $('.addCategory a').on('click', function () {
+                // Get the text of the clicked item
+                var selectedText = $(this).text();
+                var selectedId = $(this).attr('id');
+                // Update the dropdown button text
+                $('#addCategory').text(selectedText);
+                // Update the dropdown button data-id attribute
+                $('#menuId').val(selectedId);
+            });
+
+            $('.orderCategory a').on('click', function () {
+
+                // Get the text of the clicked item
+                var selectedText = $(this).text();
+                var selectedId = $(this).attr('id');
+                // Update the dropdown button text
+                $('#orderCategory').text(selectedText);
+                // Update the dropdown button data-id attribute
+                $('#orderCategory').attr('data-id', selectedId);
+
+                // Fetch the categories for the selected menu
+                fetch('/get-categories?menuId=' + selectedId)
+                    .then(response => response.json())
+                    .then(data => {
+                        var sortableList = $('#sortable');
+                        sortableList.empty(); // Clear the existing list
+
+                        // Populate the sortable list with fetched categories
+                        data.categories.forEach(function (category) {
+                            var listItem = $('<li></li>')
+                                .attr('data-id', category.category_id)
+                                .text(category.category_name);
+                            sortableList.append(listItem);
+                        });
+
+                        // Re-initialize sortable after dynamically adding items
+                        $("#sortable").sortable("refresh");
+                    }).catch(error => {
+                        alert('something went wrong!, please try again.');
+                        console.error('Error fetching categories:', error);
+                    });
+            });
+
+            $("#sortable").sortable({
+                update: function (event, ui) {
+                    var sortedIDs = $("#sortable").sortable("toArray", { attribute: "data-id" });
+                    console.log(sortedIDs);
+                    // Send sortedIDs to your backend to update the priority/order
+                    // Example using fetch API:
+                    fetch('/reorder-categories', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ order: sortedIDs }),
+                    }).then(response => response.json())
+                        .then(data => {
+                            if(!data.success){
+                                alert('Failed to update category order. please try again.');
+                            }
+                        }).catch((error) => {
+                            alert('Failed to update category order. please try again.');
+                        });
+                }
+            });
+            $("#sortable").disableSelection();
+
+            $('form[action="/add-category"]').on('submit', function (e) {
+                if ($('#menuId').val() === "") {
+                    e.preventDefault();
+                    somethingWrong('messageForsection3', 'Please select a Menu to add the Category to');
+                }
+            });
+            $('form[action="/deletecategory"]').on('submit', function (e) {
+                if ($('#categoryId').val() === "") {
+                    e.preventDefault();
+                    somethingWrong('messageForsection1', 'Please select a Category to delete');
+                }
+            });
+
+            // Show modal when Update button is clicked
+            $('#updateButton').on('click', function (e) {
+                // Check if a category is selected
+                var selectedCategoryName = $('#deleteButton').text();
+                var selectedCategoryId = $('#categoryId').val();
+                if (selectedCategoryId === "") {
+                    somethingWrong('messageForsection1', 'Please select a Category to update');
+                } else {
+                    // Set the selected category name in the modal input
+                    $('#newCategoryName').val(selectedCategoryName);
+                    $('#updateCategoryId').val(selectedCategoryId);
+                    $('#updateModal').modal('show');
+                }
+            });
+
+            // Handle the confirmation of the update
+            $('#confirmUpdateButton').on('click', function () {
+                var newCategoryName = $('#newCategoryName').val();
+                var categoryId = $('#updateCategoryId').val();
+                // Send the updated category name to your backend
+                fetch('/update-category', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ order: sortedIDs }),
-                }).then(response => response.json())
+                    body: JSON.stringify({ categoryId: categoryId, newCategoryName: newCategoryName })
+                })
+                    .then(response => response.json())
                     .then(data => {
-                        console.log('Success:', data);
+                        if (data.success) {
+                            success('messageForsection1', 'Category updated successfully.');
+                            $('#updateModal').modal('hide');
+                        } else {
+                            somethingWrong('messageForsection2', 'Failed to update category. please try again.');
+                        }
                     }).catch((error) => {
-                        console.error('Error:', error);
+                        somethingWrong('messageForsection1', 'Failed to update category. please try again.');
+                        $('#updateModal').modal('hide');
                     });
-            }
-        });
-        $("#sortable").disableSelection();
-
-         $('form[action="/add-category"]').on('submit', function (e) {
-            if ($('#menuId').val() === "") {
-                e.preventDefault();
-                alert('Please Select a menu');
-            }
-        });
-        $('form[action="/deletecategory"]').on('submit', function (e) {
-            if ($('#categoryId').val() === "") {
-                e.preventDefault();
-                alert('Please Select an Category to delete');
-            }
-        });
-
-            // Show modal when Update button is clicked
-        $('#updateButton').on('click', function (e) {
-            // Check if a category is selected
-            var selectedCategoryName = $('#deleteButton').text();
-            var selectedCategoryId = $('#categoryId').val();
-            if (selectedCategoryId === "") {
-                alert('Please Select a Category to update');
-            } else {
-                // Set the selected category name in the modal input
-                $('#newCategoryName').val(selectedCategoryName);
-                $('#updateCategoryId').val(selectedCategoryId);
-                $('#updateModal').modal('show');
-            }
-        });
-
-            // Handle the confirmation of the update
-        $('#confirmUpdateButton').on('click', function () {
-            var newCategoryName = $('#newCategoryName').val();
-            var categoryId = $('#updateCategoryId').val();
-            // Send the updated category name to your backend
-            fetch('/update-category', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ categoryId: categoryId, newCategoryName: newCategoryName })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Category updated successfully!');
-                    window.location.reload();
-                } else {
-                    alert('Failed to update category. please try again.');
-                }
-                $('#updateModal').modal('hide');
-            }).catch((error) => {
-                console.error('Error:', error);
-                alert('Failed to update category. please try again.');
-                $('#updateModal').modal('hide');
             });
         });
-    });
-</script>
+    </script>
 
 </body>
 

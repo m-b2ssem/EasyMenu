@@ -16,7 +16,7 @@
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
-        <!-- Bootstrap CSS -->
+    <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Toggle CSS -->
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
@@ -24,7 +24,7 @@
     <!-- Custom styles for this template-->
     <link href="/css/sb-admin-2.min.css" rel="stylesheet">
 
-        <style>
+    <style>
         .sortable-list {
             list-style-type: none;
             margin: 0;
@@ -51,125 +51,133 @@
         }
 
         .centered-row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: row; /* This ensures the children are laid out in a row */
-    text-align: center; /* This centers the text inside the children, if needed */
-}
-.dropdown-menu {
-    max-height: 200px; /* Adjust the height as needed */
-    overflow-y: auto;
-}
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
+            /* This ensures the children are laid out in a row */
+            text-align: center;
+            /* This centers the text inside the children, if needed */
+        }
 
-
+        .dropdown-menu {
+            max-height: 200px;
+            /* Adjust the height as needed */
+            overflow-y: auto;
+        }
     </style>
 </head>
 
 <body id="page-top">
 
-  <!-- ***** Preloader Start ***** -->
-  <div id="js-preloader" class="js-preloader">
-    <div class="preloader-inner">
-      <span class="dot"></span>
-      <div class="dots">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-    </div>
-  </div>
-  <!-- ***** Preloader End ***** -->
-
-  <!-- ***** Header Area Start ***** -->
-  <link rel="alternate" hreflang="en" href="https://easymenus.eu">
-<link rel="alternate" hreflang="de" href="https://de.easymenus.eu">
-<script type="text/javascript" src="https://cdn.weglot.com/weglot.min.js"></script>
-<script>
-    Weglot.initialize({
-        api_key: 'wg_ccdc61525b763853033f4669bd1f972d2'
-    });
-</script>
-
-<!-- Update Item Modal -->
-<div class="modal fade" id="updateItemModal" tabindex="-1" aria-labelledby="updateItemModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="updateItemModalLabel">Update Item</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+    <!-- ***** Preloader Start ***** -->
+    <div id="js-preloader" class="js-preloader">
+        <div class="preloader-inner">
+            <span class="dot"></span>
+            <div class="dots">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
-            <form id="updateItemForm" onsubmit="updateItem(event)">
-                <div class="modal-body">
-                    <input type="hidden" name="itemId" id="updateItemId">
-                    <div class="form-group">
-                        <label for="updateItemName">Item Name</label>
-                        <input type="text" class="form-control" id="updateItemName" name="itemName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="updateItemPrice">Item Price</label>
-                        <input type="text" class="form-control" id="updateItemPrice" name="price" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="updateItemDescription">Item Description</label>
-                        <input type="text" class="form-control" id="updateItemDescription" name="description" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="updateFoodType">Food Type</label>
-                        <div class="control">
-                            <label class="radio">
-                                <input type="radio" name="foodType" value="None" checked> None
-                            </label>
-                            <label class="radio">
-                                <input type="radio" name="foodType" value="Vegan"> Vegan
-                            </label>
-                            <label class="radio">
-                                <input type="radio" name="foodType" value="Vegetarian"> Vegetarian
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="updateItemAllergies">Allergies</label>
-                        <button type="button" id="addUpdateAllergyBtn" class="btn btn-primary" style="margin-left: 10px;">Add Allergy</button>
-                        <div class="col" style="text-align: center; margin: 20px;" id="updateAllergyInputs">
-                            <!-- Allergy inputs will be added here -->
-                        </div>
-                        <div id="updateAllergyList" style="text-align: center; margin: 20px;">
-                            <!-- Added allergies will be displayed here -->
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="updateItemCategory">Choose Category</label>
-                        <div class="dropdown">
-                            <button class="btn btn-primary dropdown-toggle" aria-expanded="false" id="updateItemCategory" data-bs-toggle="dropdown" type="button">Choose Category</button>
-                            <input type="hidden" name="categoryId" id="updateCategoryId">
-                            <div class="dropdown-menu setCategoryForUpdate">
-                                <% categories.forEach(categry => { %>
-                                    <a class="dropdown-item" id="<%= categry.category_id %>" href="#">
-                                        <%= categry.category_name %>
-                                    </a>
-                                <% }) %>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="updateItemImage">Item Image <br/> *let it empty if you want to use the old image*</label>
-                        <input type="file" class="form-control" id="updateItemImage" name="image" accept="image/*">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Update Item</button>
-                </div>
-                <div class="col" style="text-align: center;">
-                    <label id="updateError" style="display: none;"></label>
-                </div>
-            </form>
         </div>
     </div>
-</div>
+    <!-- ***** Preloader End ***** -->
+
+    <!-- ***** Header Area Start ***** -->
+    <link rel="alternate" hreflang="en" href="https://easymenus.eu">
+    <link rel="alternate" hreflang="de" href="https://de.easymenus.eu">
+    <script type="text/javascript" src="https://cdn.weglot.com/weglot.min.js"></script>
+    <script>
+        Weglot.initialize({
+            api_key: 'wg_ccdc61525b763853033f4669bd1f972d2'
+        });
+    </script>
+
+    <!-- Update Item Modal -->
+    <div class="modal fade" id="updateItemModal" tabindex="-1" aria-labelledby="updateItemModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateItemModalLabel">Update Item</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="updateItemForm" onsubmit="updateItem(event)">
+                    <div class="modal-body">
+                        <input type="hidden" name="itemId" id="updateItemId">
+                        <div class="form-group">
+                            <label for="updateItemName">Item Name</label>
+                            <input type="text" class="form-control" id="updateItemName" name="itemName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="updateItemPrice">Item Price</label>
+                            <input type="text" class="form-control" id="updateItemPrice" name="price" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="updateItemDescription">Item Description</label>
+                            <input type="text" class="form-control" id="updateItemDescription" name="description"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="updateFoodType">Food Type</label>
+                            <div class="control">
+                                <label class="radio">
+                                    <input type="radio" name="foodType" value="None" checked> None
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="foodType" value="Vegan"> Vegan
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="foodType" value="Vegetarian"> Vegetarian
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="updateItemAllergies">Allergies</label>
+                            <button type="button" id="addUpdateAllergyBtn" class="btn btn-primary"
+                                style="margin-left: 10px;">Add Allergy</button>
+                            <div class="col" style="text-align: center; margin: 20px;" id="updateAllergyInputs">
+                                <!-- Allergy inputs will be added here -->
+                            </div>
+                            <div id="updateAllergyList" style="text-align: center; margin: 20px;">
+                                <!-- Added allergies will be displayed here -->
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="updateItemCategory">Choose Category</label>
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle" aria-expanded="false"
+                                    id="updateItemCategory" data-bs-toggle="dropdown" type="button">Choose
+                                    Category</button>
+                                <input type="hidden" name="categoryId" id="updateCategoryId">
+                                <div class="dropdown-menu setCategoryForUpdate">
+                                    <% categories.forEach(categry=> { %>
+                                        <a class="dropdown-item" id="<%= categry.category_id %>" href="#">
+                                            <%= categry.category_name %>
+                                        </a>
+                                        <% }) %>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="updateItemImage">Item Image <br /> *let it empty if you want to use the old
+                                image*</label>
+                            <input type="file" class="form-control" id="updateItemImage" name="image" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update Item</button>
+                    </div>
+                    <div class="col" style="text-align: center;">
+                        <label id="updateError" style="display: none;"></label>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
 
     <!-- Page Wrapper -->
@@ -206,10 +214,14 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item active">
-                <a class="nav-link" href="/management/profile/<%= user.user_id %>"><i class="fas fa-fw fa-cog"></i><span>Profile</span></a>
-                <a class="nav-link" href="/management/menu/<%= user.user_id %>"><i class="fas fa-fw fa-cog"></i><span>Menus</span></a>
-                <a class="nav-link" href="/management/category/<%= user.user_id %>"><i class="fas fa-fw fa-cog"></i><span>Categories</span></a>
-                <a class="nav-link" href="/management/items/<%= user.user_id %>"><i class="fas fa-fw fa-cog"></i><span>Items</span></a>
+                <a class="nav-link" href="/management/profile/<%= user.user_id %>"><i
+                        class="fas fa-fw fa-cog"></i><span>Profile</span></a>
+                <a class="nav-link" href="/management/menu/<%= user.user_id %>"><i
+                        class="fas fa-fw fa-cog"></i><span>Menus</span></a>
+                <a class="nav-link" href="/management/category/<%= user.user_id %>"><i
+                        class="fas fa-fw fa-cog"></i><span>Categories</span></a>
+                <a class="nav-link" href="/management/items/<%= user.user_id %>"><i
+                        class="fas fa-fw fa-cog"></i><span>Items</span></a>
             </li>
 
         </ul>
@@ -241,9 +253,10 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.company_name %></span>
-                                <img class="img-profile rounded-circle"
-                                    src="/img/undraw_profile.svg">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                                    <%= user.company_name %>
+                                </span>
+                                <img class="img-profile rounded-circle" src="/img/undraw_profile.svg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -273,26 +286,33 @@
                                 <label class="col-form-label">Here you can delete or update the selected item</label>
                             </div>
                         </div>
-                        <div style="position: relative;display: flex;text-align: center;margin: 10px;margin-bottom: 30px;">
+                        <div
+                            style="position: relative;display: flex;text-align: center;margin: 10px;margin-bottom: 30px;">
                             <div class="col" style="text-align: center;position: relative;display: block;">
                                 <form action="/deleteitem" method="post">
-                                    <div class="dropdown" style="text-align: center;display: inline;margin-right: 18px;">
+                                    <div class="dropdown"
+                                        style="text-align: center;display: inline;margin-right: 18px;">
                                         <button class="btn btn-primary dropdown-toggle" aria-expanded="false"
-                                            data-bs-toggle="dropdown" id="deleteitem" name="item" type="button">Items </button>
+                                            data-bs-toggle="dropdown" id="deleteitem" name="item" type="button">Items
+                                        </button>
                                         <div class="dropdown-menu deleteitem">
                                             <% items.forEach(item=> { %>
                                                 <a class="dropdown-item" id="<%= item.item_id %>" href="#">
                                                     <%= item.item_name %>
                                                 </a>
-                                            <% }) %>
+                                                <% }) %>
                                         </div>
                                     </div>
                                     <input type="hidden" name="itemId" id="itemId" />
                                     <div class="centered-row">
-                                        <button class="btn btn-primary" type="button" id="updateButton" style="margin: 10px;">Update</button>
-                                        <button class="btn btn-primary" type="submit" style="margin: 10px;">Delete</button>
+                                        <button class="btn btn-primary" type="button" id="updateButton"
+                                            style="margin: 10px;">Update</button>
+                                        <button class="btn btn-primary" type="submit"
+                                            style="margin: 10px;">Delete</button>
                                         <div id="statusContainer" style="text-align: center; ">
-                                            <input type="checkbox" id="toggleStatus" data-toggle="toggle" data-on="Active" data-off="Deactiv" data-onstyle="primary" data-offstyle="danger">
+                                            <input type="checkbox" id="toggleStatus" data-toggle="toggle"
+                                                data-on="Active" data-off="Deactiv" data-onstyle="primary"
+                                                data-offstyle="danger">
                                         </div>
                                     </div>
                                 </form>
@@ -329,34 +349,37 @@
                     </div>
                     <div style="position: relative;margin-top: 15px;">
                         <div class="col" style="text-align: center;">
-                            <label class="col-form-label" style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">
+                            <label class="col-form-label"
+                                style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">
                                 Food Type
                             </label>
                         </div>
                         <div class="col" style="text-align: center;">
                             <div class="control">
                                 <label class="radio">
-                                  <input type="radio" checked="" name="foodType" value="None"/>
-                                  None
+                                    <input type="radio" checked="" name="foodType" value="None" />
+                                    None
                                 </label>
                                 <label class="radio">
-                                  <input type="radio" name="foodType" value="Vegan"/>
-                                  Vegan
+                                    <input type="radio" name="foodType" value="Vegan" />
+                                    Vegan
                                 </label>
-                                <label class="radio" >
-                                  <input type="radio" name="foodType"  value="Vegetarian"/>
-                                  Vegetarian
+                                <label class="radio">
+                                    <input type="radio" name="foodType" value="Vegetarian" />
+                                    Vegetarian
                                 </label>
-                              </div>
+                            </div>
                         </div>
                     </div>
 
                     <div style="position: relative;margin-top: 15px;">
                         <div class="col" style="text-align: center;">
-                            <label class="col-form-label" style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">
+                            <label class="col-form-label"
+                                style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">
                                 Allergies
                             </label>
-                            <button type="button" id="addAllergyBtn" class="btn btn-primary" style="margin-left: 10px;">Add Allergy</button>
+                            <button type="button" id="addAllergyBtn" class="btn btn-primary"
+                                style="margin-left: 10px;">Add Allergy</button>
                         </div>
                         <div class="col" style="text-align: center; margin: 20px;" id="allergyInputs">
                             <!-- Allergy inputs will be added here -->
@@ -378,22 +401,24 @@
                                         <a class="dropdown-item" id="<%= categry.category_id %>" href="#">
                                             <%= categry.category_name %>
                                         </a>
-                                    <% }) %>
+                                        <% }) %>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div style="position: relative;margin-top: 15px;">
                         <div class="col" style="text-align: center;">
-                            <label class="col-form-label" style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">
+                            <label class="col-form-label"
+                                style="position: relative;text-shadow: 0px 0px 0px var(--bs-link-color);">
                                 Item Image
                             </label>
-                            <span style=" font-size: small; color: var(--bs-success);">   *(Recommended)</span>
+                            <span style=" font-size: small; color: var(--bs-success);"> *(Recommended)</span>
                         </div>
-                        <div class="col" style="text-align: center;"><input  name="image" type="file" accept="image/*"
+                        <div class="col" style="text-align: center;"><input name="image" type="file" accept="image/*"
                                 style="border-radius: 4px;border-width: 0px;position: relative;" /></div>
                     </div>
-                    <div style="position: relative;margin-top: 40px;text-align: center;color: var(--bs-btn-disabled-color);">
+                    <div
+                        style="position: relative;margin-top: 40px;text-align: center;color: var(--bs-btn-disabled-color);">
                         <button class="btn btn-primary" type="submit"
                             style="background: rgb(42,208,28);position: relative;filter: brightness(96%) contrast(93%);backdrop-filter: blur(46px);transform: perspective(0px) translate(0px);">Add
                             Item</button>
@@ -414,30 +439,30 @@
                                     <a class="dropdown-item" id="<%= categry.category_id %>" href="#">
                                         <%= categry.category_name %>
                                     </a>
-                                <% }) %>
+                                    <% }) %>
                             </div>
                         </div>
                     </div>
                     <ul id="sortable" class="sortable-list">
                     </ul>
                 </div>
-                </div>
-                <!-- /.container-fluid -->
-                </div>
-            <!-- End of Main Content -->
-
-            <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Easy Menu  <%= year %></span>
-                    </div>
-                </div>
-            </footer>
-            <!-- End of Footer -->
-
+            </div>
+            <!-- /.container-fluid -->
         </div>
-        <!-- End of Content Wrapper -->
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Easy Menu <%= year %></span>
+                </div>
+            </div>
+        </footer>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
 
     </div>
     <!-- End of Page Wrapper -->
@@ -479,10 +504,11 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Bootstrap Toggle JS -->
+    <!-- Bootstrap Toggle JS -->
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 
     <script>
@@ -490,12 +516,12 @@
             $('#statusContainer').hide();
 
             var closeButton = document.querySelector('.modal-footer [data-dismiss="modal"]'); // Target the close button more specifically
-    closeButton.addEventListener('click', function() {
-        var modalElement = document.getElementById('updateItemModal');
-        var modalInstance = bootstrap.Modal.getInstance(modalElement); // Get the Bootstrap Modal instance
-        modalInstance.hide(); // Hide the modal properly
-    });
-            
+            closeButton.addEventListener('click', function () {
+                var modalElement = document.getElementById('updateItemModal');
+                var modalInstance = bootstrap.Modal.getInstance(modalElement); // Get the Bootstrap Modal instance
+                modalInstance.hide(); // Hide the modal properly
+            });
+
             // Event listener for dropdown items
             $('.setcategory a').on('click', function () {
                 event.preventDefault();
@@ -508,7 +534,7 @@
                 $('#categoryId').val(selectedId);
             });
 
-            
+
 
 
             $('.deleteitem a').on('click', function () {
@@ -522,7 +548,6 @@
                 fetch('/get-item-status?itemId=' + selectedId)
                     .then(response => response.json())
                     .then(data => {
-                        console.log(data);
                         if (data.item.item_status === true) {
                             $('#toggleStatus').bootstrapToggle('on');
                         } else {
@@ -534,7 +559,7 @@
                             var itemId = $('#itemId').val();
 
                             if (itemId === "") {
-                                alert('Please select an item to update');
+                                somethingWrong('messageForUpdate', 'Please select an item to update');
                                 return;
                             }
                             fetch('/update-item-status', {
@@ -545,9 +570,9 @@
                                 body: JSON.stringify({ itemId: itemId, status: status }),
                             }).then(response => response.json())
                                 .then(data => {
-                                    console.log('Success:', data);
+                                    success('messageForUpdate', 'Item status was updated successfully');
                                 }).catch((error) => {
-                                    alert('Failed, please try again')
+                                    somethingWrong('messageForUpdate', 'Failed, please try again');
                                     console.error('Error:', error);
                                 });
                         });
@@ -555,11 +580,11 @@
                         console.error('Error fetching item status:', error);
                     });
 
-                
-                
+
+
                 $('#itemId').val(selectedId);
             });
-        
+
 
             $('.setCategoryForUpdate a').on('click', function () {
                 // Get the text of the clicked item
@@ -599,21 +624,21 @@
                         // Re-initialize sortable after dynamically adding items
                         $("#sortable").sortable("refresh");
                     }).catch(error => {
-                        console.error('Error fetching categories:', error);
+                        alert('Failed to fetch items, please try again');
                     });
             });
 
             $('form[action="/deleteitem"]').on('submit', function (e) {
-            if ($('#itemId').val() === "") {
-                e.preventDefault();
-                alert('Please Select an Item ');
-            }
+                if ($('#itemId').val() === "") {
+                    e.preventDefault();
+                    somethingWrong('messageForUpdate', 'Please select an item to delete');
+                }
             });
 
 
             $("#sortable").sortable({
                 update: function (event, ui) {
-                    
+
                     var sortedIDs = $("#sortable").sortable("toArray", { attribute: "data-id" });
                     console.log(sortedIDs);
                     // Send sortedIDs to your backend to update the priority/order
@@ -626,9 +651,11 @@
                         body: JSON.stringify({ order: sortedIDs }),
                     }).then(response => response.json())
                         .then(data => {
-                            console.log('Success:', data);
+                            if (!data.success) {
+                                alert('Failed to update the order, please try again');
+                            }
                         }).catch((error) => {
-                            alert('Failed, please try again')
+                            alert('Failed to update the order, please try again');
                             console.error('Error:', error);
                         });
                 }
@@ -636,20 +663,20 @@
             $("#sortable").disableSelection();
         });
 
-        document.getElementById('addAllergyBtn').addEventListener('click', function() {
+        document.getElementById('addAllergyBtn').addEventListener('click', function () {
             const inputContainer = document.getElementById('allergyInputs');
             const form = document.getElementById('itemForm');
             const input = document.createElement('input');
             input.type = 'text';
             input.style = 'margin-top: 5px; border-radius: 8px; box-shadow: 1px 1px 5px var(--bs-blue);';
             input.placeholder = 'The Letter of the allergy';
-            
+
             const addButton = document.createElement('button');
             addButton.type = 'button';
             addButton.textContent = 'Add';
-            addButton.classList.add('btn', 'btn-primary'); 
+            addButton.classList.add('btn', 'btn-primary');
             addButton.style = 'margin-left: 5px;';
-            addButton.onclick = function() {
+            addButton.onclick = function () {
                 const value = input.value.trim();
                 if (value) {
                     if (value.length > 1) {
@@ -666,175 +693,190 @@
                     allergyLabel.textContent = value;
                     allergyLabel.style = 'display: inline-block; margin: 5px; background: var(--bs-light); padding: 2px 8px; border-radius: 4px;';
                     allergyList.appendChild(allergyLabel);
-                    
+
                     // Correctly concatenate and store the allergy values
                     if (allergyValues.value) {
                         allergyValues.value += ',' + value; // Add a comma before the new value if there's already content
                     } else {
                         allergyValues.value = value; // Just set the value if it's the first entry
                     }
-                    
+
                     input.value = ''; // Clear input after adding
-                    }
+                }
             };
 
-        if (!document.getElementById('allergies')) {
-            const allergyInputs = document.createElement('input');
-            allergyInputs.name = 'allergies';
-            allergyInputs.type = 'hidden';
-            allergyInputs.id = 'allergies';
-            form.appendChild(allergyInputs);
-        }
-    
-        inputContainer.appendChild(input);
-        inputContainer.appendChild(addButton);
-    });
+            if (!document.getElementById('allergies')) {
+                const allergyInputs = document.createElement('input');
+                allergyInputs.name = 'allergies';
+                allergyInputs.type = 'hidden';
+                allergyInputs.id = 'allergies';
+                form.appendChild(allergyInputs);
+            }
 
-    $('#updateButton').on('click', function () {
-        var item_id = $('#itemId').val();
-        if (item_id === "") {
-            alert('Please select an item to update');
-            return;
-        }
-        
+            inputContainer.appendChild(input);
+            inputContainer.appendChild(addButton);
+        });
 
-        fetch('/get-item?itemId=' + item_id)
-            .then(response => response.json())
-            .then(data => {
-                const form = document.getElementById('updateItemForm');
-                $('#updateItemId').val(data.item.item_id);
-                $('#updateItemName').val(data.item.item_name);
-                $('#updateItemPrice').val(data.item.price);
-                $('#updateItemDescription').val(data.item.description);
-                
-                // Set the food type
-                $('input[name="foodType"][value="' + data.item.food_type + '"]').prop('checked', true);
+        $('#updateButton').on('click', function () {
+            event.preventDefault();
+            var item_id = $('#itemId').val();
+            if (item_id === "") {
+                somethingWrong('messageForUpdate', 'Please select an item to update');
+                return;
+            }
 
-                // Create a hidden input to store the allergy values
-                let allergyInputs = document.getElementById('updateAllergies');
-                if (!allergyInputs) {
-                    allergyInputs = document.createElement('input');
-                    allergyInputs.name = 'allergies';
-                    allergyInputs.type = 'hidden';
-                    allergyInputs.id = 'updateAllergies';
-                    form.appendChild(allergyInputs);
-                }
-                allergyInputs.value = data.item.allergies || '';
 
-                // Populate allergies
-                const updateAllergyList = $('#updateAllergyList').empty();
-                const allergies = data.item.allergies ? data.item.allergies.split(',') : [];
-                allergies.forEach(allergy => {
-                    addAllergyLabel(allergy, updateAllergyList);
-                });
+            fetch('/get-item?itemId=' + item_id)
+                .then(response => response.json())
+                .then(data => {
+                    const form = document.getElementById('updateItemForm');
+                    $('#updateItemId').val(data.item.item_id);
+                    $('#updateItemName').val(data.item.item_name);
+                    $('#updateItemPrice').val(data.item.price);
+                    $('#updateItemDescription').val(data.item.description);
 
-                $('#updateAllergies').val(allergies.join(','));
+                    // Set the food type
+                    $('input[name="foodType"][value="' + data.item.food_type + '"]').prop('checked', true);
 
-                // Fetch the category name
-                fetch('/get-category-name?categoryId=' + data.item.category_id)
-                    .then(response => response.json())
-                    .then(data => {
-                        $('#updateItemCategory').text(data.category.category_name);
-                        $('#updateCategoryId').val(data.category.category_id);
-                    }).catch(error => {
-                        alert('Failed to fetch category details, please try again');
-                        console.error('Error fetching category:', error);
+                    // Create a hidden input to store the allergy values
+                    let allergyInputs = document.getElementById('updateAllergies');
+                    if (!allergyInputs) {
+                        allergyInputs = document.createElement('input');
+                        allergyInputs.name = 'allergies';
+                        allergyInputs.type = 'hidden';
+                        allergyInputs.id = 'updateAllergies';
+                        form.appendChild(allergyInputs);
+                    }
+                    allergyInputs.value = data.item.allergies || '';
+
+                    // Populate allergies
+                    const updateAllergyList = $('#updateAllergyList').empty();
+                    const allergies = data.item.allergies ? data.item.allergies.split(',') : [];
+                    allergies.forEach(allergy => {
+                        addAllergyLabel(allergy, updateAllergyList);
                     });
 
-                $('#updateItemModal').modal('show');
-            }).catch(error => {
-                alert('Failed to fetch item details, please try again');
-                console.error('Error fetching item:', error);
-            });
-    });
+                    $('#updateAllergies').val(allergies.join(','));
 
-    var span = document.getElementsByClassName("close")[0];
-    span.onclick = function () {
-        var modalElement = document.getElementById('updateItemModal');
-        var modalInstance = bootstrap.Modal.getInstance(modalElement); // Get the modal instance
-        modalInstance.hide(); // Use the hide method to close the modal properly
-    }
-    // Function to update allergies list in the hidden input
-    function updateAllergiesInput() {
-        const allergyLabels = document.getElementById('updateAllergyList').children;
-        const allergies = [];
-        for (let i = 0; i < allergyLabels.length; i++) {
-            allergies.push(allergyLabels[i].innerText.replace('x', '').trim());
+                    // Fetch the category name
+                    fetch('/get-category-name?categoryId=' + data.item.category_id)
+                        .then(response => response.json())
+                        .then(data => {
+                            $('#updateItemCategory').text(data.category.category_name);
+                            $('#updateCategoryId').val(data.category.category_id);
+                        }).catch(error => {
+                            alert('Failed to fetch category details, please try again');
+                            console.error('Error fetching category:', error);
+                        });
+
+                    $('#updateItemModal').modal('show');
+                }).catch(error => {
+                    alert('Failed to fetch item details, please try again');
+                    console.error('Error fetching item:', error);
+                });
+        });
+
+        function somethingWrong(elementId, messageToSend) {
+            const message = document.getElementById(elementId);
+            message.innerText = messageToSend;
+            message.style.display = 'block';
+            message.style.color = 'red';
         }
-        document.getElementById('updateAllergies').value = allergies.join(',');
-    }
 
-    // Function to add an allergy label with delete button
-    function addAllergyLabel(allergy, container) {
-        const allergyLabel = $('<span>').text(allergy).css({
-            display: 'inline-block',
-            margin: '5px',
-            background: 'var(--bs-light)',
-            padding: '2px 8px',
-            borderRadius: '4px'
-        });
-        const deleteButton = $('<button>').text('x').css({
-            marginLeft: '5px',
-            background: 'red',
-            color: 'white',
-            border: 'none',
-            borderRadius: '50%',
-            width: '20px',
-            height: '20px',
-            lineHeight: '16px',
-            textAlign: 'center',
-            cursor: 'pointer'
-        }).click(function() {
-            $(this).parent().remove();
-            updateAllergiesInput();
-        });
-        allergyLabel.append(deleteButton);
-        container.append(allergyLabel);
-    }
+        function success(elementId, messageToSend) {
+            const message = document.getElementById(elementId);
+            message.innerText = messageToSend;
+            message.style.display = 'block';
+            message.style.color = 'green';
+        }
 
-    document.getElementById('addUpdateAllergyBtn').addEventListener('click', function() {
-        const inputContainer = document.getElementById('updateAllergyInputs');
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.style = 'margin-top: 5px; border-radius: 8px; box-shadow: 1px 1px 5px var(--bs-blue);';
-        input.placeholder = 'The Letter of the allergy';
-        
-        const addButton = document.createElement('button');
-        addButton.type = 'button';
-        addButton.textContent = 'Add';
-        addButton.classList.add('btn', 'btn-primary'); 
-        addButton.style = 'margin-left: 5px;';
-        addButton.onclick = function() {
-            const value = input.value.trim();
-            if (value) {
-                if (value.length > 1) {
-                    const message = document.getElementById('updateError');
-                    message.innerText = 'Please enter only one letter for the allergy';
-                    message.style.display = 'block';
-                    message.style.color = 'red';
-                    message.scrollIntoView();
-                    return;
-                }
-                addAllergyLabel(value, $('#updateAllergyList'));
-                updateAllergiesInput();
-                input.value = '';
+        var span = document.getElementsByClassName("close")[0];
+        span.onclick = function () {
+            var modalElement = document.getElementById('updateItemModal');
+            var modalInstance = bootstrap.Modal.getInstance(modalElement); // Get the modal instance
+            modalInstance.hide(); // Use the hide method to close the modal properly
+        }
+        // Function to update allergies list in the hidden input
+        function updateAllergiesInput() {
+            const allergyLabels = document.getElementById('updateAllergyList').children;
+            const allergies = [];
+            for (let i = 0; i < allergyLabels.length; i++) {
+                allergies.push(allergyLabels[i].innerText.replace('x', '').trim());
             }
-        };
+            document.getElementById('updateAllergies').value = allergies.join(',');
+        }
 
-        inputContainer.appendChild(input);
-        inputContainer.appendChild(addButton);
-    });
+        // Function to add an allergy label with delete button
+        function addAllergyLabel(allergy, container) {
+            const allergyLabel = $('<span>').text(allergy).css({
+                display: 'inline-block',
+                margin: '5px',
+                background: 'var(--bs-light)',
+                padding: '2px 8px',
+                borderRadius: '4px'
+            });
+            const deleteButton = $('<button>').text('x').css({
+                marginLeft: '5px',
+                background: 'red',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                width: '20px',
+                height: '20px',
+                lineHeight: '16px',
+                textAlign: 'center',
+                cursor: 'pointer'
+            }).click(function () {
+                $(this).parent().remove();
+                updateAllergiesInput();
+            });
+            allergyLabel.append(deleteButton);
+            container.append(allergyLabel);
+        }
+
+        document.getElementById('addUpdateAllergyBtn').addEventListener('click', function () {
+            const inputContainer = document.getElementById('updateAllergyInputs');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.style = 'margin-top: 5px; border-radius: 8px; box-shadow: 1px 1px 5px var(--bs-blue);';
+            input.placeholder = 'The Letter of the allergy';
+
+            const addButton = document.createElement('button');
+            addButton.type = 'button';
+            addButton.textContent = 'Add';
+            addButton.classList.add('btn', 'btn-primary');
+            addButton.style = 'margin-left: 5px;';
+            addButton.onclick = function () {
+                const value = input.value.trim();
+                if (value) {
+                    if (value.length > 1) {
+                        const message = document.getElementById('updateError');
+                        message.innerText = 'Please enter only one letter for the allergy';
+                        message.style.display = 'block';
+                        message.style.color = 'red';
+                        message.scrollIntoView();
+                        return;
+                    }
+                    addAllergyLabel(value, $('#updateAllergyList'));
+                    updateAllergiesInput();
+                    input.value = '';
+                }
+            };
+
+            inputContainer.appendChild(input);
+            inputContainer.appendChild(addButton);
+        });
     </script>
 
-    
+
     <script>
         async function updateItem(event) {
             event.preventDefault();
             const form = event.target;
             if (!document.getElementById('updateCategoryId').value) {
-            event.preventDefault();
-            alert('Please choose a category.');
-            return;
+                event.preventDefault();
+                alert('Please choose a category.');
+                return;
             }
             const formData = new FormData(form);
             try {
@@ -857,13 +899,13 @@
                     message.style.color = 'red';
                 }
             } catch (error) {
-                    form.reset();
-                    const updateAllergyList = $('#updateAllergyList').empty();
-                    const message = document.getElementById('messageForUpdate');
-                    message.innerText = 'Failed to update the item, please try again'
-                    message.style.display = 'block';
-                    message.style.color = 'red';
-                    $('#updateItemModal').modal('hide');
+                form.reset();
+                const updateAllergyList = $('#updateAllergyList').empty();
+                const message = document.getElementById('messageForUpdate');
+                message.innerText = 'Failed to update the item, please try again'
+                message.style.display = 'block';
+                message.style.color = 'red';
+                $('#updateItemModal').modal('hide');
             }
         }
     </script>
@@ -873,9 +915,9 @@
             event.preventDefault();
             const form = event.target;
             if (!document.getElementById('categoryId').value) {
-            event.preventDefault();
-            alert('Please choose a category.');
-            return;
+                event.preventDefault();
+                alert('Please choose a category.');
+                return;
             }
             const formData = new FormData(form);
             try {
@@ -898,12 +940,12 @@
                     message.style.color = 'red';
                 }
             } catch (error) {
-                    const updateAllergyList = $('#allergyList').empty();
-                    form.reset();
-                    const message = document.getElementById('messageForAdd');
-                    message.innerText = data.message;
-                    message.style.display = 'block';
-                    message.style.color = 'red';
+                const updateAllergyList = $('#allergyList').empty();
+                form.reset();
+                const message = document.getElementById('messageForAdd');
+                message.innerText = data.message;
+                message.style.display = 'block';
+                message.style.color = 'red';
             }
         }
     </script>
@@ -911,5 +953,3 @@
 </body>
 
 </html>
-
-

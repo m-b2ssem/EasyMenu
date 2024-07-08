@@ -48,6 +48,7 @@ import {
   updateResetPassword,
   selectUserByToken,
   updatePassword,
+  updatecategoryStatus,
 } from './querys.js';
 import {createLangaugeList, convertArrayBufferToBase64, cehckSizeandConvertTOBytea, formatDate} from './helperFunctions.js';
 import {sendEmail, generateResetToken, sendEmailJana} from './sendEmail.js';
@@ -414,6 +415,16 @@ app.get('/get-category-status', async (req, res) => {
   res.json({category});
 });
 
+app.post('/update-category-status', async(req, res) => {
+  const categoryId = parseInt(req.body.categoryId);
+  const status = req.body.status;
+  const result = await updatecategoryStatus(db, categoryId, status);
+  if (!result) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  res.json({ success: true });
+});
+
 app.post('/reorder-categories', async(req, res) => {
   const order = req.body.order;
 
@@ -475,10 +486,6 @@ app.post('/update-item-status', async(req, res) => {
   }
   res.json({ success: true });
 });
-
-
-
-
 
 
 

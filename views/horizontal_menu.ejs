@@ -15,35 +15,14 @@
 </head>
 
 <body data-bs-spy="scroll" data-bs-target="#categories-list" data-bs-offset="50">
-    <!-- Google Translate Script -->
-    <script>
-        (function () {
-            var e = document.createElement("script");
-            e.type = "text/javascript";
-            e.async = true;
-            e.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
-            var a = document.getElementsByTagName("script")[0];
-            a.parentNode.insertBefore(e, a);
-        })();
-    </script>
-
-    <!-- Google Translate Initialization Function -->
-    <script>
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: '<%= language[0].code %>',
-                includedLanguages: '',
-            }, 'google_translate_element');
-        }
-    </script>
-
+    <script src="/js/translate.js"></script>
     <!-- Google Translate Element -->
-    <div id="google_translate_element"></div>
+    <div id="translater"></div>
 
     <div style="width: 100%; height: 50%; min-height: 240px; max-height: 450px; background: url(<%= backgroundImage %>) center / cover no-repeat;">
         <!--<h1 style="text-align: center; padding-top: 30%; color: black;">Jankoia Restaurant Menu</h1>-->
     </div>
-    <div class="container" style="padding-top:40px; padding-bottom:60px;">
+    <div class="container" id="trnaslate" style="padding-top:40px; padding-bottom:60px;">
         <div>
             <div class="col scrollmenu" id="categories-list">
                 <% categories.forEach(function (category) { %>
@@ -109,157 +88,11 @@
             </div>
         </div>
     </div>
-
     <!-- Include jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-document.addEventListener('DOMContentLoaded', function () {
-    var scrollSpy = new bootstrap.ScrollSpy(document.body, {
-        target: '#categories-list'
-    });
-
-    var dataSpyList = [].slice.call(document.querySelectorAll('[data-bs-spy="scroll"]'));
-    dataSpyList.forEach(function (dataSpyEl) {
-        bootstrap.ScrollSpy.getInstance(dataSpyEl).refresh();
-    });
-
-    var firstScrollSpyEl = document.querySelector('[data-bs-spy="scroll"]');
-    firstScrollSpyEl.addEventListener('activate.bs.scrollspy', function (event) {
-        var activeLink = event.relatedTarget;
-        var scrollmenu = document.getElementById('categories-list');
-        var scrollmenuWidth = scrollmenu.offsetWidth;
-        var activeLinkWidth = activeLink.offsetWidth;
-        var activeLinkOffsetLeft = activeLink.offsetLeft;
-
-        // Calculate the scroll position to center the active link
-        var scrollPosition = activeLinkOffsetLeft - (scrollmenuWidth / 2) + (activeLinkWidth / 2);
-
-        // Ensure the scroll position doesn't exceed the scrollable range
-        var maxScrollPosition = scrollmenu.scrollWidth - scrollmenuWidth;
-        if (scrollPosition > maxScrollPosition) {
-            scrollPosition = maxScrollPosition;
-        }
-        if (scrollPosition < 0) {
-            scrollPosition = 0;
-        }
-
-        scrollmenu.scrollTo({
-            left: scrollPosition,
-            behavior: 'smooth'
-        });
-    });
-
-    // Add click event listener to the nav-links for smooth scroll
-    var navLinks = document.querySelectorAll('#categories-list .nav-link');
-    navLinks.forEach(function (navLink) {
-        navLink.addEventListener('click', function (event) {
-            event.preventDefault();
-            var targetId = this.getAttribute('href').substring(1);
-            var targetElement = document.getElementById(targetId);
-            var offsetTop = targetElement.offsetTop;
-
-            window.scrollTo({
-                top: offsetTop,
-                behavior: 'smooth'
-            });
-        });
-    });
-});
-
-    </script>
-
-    <script>
-        // JavaScript to handle the modal
-        var modal = document.getElementById("myModal");
-        var span = document.getElementsByClassName("close")[0];
-
-        function openModal(name, price, description, image, allergies, foodType) {
-            document.getElementById("modalItemName").innerText = name;
-            document.getElementById("modalPrice").innerText = price;
-            document.getElementById("modalDescription").innerText = description;
-            document.getElementById("modalImage").src = image;
-
-            if (allergies) {
-                document.getElementById("modalAllergy").innerText = allergies;
-            } else {
-                document.getElementById("modalAllergy").innerText = '';
-            }
-
-            var foodTypeImage = '';
-            if (foodType === 'Vegan') {
-                foodTypeImage = '/img/vegan.jpg';
-            } else if (foodType === 'Vegetarian') {
-                foodTypeImage = '/img/vegetarian.jpg';
-            } else {
-                foodTypeImage = ''; // No image for other types
-            }
-            document.getElementById("modalFoodTypeImage").src = foodTypeImage;
-
-            modal.style.display = "block";
-            document.body.classList.add("modal-open");
-        }
-
-        span.onclick = function () {
-            modal.style.display = "none";
-            document.body.classList.remove("modal-open");
-        }
-
-        window.onclick = function (event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-                document.body.classList.remove("modal-open");
-            }
-        }
-    </script>
-
-    <script>
-        function applyCustomStyles() {
-            var iframe = document.querySelector('iframe.VIpgJd-ZVi9od-xl07Ob-OEVmcd');
-            if (iframe) {
-                var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                console.log(iframeDoc);
-                var style = document.createElement('style');
-                style.textContent = `
-            .VIpgJd-ZVi9od-vH1Gmf {
-                text-align: center!important;
-            }
-
-            .indicator{
-                display: none !important;
-            }
-
-              .VIpgJd-ZVi9od-vH1Gmf-ibnC6b{
-            border-radius: 8px !important;
-            width: 400px !important;
-        }
-
-        VIpgJd-ZVi9od-vH1Gmf{
-            display: none !important; 
-        }
-
-            VIpgJd-ZVi9od-vH1Gmf-ibnC6b div:hover {
-                background-color: #f1f1f1;
-            }
-
-            .VIpgJd-ZVi9od-l4eHX-hSRGPd{
-                display: none !important;
-            }
-        `;
-                iframeDoc.head.appendChild(style);
-                var iframeee = iframeDoc.querySelector('.VIpgJd-ZVi9od-vH1Gmf-ibnC6b');
-            } else {
-                setTimeout(applyCustomStyles, 500);
-            }
-        }
-
-        // Wait for the iframe to load and then apply styles
-        window.addEventListener('load', function () {
-            setTimeout(applyCustomStyles, 500);
-        });
-    </script>
+    <script src="/js/menu.js"></script>
 </body>
 
 </html>

@@ -438,3 +438,13 @@ export async function updatePassword(db, user_id, hash) {
     }
     return false;
 }
+
+
+export async function updatecategoryStatus(db, category_id, status) {
+    const result = await db.query("UPDATE categories SET category_status = $1 WHERE category_id = $2",
+        [status, category_id]);
+    if (result.rowCount > 0) {
+        return true;
+    }
+    return false;
+}
