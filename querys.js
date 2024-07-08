@@ -448,3 +448,15 @@ export async function updatecategoryStatus(db, category_id, status) {
     }
     return false;
 }
+
+
+/*export async function setQRcode (db) {
+    const toQrcode = 'https://www.easymenus.eu/menu/3/rafidain';
+    const qrCodeDataUrl = await QRCode.toDataURL(toQrcode);
+    const base64Data = qrCodeDataUrl.replace(/^data:image\/png;base64,/, '');
+    const qrCodeBuffer = Buffer.from(base64Data, 'base64');
+    const qrCodeResult = await db.query(
+        "UPDATE menus SET qr_code = $1 WHERE menu_id = 3",
+        [qrCodeBuffer]
+    );
+  }*/

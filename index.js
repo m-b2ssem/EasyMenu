@@ -90,6 +90,7 @@ db.connect((err) => {
 });
 
 
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 app.use(express.json());
@@ -919,6 +920,8 @@ app.post('/jana', storage_jana.single('manuscript_file'), async (req, res) => {
   await sendEmailJana(bodyString, file);
   res.json({ success: true,  message: 'Váš formulár bol úspešne vyplnený.' });
 });
+
+
 
 app.listen(PORT, () => {
   console.log('Server is running on http://localhost: ' + PORT);
