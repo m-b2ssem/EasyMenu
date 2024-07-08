@@ -454,7 +454,6 @@
                         $('#toggleStatus').change(function () {
                             var status = $(this).prop('checked');
                             var categoryId = $('#categoryId').val();
-
                             if (categoryId === "") {
                                 somethingWrong('messageForsection1', 'Please select a Category to update');
                                 return;
@@ -467,11 +466,11 @@
                                 body: JSON.stringify({ categoryId: categoryId, status: status }),
                             }).then(response => response.json())
                                 .then(data => {
-                                    success('messageForsection1', 'Category status updated successfully.');
-                                    console.log('Success:', data);
+                                    if (!data.success) {
+                                        somethingWrong('messageForsection1', 'Failed to update category status.');
+                                    }
                                 }).catch((error) => {
                                     somethingWrong('messageForsection1', 'Failed to update category status.');
-                                    console.error('Error:', error);
                                 });
                         });
                     }).catch(error => {

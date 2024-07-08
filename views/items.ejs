@@ -569,7 +569,9 @@
                                 body: JSON.stringify({ itemId: itemId, status: status }),
                             }).then(response => response.json())
                                 .then(data => {
-                                    success('messageForUpdate', 'Item status was updated successfully');
+                                    if (!data.success) {
+                                        somethingWrong('messageForUpdate', 'Failed, please try again');
+                                    }
                                 }).catch((error) => {
                                     somethingWrong('messageForUpdate', 'Failed, please try again');
                                     console.error('Error:', error);
