@@ -104,9 +104,23 @@ const PORT = process.env.PORT;  // const PORT = 3000;
 const saltRounds = 10;
 
 
-app.get('/tt', (req, res) => {
+app.get('/cookie-policy', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/pages/cookies.html'));
 });
+
+app.get('/imprint', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/pages/imprint.html'));
+});
+
+app.get('/terms', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/pages/terms.html'));
+});
+
+app.get('/privacy', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/pages/privacy-policy.html'));
+});
+
+
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/pages/index.html'));
