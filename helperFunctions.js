@@ -32,9 +32,8 @@ export function createLangaugeList(language) {
 }
 
 
-
 export async function convertArrayBufferToBase64(buffer) {
-    return await Buffer.from(buffer).toString('base64');
+    return  Buffer.from(buffer).toString('base64');
 }
 
 

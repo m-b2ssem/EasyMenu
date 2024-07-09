@@ -57,6 +57,8 @@ import { Strategy } from 'passport-local';
 import bcrypt from 'bcrypt';
 import multer from 'multer';
 import  fs  from 'fs';
+import { sendMetaConversionEvent } from './conversions.js';
+import { v4 as uuidv4 } from 'uuid';
 
 
 let stripe_key = process.env.STRIPE_KEY;
@@ -797,7 +799,7 @@ app.post('/delete-account', async (req, res) => {
 
 
   const subscription = await selectSubscrptionByUserId(db, userId);
-  if (subscription.stripe_customer_id) {
+  if (subscription && subscription.stripe_customer_id) {
     try {
       await stripe.customers.del(subscription.stripe_customer_id);
     } catch (error) {
@@ -815,6 +817,9 @@ app.post('/delete-account', async (req, res) => {
 
 app.post('/register', async (req, res) => {
   const { campanyName, email, password } = req.body;
+  const clientIpAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const clientUserAgent = req.headers['user-agent'];
+  const eventSourceUrl = req.headers['referer'];
 
   if (!campanyName || !email || !password) {
     return res.status(400).json({ success: false, message: 'Please fill all fields.' });
@@ -838,12 +843,21 @@ app.post('/register', async (req, res) => {
         await sendEmail(lowerCaseEmail, 'Welcome to Easy Menu – Your Registration is Complete!', registerTemplate);
         const result_user = result.rows[0];
 
-        req.login(result_user, (err) => {
+        const eventId = uuidv4(); // Generate a unique event_id
+        const event_time =  Math.floor(new Date() / 1000);
+        const event_name = 'CompleteRegistration';
+        req.login(result_user, async (err) => {
           if (err) {
             console.log(err);
             return res.status(500).json({ success: false, message: 'Login failed, please try again.' });
           } else {
-            return res.status(200).json({ success: true, message: 'Registration successful.', userId: result_user.user_id });
+            // Send event to Meta Conversion API
+            try {
+              await sendMetaConversionEvent(result_user.user_id, eventId,campanyName,lowerCaseEmail, clientIpAddress, clientUserAgent, event_name, eventSourceUrl, event_time);
+            } catch (error) {
+              console.error('Error sending conversion event to Meta:', error);
+            }
+            return res.status(200).json({ success: true, message: 'Registration successful.', userId: result_user.user_id, eventId: eventId});
           }
         });
       }

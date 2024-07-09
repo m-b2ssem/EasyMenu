@@ -75,7 +75,6 @@
     <script>
       $('#registerForm').on('submit', function(event) {
         event.preventDefault();
-
         const formData = {
           campanyName: $('#campanyName').val(),
           email: $('#email').val(),
@@ -88,8 +87,11 @@
           contentType: 'application/json',
           data: JSON.stringify(formData),
           success: function(response) {
-            alert(response.message);
+            //alert(response.message);
             if (response.success) {
+              fbq('track', 'CompleteRegistration', {user_id: response.userId.toString()}, {
+                  eventID: response.eventId // Use the event ID from the server
+              });
               window.location.href = '/management/menu/' + response.userId;
             }
           },
