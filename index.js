@@ -113,6 +113,10 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/pages/index.html'));
 });
 
+app.get('/sitemap.xml', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/sitemap.xml'));
+});
+
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/pages/login_page.html'));
 });
