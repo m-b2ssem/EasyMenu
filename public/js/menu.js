@@ -3,6 +3,11 @@ document.addEventListener("DOMContentLoaded", function () {
     target: "#categories-list",
   });
 
+    // Refresh ScrollSpy instances
+    var dataSpyList = [].slice.call(document.querySelectorAll('[data-bs-spy="scroll"]'));
+    dataSpyList.forEach(function (dataSpyEl) {
+      bootstrap.ScrollSpy.getInstance(dataSpyEl).refresh();
+    });
 
   var firstScrollSpyEl = document.querySelector('[data-bs-spy="scroll"]');
   firstScrollSpyEl.addEventListener("activate.bs.scrollspy", function (event) {
@@ -88,3 +93,6 @@ window.onclick = function (event) {
   }
 };
 
+
+
+document.documentElement.style.scrollBehavior = "smooth";
