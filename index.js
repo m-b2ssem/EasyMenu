@@ -5,7 +5,6 @@ import { dirname } from 'path';
 import bodyParser from 'body-parser';
 import { config } from 'dotenv';
 import Stripe from 'stripe';
-import pg from 'pg';
 import session from 'express-session';
 import { 
   selectUserByEmail,
@@ -50,14 +49,14 @@ import {
   updatePassword,
   updatecategoryStatus,
 } from './querys.js';
-import {createLangaugeList, convertArrayBufferToBase64, cehckSizeandConvertTOBytea, formatDate} from './helperFunctions.js';
+import {createLangaugeList, convertArrayBufferToBase64, cehckSizeandConvertTOBytea, formatDate, parsePrice} from './helperFunctions.js';
 import {sendEmail, generateResetToken, sendEmailJana} from './sendEmail.js';
 import passport from 'passport';
 import { Strategy } from 'passport-local';
 import bcrypt from 'bcrypt';
 import multer from 'multer';
 import  fs  from 'fs';
-import { sendMetaConversionEvent } from './conversions.js';
+import { sendMetaConversionEvent, hashData } from './conversions.js';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -75,21 +74,7 @@ app.use(session({
    }
 }));
 
-const db = new pg.Client({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: 5432,
-});
 
-db.connect((err) => {
-  if (err) {
-    console.error('Connection error', err.stack);
-  } else {
-    console.log('Connected to the database');
-  }
-});
 
 
 
@@ -144,12 +129,19 @@ app.get('/forgot-password', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/pages/forgot-password.html'));
 });
 
+app.get('/completed-registration/:userid', (req, res) => {
+  const userId = parseInt(req.params.userid);
+  console.log(req);
+  res.sendFile(path.join(__dirname, '/public/pages/complete_registration.html'));
+});
+
+
 app.post('/forgot-password', async (req, res) => {
   const { email } = req.body;
   const lowerCaseEmail = email.toLowerCase();
 
   try {
-    const user = await selectUserByEmail(db, lowerCaseEmail);
+    const user = await selectUserByEmail(lowerCaseEmail);
 
     if (!user) {
       return res.render('message.ejs', { message: 'something went wrong, please try again',
@@ -161,7 +153,7 @@ app.post('/forgot-password', async (req, res) => {
     const token = await generateResetToken();
     const resetPasswordExpires = new Date(Date.now() + 3600000); // Token expires in 1 hour
 
-    await updateResetPassword(db, lowerCaseEmail, token, resetPasswordExpires);
+    await updateResetPassword(lowerCaseEmail, token, resetPasswordExpires);
     const resetLink = `http://easymenus.eu/reset-password?token=${token}`;
     let registerTemplate = fs.readFileSync(path.join(__dirname, '/public/pages/forgot-password-template.html'), 'utf8');
     registerTemplate = registerTemplate.replace('%link%', resetLink);
@@ -183,7 +175,7 @@ app.post('/forgot-password', async (req, res) => {
 
 app.get('/reset-password', async (req, res) => {
   const token = req.query.token;
-  const user = await selectUserByToken(db, token);
+  const user = await selectUserByToken(token);
   const now = new Date(Date.now());
   const expire = user.reset_password_expires < now;
 
@@ -198,7 +190,7 @@ app.get('/reset-password', async (req, res) => {
 app.post('/reset-password', async (req, res) => {
   const { token, password } = req.body;
   const now = new Date(Date.now());
-  const user = await selectUserByToken(db, token);
+  const user = await selectUserByToken(token);
   const expire = user.reset_password_expires < now;
   
 
@@ -217,7 +209,7 @@ app.post('/reset-password', async (req, res) => {
        });
     } else {
       try {
-        const result = await updatePassword(db, user.user_id, hash);
+        const result = await updatePassword(user.user_id, hash);
       if (!result) {
         return res.render('message.ejs', { message: 'Password has not been reset. Please try again.',
           link: '/forgot-password',
@@ -238,7 +230,7 @@ app.post('/reset-password', async (req, res) => {
 app.get('/menu/:menuid/:res', async (req, res) => {
   const menuid = req.params.menuid;
 
-  const result = await getMenuByMenuId(db, menuid);
+  const result = await getMenuByMenuId(menuid);
   if (!result) {
     return res.render('message.ejs', { message: 'There is no menu found, please login to see the menu URL.', link: '/login', name: 'login' });
   }
@@ -247,7 +239,7 @@ app.get('/menu/:menuid/:res', async (req, res) => {
     return res.render('message.ejs', { message: 'There is no menu found, please login to see the menu URL.', link: '/login', name: 'login' });
   }
 
-  const response = await selectSubscrptionPlanByUserId(db, menu.user_id);
+  const response = await selectSubscrptionPlanByUserId(menu.user_id);
   const createdAt = new Date(response.created_at);
   const expirationDate = new Date(createdAt);
   expirationDate.setDate(expirationDate.getDate() + response.duration_days);
@@ -256,12 +248,12 @@ app.get('/menu/:menuid/:res', async (req, res) => {
 
 //implament it later to display just when the plan is valid
   if (isPlanValid){
-    let user = await selectUserById(db, menu.user_id);
+    let user = await selectUserById(menu.user_id);
     user = user.rows[0];
-    const menu_design = await getDesignByMenuId(db, menuid);
+    const menu_design = await getDesignByMenuId(menuid);
     const language = await createLangaugeList(menu.menu_language);
-    let categories = await getCategoriesWithItems(db, menuid);
-    let logo = await getLogoImage(db, menuid);
+    let categories = await getCategoriesWithItems(menuid);
+    let logo = await getLogoImage(menuid);
     if (!logo) {
       logo ='https://easymenus.eu/img/mainlogo.jpg';
     }
@@ -293,7 +285,7 @@ app.get('/management/menu/:userid', async (req, res) => {
   const urlid = parseInt(req.params.userid);
   if (req.isAuthenticated()) {
     if (urlid === req.user.user_id) {
-      const menus = await getMenuByUserId(db ,urlid);
+      const menus = await getMenuByUserId(urlid);
       const menu = menus[0];
       let name_of_menu =  menu.menu_name.replace(/\s+/g, '');
       name_of_menu = name_of_menu.toLowerCase();
@@ -301,7 +293,7 @@ app.get('/management/menu/:userid', async (req, res) => {
       const menu_name = 'https://www.easymenus.eu/menu/' + menu.menu_id +'/' + name_of_menu;
       const langauges = await createLangaugeList(menu.menu_language);
       const image = await 'data:image/png;base64,' + await convertArrayBufferToBase64(menu.qr_code);
-      const menuDesign = await getDesignByMenuId(db, menu.menu_id);
+      const menuDesign = await getDesignByMenuId(menu.menu_id);
       res.render('menu', {
         'user': req.user ,
         'year': new Date().getFullYear(),
@@ -329,7 +321,7 @@ app.post('/uplaod-logo-image', storage.single('image'), async (req, res) => {
   if (!buffer) {
     return res.json({ success: false, message: 'Image is too large.'});
   }
-  const result = await updateLogoImage(db, menu_id, buffer);
+  const result = await updateLogoImage(menu_id, buffer);
   if (!result) {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
@@ -340,7 +332,7 @@ app.post('/updateColor', async (req, res) => {
   let {designId, color }= req.body;
   designId = parseInt(designId);
   
-  const  result = await updateColoInDesign(db, designId, color);
+  const  result = await updateColoInDesign(designId, color);
   if (!result) {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
@@ -351,7 +343,7 @@ app.post('/updateLangauge', async (req, res) => {
   let {langauge, menuId }= req.body;
   menuId = parseInt(menuId);
 
-  const  result = await updateLangauge(db, langauge, menuId);
+  const  result = await updateLangauge(langauge, menuId);
   if (!result) {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
@@ -368,8 +360,8 @@ app.get('/management/category/:userid', async (req, res) => {
 
   if (req.isAuthenticated()) {
     if (urlid === req.user.user_id) {
-      const categories = await getCategoriesByUserId(db, req.user.user_id);
-      const menus = await getMenuByUserId(db ,urlid);
+      const categories = await getCategoriesByUserId(req.user.user_id);
+      const menus = await getMenuByUserId(urlid);
       res.render('categories', {'user': user, 'categories': categories, 'year': new Date().getFullYear(), 'menus': menus});
     } else {
       res.redirect('/login');
@@ -383,7 +375,7 @@ app.post('/add-category', async (req, res) => {
   const {categoryName, menuId} = req.body;
   const menu_id = parseInt(menuId);
   const userId = req.user.user_id
-  const result = await insertCategory(db, menu_id, categoryName, userId);
+  const result = await insertCategory(menu_id, categoryName, userId);
   if (!result) {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
@@ -392,7 +384,7 @@ app.post('/add-category', async (req, res) => {
 
 app.post('/deletecategory', async (req, res) => {
   const categoryId = req.body.categoryId;
-  const result = await deleteCategory(db, categoryId);
+  const result = await deleteCategory(categoryId);
   if (!result) {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
@@ -402,7 +394,7 @@ app.post('/deletecategory', async (req, res) => {
 app.post('/update-category', async (req, res) => {
   const {categoryId, newCategoryName} = req.body;
 
-  const result = await updateCategoryName(db, categoryId, newCategoryName);
+  const result = await updateCategoryName(categoryId, newCategoryName);
   if (!result) {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
@@ -413,7 +405,7 @@ app.post('/update-category', async (req, res) => {
 // get all categories from the database by menu id and return them as JSON
 app.get('/get-categories', async (req, res) => {
   const menuId = req.query.menuId; // Access query parameter
-  let categories = await getCategoriesByMenuId(db, menuId);
+  let categories = await getCategoriesByMenuId(menuId);
   if (!categories) {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
@@ -425,7 +417,7 @@ app.get('/get-categories', async (req, res) => {
 
 app.get('/get-category-status', async (req, res) => {
   const categoryId = parseInt(req.query.categoryId);
-  const category = await getCategoryByCategoryId(db, categoryId);
+  const category = await getCategoryByCategoryId(categoryId);
   if (!category) {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
@@ -435,7 +427,7 @@ app.get('/get-category-status', async (req, res) => {
 app.post('/update-category-status', async(req, res) => {
   const categoryId = parseInt(req.body.categoryId);
   const status = req.body.status;
-  const result = await updatecategoryStatus(db, categoryId, status);
+  const result = await updatecategoryStatus(categoryId, status);
   if (!result) {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
@@ -452,7 +444,7 @@ app.post('/reorder-categories', async(req, res) => {
   try {
     for (const id of reversedCategoriesIds) {
       // update the priority of the category
-      await updateCategoryPriority(db ,id, priority);
+      await updateCategoryPriority(id, priority);
       priority++;
     }
     res.json({ success: true });
@@ -474,7 +466,7 @@ app.post('/reorder-items', async(req, res) => {
   try {
     for (const id of reversedItemsIds) {
       // update the priority of the category
-      await updateItemPriority(db ,id, priority);
+      await updateItemPriority(id, priority);
       priority++;
     }
     res.json({ success: true });
@@ -487,7 +479,7 @@ app.post('/reorder-items', async(req, res) => {
 
 app.get('/get-item-status', async (req, res) => {
   const itemId = parseInt(req.query.itemId);
-  const item = await getItemByItemId(db, itemId);
+  const item = await getItemByItemId(itemId);
   if (!item) {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
@@ -497,7 +489,7 @@ app.get('/get-item-status', async (req, res) => {
 app.post('/update-item-status', async(req, res) => {
   const itemId = parseInt(req.body.itemId);
   const status = req.body.status;
-  const result = await updateItemStatus(db, itemId, status);
+  const result = await updateItemStatus(itemId, status);
   if (!result) {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
@@ -509,7 +501,7 @@ app.post('/update-item-status', async(req, res) => {
 // to do. I need to delete the chosse item from the database
 app.post('/deleteitem', async(req, res) => {
   const itemId = parseInt(req.body.itemId);
-  const result = await deleteItem(db, itemId);
+  const result = await deleteItem(itemId);
   if (!result) {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
@@ -527,6 +519,10 @@ app.post('/additem', upload.single('image'), async (req, res) => {
   const file = req.file;
   let buffer = null;
   let capitalisedAllergies = null;
+  const intPrice = await parsePrice(price);
+  if (isNaN(intPrice)) {
+    return res.json({ success: false, message: 'Please enter a valid number in the Prise filed'});
+  }
 
   if (allergies){
     capitalisedAllergies = allergies.toUpperCase();
@@ -541,11 +537,7 @@ app.post('/additem', upload.single('image'), async (req, res) => {
     }
   }
   categoryId = parseInt(categoryId);
-  const intPrice = parseFloat(price);
-  if (isNaN(intPrice)  || intPrice === undefined){
-    return res.json({ success: false, message: 'Please enter a valid number in the Prise filed'});
-  }
-  const inserted = await insertItem(db, categoryId, itemName, description, intPrice, buffer, foodType, capitalisedAllergies);
+  const inserted = await insertItem(categoryId, itemName, description, intPrice, buffer, foodType, capitalisedAllergies);
   if (!inserted) {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
@@ -558,6 +550,12 @@ app.post('/additem', upload.single('image'), async (req, res) => {
 app.post('/update-item', update_item.single('image'), async (req, res) => {
   let { itemName, price, description, categoryId, itemId, foodType, allergies } = req.body;
   const file = req.file;
+
+  const intPrice = await parsePrice(price);
+  if (isNaN(intPrice)) {
+    return res.json({ success: false, message: 'Please enter a valid number in the Prise filed'});
+  }
+
   let capitalisedAllergies = null;
   if (!itemName || !price || !description || !categoryId) {
     return res.json({ success: false, message: 'Please fill all fields.'});
@@ -571,11 +569,7 @@ app.post('/update-item', update_item.single('image'), async (req, res) => {
       return res.json({ success: false, message: 'Image is too large.'});
     }
     categoryId = parseInt(categoryId);
-    const intPrice = parseFloat(price);
-    if (isNaN(intPrice)  || intPrice === undefined){
-      return res.json({ success: false, message: 'Please enter a valid number in the Prise filed'});
-    }
-    const update = await updateItem(db, categoryId, itemName, description, intPrice, buffer, itemId,foodType, capitalisedAllergies);
+    const update = await updateItem(categoryId, itemName, description, intPrice, buffer, itemId,foodType, capitalisedAllergies);
     if (!update) {
       return res.json({ success: false, message: 'Something went wrong, please try again.'});
     }
@@ -583,11 +577,7 @@ app.post('/update-item', update_item.single('image'), async (req, res) => {
   else
   {
     categoryId = parseInt(categoryId);
-    const intPrice = parseFloat(price);
-    if (isNaN(intPrice)  || intPrice === undefined){
-      return res.json({ success: false, message: 'Please enter a valid number in the Prise filed'});
-    }
-    const update = await updateItem(db, categoryId, itemName, description, intPrice, null, itemId, foodType, capitalisedAllergies);
+    const update = await updateItem(categoryId, itemName, description, intPrice, null, itemId, foodType, capitalisedAllergies);
     if (!update) {
       return res.json({ success: false, message: 'Something went wrong, please try again.'});
     }
@@ -598,13 +588,13 @@ app.post('/update-item', update_item.single('image'), async (req, res) => {
 
 app.get('/get-items', async (req, res) => {
   const category_id = req.query.categoryId; // Access query parameter
-  const items = await getItemsByCategory(db, category_id);
+  const items = await getItemsByCategory(category_id);
   res.json({items});
 });
 
 app.get('/get-item', async (req, res) => {
   const itemId = parseInt(req.query.itemId);
-  const item = await getItemByItemId(db, itemId);
+  const item = await getItemByItemId(itemId);
   if (!item) {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
@@ -613,7 +603,7 @@ app.get('/get-item', async (req, res) => {
 
 app.get('/get-category-name', async (req, res) => {
   const categoryId = parseInt(req.query.categoryId);
-  const category = await getCategoryByCategoryId(db, categoryId);
+  const category = await getCategoryByCategoryId(categoryId);
   if (!category) {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
@@ -626,8 +616,8 @@ app.get('/management/items/:userid', async(req, res) => {
   const urlid = parseInt(req.params.userid);
   if (req.isAuthenticated()) {
     if (urlid === req.user.user_id) {
-      const categories = await getCategoriesByUserId(db, req.user.user_id);
-      const items = await getItemsByuserId(db, req.user.user_id);
+      const categories = await getCategoriesByUserId(req.user.user_id);
+      const items = await getItemsByuserId(req.user.user_id);
       res.render('items', {'user': req.user, 'year': new Date().getFullYear(), 'categories': categories, 'items': items});
     } else {
       res.redirect('/login');
@@ -640,15 +630,13 @@ app.get('/management/items/:userid', async(req, res) => {
 app.get('/management/profile/:user_id', async (req, res) => {
   if (req.isAuthenticated()) {
     const user_id = parseInt(req.params.user_id);
-    const result = await selectUserById(db, user_id);
+    const result = await selectUserById(user_id);
     if (result.rows.length > 0) {
-      let subscription_plan = await selectSubscrptionPlanByUserId(db, user_id);
-      const subscription = await selectSubscrptionByUserId(db, user_id);
+      let subscription_plan = await selectSubscrptionPlanByUserId(user_id);
+      const subscription = await selectSubscrptionByUserId(user_id);
 
       const customer = await stripe.customers.retrieve('cus_QPxE4HfPfrvgOg');
       const inc = await stripe.invoices.list({customer: 'cus_QPxE4HfPfrvgOg'});
-      console.log(Date(inc.data[0].period_end));
-      console.log(customer);
       const createdAt = new Date(subscription_plan.created_at);
       const expirationDate = new Date(createdAt);
       expirationDate.setDate(expirationDate.getDate() + subscription_plan.duration_days);
@@ -688,7 +676,7 @@ app.post('/change-pass', async (req, res) => {
   const { currentPassword, newPassword, userId } = req.body;
 
   try {
-    const result = await selectUserById(db, parseInt(userId));
+    const result = await selectUserById(parseInt(userId));
     
     if (result.rows.length > 0) {
       const user = result.rows[0];
@@ -698,7 +686,7 @@ app.post('/change-pass', async (req, res) => {
       
       if (isMatch) {
         const hash = await bcrypt.hash(newPassword, saltRounds);
-        const updateResult = await updatePassword(db, userId, hash);
+        const updateResult = await updatePassword(userId, hash);
 
         if (updateResult) {
           return res.json({ success: true });
@@ -729,8 +717,8 @@ app.post('/create-checkout-session', async (req, res) => {
     try {
       const  stringUserId = userId.toString();
       const sessionStripe = await stripe.checkout.sessions.create({
-        success_url: "http://easymenu.eu/success/" + userId + "/" + subscription,
-        cancel_url: "http://easymenu.eu/management/profile/"+ userId,
+        success_url: "http://easymenus.eu/success/" + userId + "/" + subscription,
+        cancel_url: "http://easymenus.eu/management/profile/"+ userId,
         line_items: [
           {
             price: process.env.PRICE_ID,
@@ -739,13 +727,13 @@ app.post('/create-checkout-session', async (req, res) => {
         ],
         mode: "subscription",
       });
-      const plan = await selectSubscrptionPlanByUserId(db, userId);
-      const response_1 = await selectSubscrptionByUserId(db, userId);
+      const plan = await selectSubscrptionPlanByUserId(userId);
+      const response_1 = await selectSubscrptionByUserId(userId);
       if (response_1){
-        await updateSubscription(db, userId, null, sessionStripe.id,null,null,null, false);
+        await updateSubscription(userId, null, sessionStripe.id,null,null,null, false);
       }
       else{
-        const result = await insertSubscription(db, plan.plan_id, userId, sessionStripe.id);
+        const result = await insertSubscription(plan.plan_id, userId, sessionStripe.id);
       }
   
 
@@ -763,8 +751,8 @@ app.get('/success/:userId/:subscription', async (req, res) => {
   const userId = parseInt(req.params.userId);
   const subscription = req.params.subscription;
 
-  const response = await selectSubscrptionByUserId(db, userId);
-  const user = await selectUserById(db, userId);
+  const response = await selectSubscrptionByUserId(userId);
+  const user = await selectUserById(userId);
 
   if (!response.stripe_session_id) {
     return res.render('profile.ejs', {
@@ -784,7 +772,7 @@ app.get('/success/:userId/:subscription', async (req, res) => {
         const start_date = await formatDate(today);
         const end_date = await formatDate(futureDate);
         const paid = true;
-        const respone_2 = await updateSubscription(db, userId, customer_id, session.id, start_date, end_date, 'activ', paid);
+        const respone_2 = await updateSubscription(userId, customer_id, session.id, start_date, end_date, 'activ', paid);
       }
     } catch (error) {
       console.log(error);
@@ -798,7 +786,7 @@ app.post('/delete-account', async (req, res) => {
   console.log(userId);
 
 
-  const subscription = await selectSubscrptionByUserId(db, userId);
+  const subscription = await selectSubscrptionByUserId(userId);
   if (subscription && subscription.stripe_customer_id) {
     try {
       await stripe.customers.del(subscription.stripe_customer_id);
@@ -806,7 +794,7 @@ app.post('/delete-account', async (req, res) => {
       console.log(error);
     }
   }
-  const result = await deleteAccount(db, userId);
+  const result = await deleteAccount(userId);
   if (!result) {
     return res.json({ success: false });
   }
@@ -826,7 +814,7 @@ app.post('/register', async (req, res) => {
   }
 
   const lowerCaseEmail = email.toLowerCase();
-  const checkIfExist = await checkIfUserExist(db, lowerCaseEmail);
+  const checkIfExist = await checkIfUserExist(lowerCaseEmail);
   if (checkIfExist) {
     return res.status(409).json({ success: false, message: 'This email address already exists.' });
   } else {
@@ -834,30 +822,32 @@ app.post('/register', async (req, res) => {
       if (err) {
         return res.status(500).json({ success: false, message: 'Something went wrong, please try again.' });
       } else {
-        const result = await insertUser(db, campanyName, lowerCaseEmail, hash);
-        const result_2 = await insertMenu(db, result.rows[0].user_id, campanyName);
-        const result_3 = await insertDesign(db, result_2.rows[0].menu_id);
-        const result_4 = await insertSubscriptionPlan(db, 'free_trial', result.rows[0].user_id, 0, 30);
+        const result = await insertUser(campanyName, lowerCaseEmail, hash);
+        const result_2 = await insertMenu(result.rows[0].user_id, campanyName);
+        const result_3 = await insertDesign(result_2.rows[0].menu_id);
+        const result_4 = await insertSubscriptionPlan('free_trial', result.rows[0].user_id, 0, 30);
         let registerTemplate = fs.readFileSync(path.join(__dirname, '/public/pages/register-template.html'), 'utf8');
 
         await sendEmail(lowerCaseEmail, 'Welcome to Easy Menu – Your Registration is Complete!', registerTemplate);
         const result_user = result.rows[0];
 
-        const eventId = uuidv4(); // Generate a unique event_id
-        const event_time =  Math.floor(new Date() / 1000);
-        const event_name = 'CompleteRegistration';
         req.login(result_user, async (err) => {
           if (err) {
             console.log(err);
             return res.status(500).json({ success: false, message: 'Login failed, please try again.' });
           } else {
+            const eventId = uuidv4(); // Generate a unique event_id
+            const event_name = 'CompleteRegistration';
+            const hashUserId = await hashData(result_user.user_id.toString());
+            const hashEmail = await hashData(lowerCaseEmail);
+            const event_time =  Math.floor(new Date() / 1000);
             // Send event to Meta Conversion API
             try {
               await sendMetaConversionEvent(result_user.user_id, eventId,campanyName,lowerCaseEmail, clientIpAddress, clientUserAgent, event_name, eventSourceUrl, event_time);
             } catch (error) {
               console.error('Error sending conversion event to Meta:', error);
             }
-            return res.status(200).json({ success: true, message: 'Registration successful.', userId: result_user.user_id, eventId: eventId});
+            return res.status(200).json({ success: true, message: 'Registration successful.', userId: result_user.user_id, eventId: eventId, hashUserId: hashUserId, hashEmail: hashEmail});
           }
         });
       }
@@ -865,10 +855,7 @@ app.post('/register', async (req, res) => {
   }
 });
 
-app.get('/zz', async (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/pages/forgot-password-template.html'));
 
-});
 
 
 app.post('/login', 
@@ -887,7 +874,7 @@ app.post('/login',
 passport.use(
   new Strategy (async function verify(username, password, cb) {
     try {
-      const result = await selectUserByEmail(db, username.toLowerCase());
+      const result = await selectUserByEmail(username.toLowerCase());
       if (result.rows.length > 0) {
         const user = result.rows[0];
         const hashPassword = user.password;

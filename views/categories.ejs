@@ -25,6 +25,13 @@
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 
     <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NJ44ZN37');</script>
+    <!-- End Google Tag Manager -->
     <style>
         .sortable-list {
             list-style-type: none;
@@ -438,6 +445,7 @@
                 var selectedText = $(this).text();
                 var selectedId = $(this).attr('id');
                 // Update the dropdown button text
+                console.log(selectedText);
                 $('#deleteButton').text(selectedText);
                 // Update the dropdown button data-id attribute
                 $('#categoryId').val(selectedId);
@@ -493,6 +501,7 @@
             }
 
             $('.addCategory a').on('click', function () {
+                event.preventDefault();
                 // Get the text of the clicked item
                 var selectedText = $(this).text();
                 var selectedId = $(this).attr('id');
@@ -575,7 +584,7 @@
             // Show modal when Update button is clicked
             $('#updateButton').on('click', function (e) {
                 // Check if a category is selected
-                var selectedCategoryName = $('#deleteButton').text();
+                var selectedCategoryName = $('#deleteButton').text().replace(/\s+/g, '');
                 var selectedCategoryId = $('#categoryId').val();
                 if (selectedCategoryId === "") {
                     somethingWrong('messageForsection1', 'Please select a Category to update');
@@ -602,8 +611,7 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            success('messageForsection1', 'Category updated successfully.');
-                            $('#updateModal').modal('hide');
+                            window.location.reload();
                         } else {
                             somethingWrong('messageForsection2', 'Failed to update category. please try again.');
                         }

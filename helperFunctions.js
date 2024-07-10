@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Adjusted language list with ISO 639-1 codes where available
-export function createLangaugeList(language) {
+export async function createLangaugeList(language) {
     const allLanguages = [
         { name: 'English', code: 'en' },
         { name: 'عربي', code: 'ar' }, // Arabic
@@ -72,4 +72,19 @@ export async function  formatDate(date) {
     const microseconds = '000'; // JavaScript Date object does not support microseconds
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}${microseconds}`;
+}
+
+async function isNumber(value) {
+    // Regular expression to check if the value is a valid number
+    const regex = /^-?\d+(\.\d+)?$/;
+    return regex.test(value) && !isNaN(parseFloat(value));
+}
+
+
+export async function parsePrice(price) {
+    if (isNumber(price)) {
+        return parseFloat(price);
+    } else {
+        return NaN; // or handle the invalid input as needed
+    }
 }

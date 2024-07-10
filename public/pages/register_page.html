@@ -56,7 +56,7 @@
                         </div>
       
                         <div class="pt-1 mb-4">
-                          <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-dark btn-lg btn-block">Register</button>
+                          <button type="submit" id="registerid" data-mdb-button-init data-mdb-ripple-init class="btn btn-dark btn-lg btn-block">Register</button>
                         </div>
       
                         <p class="mb-5 pb-lg-2" style="color: #393f81;">Already have an account? <a style="color: #393f81;" href="/login">Login here</a></p>
@@ -89,10 +89,12 @@
           success: function(response) {
             //alert(response.message);
             if (response.success) {
-              fbq('track', 'CompleteRegistration', {user_id: response.userId.toString()}, {
+              fbq('track', 'CompleteRegistration', {
+                external_id: response.userId.toString(),
+              }, {
                   eventID: response.eventId // Use the event ID from the server
               });
-              window.location.href = '/management/menu/' + response.userId;
+              window.location.href = '/completed-registration/' + response.userId;
             }
           },
           error: function(xhr) {
