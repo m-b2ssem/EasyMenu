@@ -1,5 +1,9 @@
 /* Hide scrollbar for Webkit browsers */
 
+html {
+  scroll-behavior: smooth;
+}
+
 div.scrollmenu::-webkit-scrollbar {
     display: none;
   }

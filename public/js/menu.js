@@ -3,12 +3,6 @@ document.addEventListener("DOMContentLoaded", function () {
     target: "#categories-list",
   });
 
-  var dataSpyList = [].slice.call(
-    document.querySelectorAll('[data-bs-spy="scroll"]')
-  );
-  dataSpyList.forEach(function (dataSpyEl) {
-    bootstrap.ScrollSpy.getInstance(dataSpyEl).refresh();
-  });
 
   var firstScrollSpyEl = document.querySelector('[data-bs-spy="scroll"]');
   firstScrollSpyEl.addEventListener("activate.bs.scrollspy", function (event) {
@@ -22,14 +16,17 @@ document.addEventListener("DOMContentLoaded", function () {
     var scrollPosition =
       activeLinkOffsetLeft - scrollmenuWidth / 2 + activeLinkWidth / 2;
 
-    // Ensure the scroll position doesn't exceed the scrollable range
+    /*// Ensure the scroll position doesn't exceed the scrollable range
     var maxScrollPosition = scrollmenu.scrollWidth - scrollmenuWidth;
     if (scrollPosition > maxScrollPosition) {
       scrollPosition = maxScrollPosition;
     }
     if (scrollPosition < 0) {
       scrollPosition = 0;
-    }
+    }*/
+
+      var maxScrollPosition = scrollmenu.scrollWidth - scrollmenuWidth;
+      scrollPosition = Math.max(0, Math.min(scrollPosition, maxScrollPosition));
 
     scrollmenu.scrollTo({
       left: scrollPosition,
