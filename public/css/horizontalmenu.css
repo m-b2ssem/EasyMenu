@@ -243,7 +243,14 @@ div.scrollmenu::-webkit-scrollbar {
         overflow-y: auto;
     }
 
-    @media (max-width: 600px) {
-        /* Adjust this value according to your phone size breakpoint */
+    .modal-header {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+  }
 
-    }
+  .modal-header .food-type-info {
+    max-width: 40px;
+    max-height: 40px;
+}
