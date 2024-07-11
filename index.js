@@ -91,7 +91,7 @@ const PORT = process.env.PORT;  // const PORT = 3000;
 const saltRounds = 10;
 
 // This is your Stripe CLI webhook secret for testing your endpoint locally.
-const endpointSecret = "whsec_8dd171db50405521e8199e740b759c4cfdb31ef85e6c96d016acca4070f9719e";
+const endpointSecret = "whsec_bUPuNmswK3Qz2P585bl4hA4Grw1UuJS3";
 
 app.post('/webhook', express.raw({type: 'application/json'}), async (request, response) => {
   const sig = request.headers['stripe-signature'];
