@@ -809,7 +809,7 @@ app.post('/create-checkout-session', async (req, res) => {
       const plan = await selectSubscrptionPlanByUserId(userId);
       const response_1 = await selectSubscrptionByUserId(userId);
       if (response_1){
-        await updateSubscription(userId, null, sessionStripe.id,null,null,null, false);
+        await updateSubscription(userId, null, sessionStripe.id,null,null,null, false, null);
       }
       else{
         const result = await insertSubscription(plan.plan_id, userId, sessionStripe.id);
