@@ -34,7 +34,27 @@
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://easymenus.eu/cookie-policy</loc>
+  <loc>https://easymenus.eu/imprint</loc>
+  <lastmod>2024-07-08T23:03:21+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://easymenus.eu/management/menu/</loc>
+  <lastmod>2024-07-08T23:03:21+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://easymenus.eu/management/profile/</loc>
+  <lastmod>2024-07-08T23:03:21+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://easymenus.eu/management/items/</loc>
+  <lastmod>2024-07-08T23:03:21+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://easymenus.eu/management/category/</loc>
   <lastmod>2024-07-08T23:03:21+00:00</lastmod>
   <priority>0.80</priority>
 </url>
@@ -43,6 +63,4 @@
   <lastmod>2024-07-08T23:03:21+00:00</lastmod>
   <priority>0.64</priority>
 </url>
-
-
 </urlset>
