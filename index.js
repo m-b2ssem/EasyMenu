@@ -93,7 +93,7 @@ const saltRounds = 10;
 // This is your Stripe CLI webhook secret for testing your endpoint locally.
 const endpointSecret = "whsec_8dd171db50405521e8199e740b759c4cfdb31ef85e6c96d016acca4070f9719e";
 
-app.post('/webhook', express.raw({type: 'application/json'}), (request, response) => {
+app.post('/webhook', express.raw({type: 'application/json'}), async (request, response) => {
   const sig = request.headers['stripe-signature'];
 
   let event;
@@ -129,7 +129,12 @@ app.post('/webhook', express.raw({type: 'application/json'}), (request, response
       break;
     case 'subscription_schedule.canceled':
       const subscriptionScheduleCanceled = event.data.object;
-      // Then define and call a function to handle the event subscription_schedule.canceled
+      const userId = parseInt(subscription.metadata.userId, 10);
+      const user_subscription = await selectSubscrptionByUserId(userId);
+      if (user_subscription) {
+        const result = await updateSubscription(userId, null, null, null, null, 'canceled', false, null);
+        const result_2 = await updateSubscriptionPlan('none', userId, 0, 0);
+      }
       console.log('subscription_schedule.canceled');
       break;
     case 'subscription_schedule.completed':
@@ -878,7 +883,8 @@ app.post('/cancel-subscription', async (req, res) => {
   } else if (subscription && subscription.stripe_subscription_id) {
     try {
       await stripe.subscriptions.update(subscription.stripe_subscription_id, {
-        cancel_at_period_end: true
+        cancel_at_period_end: true,
+        metadata: { userId: userId.toString() }
       });
     } catch (error) {
       res.json({ success: false, message: 'Something went wrong, please try again.'});
