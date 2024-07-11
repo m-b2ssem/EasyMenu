@@ -191,6 +191,12 @@ app.get('/sitemap.xml', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'sitemap.xml'));
 });
 
+// Serve robots.txt
+app.get('/robots.txt', (req, res) => {
+  res.setHeader('Content-Type', 'text/plain');
+  res.sendFile(path.join(__dirname, 'public', 'robots.txt'));
+});
+
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/pages/login_page.html'));
 });
