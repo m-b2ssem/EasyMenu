@@ -142,7 +142,7 @@
                         <p><strong>Current Subscription: </strong> <%= subscription_plan.plan_name %></p>
                         <p><strong>Total Durations : </strong> <%= subscription_plan.duration_days %> days</p>
                         <p><strong>Status : </strong> <%= subscription_plan.status %></p>
-                        <button class="btn btn-primary" value="<%= user.user_id %>">Cancel Subscription</button>
+                        <button class="btn btn-danger" value="<%= user.user_id %>">Cancel Subscription</button>
                         <div class="col" style="display: none; margin-top: 20px;" id="cancelLebal">
                             <label>suc</label>
                         </div>
@@ -160,7 +160,7 @@
                                     <option value="premium">Premium</option>-->
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-danger">Change Subscription</button>
+                            <button type="submit" class="btn btn-primary">Change Subscription</button>
                         </form>
                     </div>
 

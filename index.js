@@ -704,6 +704,7 @@ app.get('/management/items/:userid', async(req, res) => {
   }
 });
 
+
 app.get('/management/profile/:user_id', async (req, res) => {
   if (req.isAuthenticated()) {
     const user_id = parseInt(req.params.user_id);
