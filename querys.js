@@ -730,12 +730,12 @@ export async function updateSubscriptionPlan(plan_name, user_id,price, duration_
     }
 }
 
-export async function updateSubscription(user_id, stripe_customer_id,stripe_session_id, start_date, end_date, status, paid, stripe_subscripation_id) {
+export async function updateSubscription(user_id, stripe_customer_id,stripe_session_id, start_date, end_date, status, paid, stripe_subscription_id) {
     const db = await createDbClient();
     try {
         await db.connect();
-        const result = await db.query("UPDATE subscriptions SET stripe_session_id = $1, start_date = $2, end_date = $3, status = $4, paid = $5, stripe_customer_id = $6, stripe_subscripation_id = $7 WHERE user_id = $8",
-            [stripe_session_id, start_date, end_date, status, paid, stripe_customer_id, stripe_subscripation_id,user_id]);
+        const result = await db.query("UPDATE subscriptions SET stripe_session_id = $1, start_date = $2, end_date = $3, status = $4, paid = $5, stripe_customer_id = $6, stripe_subscription_id = $7 WHERE user_id = $8",
+            [stripe_session_id, start_date, end_date, status, paid, stripe_customer_id, stripe_subscription_id,user_id]);
         if (result.rowCount > 0) {
             return true;
         }
