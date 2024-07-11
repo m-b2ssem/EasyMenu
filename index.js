@@ -59,6 +59,7 @@ import multer from 'multer';
 import  fs  from 'fs';
 import { sendMetaConversionEvent, hashData } from './conversions.js';
 import { v4 as uuidv4 } from 'uuid';
+import { render } from 'ejs';
 
 
 let stripe_key = process.env.STRIPE_KEY;
@@ -755,6 +756,47 @@ app.get('/management/profile/:user_id', async (req, res) => {
     res.redirect('/login');
   }
 });
+
+app.get('/management/billing/:userid', async (req, res) => {
+  const urlid = parseInt(req.params.userid);
+  if (req.isAuthenticated()) {
+    if (urlid === req.user.user_id) {
+      res.render('billing', {'user': req.user,
+        invoices: null,
+      });
+    } else {
+      res.redirect('/login');
+    }
+  } else {
+    res.redirect('/login');
+  }
+});
+
+app.post('/getInvoice', async (req, res) => {
+  const userId = req.body.userId;
+  const searchDate = req.body.searchDate;
+  const subscription = await selectSubscrptionByUserId(userId);
+  if (subscription && subscription.stripe_customer_id) {
+    const customer = await stripe.customers.retrieve(subscription.stripe_customer_id);
+    const invoices = await stripe.invoices.list({
+      customer: customer.id,
+      created: {gte: searchDate}
+    });
+    if (invoices.data.length === 0) {
+      return res.json({ success: false, message: 'There is no invoice found for the chosen date.'});
+    }else if (invoices.data.length === 1) {
+      res.json({success: true, url: invoices.data[0].hosted_invoice_url});
+    }else{
+      for (let i = 0; i < invoices.data.length; i++) {
+        if (invoices.data[i].hosted_invoice_url) {
+          return res.json({success: true, url: invoices.data[i].hosted_invoice_url});
+        }
+      }
+    }
+  }
+  res.json({ success: false, message: 'There is no invoice found for the chosen date.'});
+});
+
 
 
 
