@@ -43,6 +43,7 @@ import {
   insertSubscription,
   selectSubscrptionByUserId,
   updateSubscription,
+  updateSubscriptionPlan,
   deleteAccount,
   updateResetPassword,
   selectUserByToken,
@@ -80,7 +81,6 @@ app.use(session({
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-app.use(express.json());
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -89,6 +89,74 @@ app.use(passport.initialize());
 app.use(passport.session());
 const PORT = process.env.PORT;  // const PORT = 3000;
 const saltRounds = 10;
+
+// This is your Stripe CLI webhook secret for testing your endpoint locally.
+const endpointSecret = "whsec_8dd171db50405521e8199e740b759c4cfdb31ef85e6c96d016acca4070f9719e";
+
+app.post('/webhook', express.raw({type: 'application/json'}), (request, response) => {
+  const sig = request.headers['stripe-signature'];
+
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+  } catch (err) {
+    response.status(400).send(`Webhook Error: ${err.message}`);
+    return;
+  }
+
+  // Handle the event
+  switch (event.type) {
+    case 'customer.subscription.created':
+      const customerSubscriptionCreated = event.data.object;
+      // Then define and call a function to handle the event customer.subscription.created
+      console.log('customer.subscription.created');
+      break;
+    case 'customer.subscription.deleted':
+      const customerSubscriptionDeleted = event.data.object;
+      // Then define and call a function to handle the event customer.subscription.deleted
+      console.log('customer.subscription.deleted');
+      break;
+    case 'customer.subscription.updated':
+      const customerSubscriptionUpdated = event.data.object;
+      // Then define and call a function to handle the event customer.subscription.updated
+      console.log('customer.subscription.updated');
+      break;
+    case 'subscription_schedule.aborted':
+      const subscriptionScheduleAborted = event.data.object;
+      // Then define and call a function to handle the event subscription_schedule.aborted
+      console.log('subscription_schedule.aborted');
+      break;
+    case 'subscription_schedule.canceled':
+      const subscriptionScheduleCanceled = event.data.object;
+      // Then define and call a function to handle the event subscription_schedule.canceled
+      console.log('subscription_schedule.canceled');
+      break;
+    case 'subscription_schedule.completed':
+      const subscriptionScheduleCompleted = event.data.object;
+      // Then define and call a function to handle the event subscription_schedule.completed
+      console.log('subscription_schedule.completed');
+      break;
+    case 'subscription_schedule.created':
+      const subscriptionScheduleCreated = event.data.object;
+      // Then define and call a function to handle the event subscription_schedule.created
+      console.log('subscription_schedule.created');
+      break;
+    case 'subscription_schedule.updated':
+      const subscriptionScheduleUpdated = event.data.object;
+      // Then define and call a function to handle the event subscription_schedule.updated
+      console.log('subscription_schedule.updated');
+      break;
+    // ... handle other event types
+    default:
+      console.log(`Unhandled event type ${event.type}`);
+  }
+
+  // Return a 200 response to acknowledge receipt of the event
+  response.send();
+});
+
+app.use(express.json());
 
 
 app.get('/cookie-policy', (req, res) => {
@@ -113,8 +181,9 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/pages/index.html'));
 });
 
+// Optional: create a specific route for the sitemap
 app.get('/sitemap.xml', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/sitemap.xml'));
+  res.sendFile(path.join(__dirname, 'public', 'sitemap.xml'));
 });
 
 app.get('/login', (req, res) => {
@@ -639,8 +708,10 @@ app.get('/management/profile/:user_id', async (req, res) => {
       let subscription_plan = await selectSubscrptionPlanByUserId(user_id);
       const subscription = await selectSubscrptionByUserId(user_id);
 
-      const customer = await stripe.customers.retrieve('cus_QPxE4HfPfrvgOg');
-      const inc = await stripe.invoices.list({customer: 'cus_QPxE4HfPfrvgOg'});
+      if (subscription && subscription.stripe_customer_id) {
+        const customer = await stripe.customers.retrieve(subscription.stripe_customer_id);
+        const invoices = await stripe.invoices.list({customer: customer.id});
+      }
       const createdAt = new Date(subscription_plan.created_at);
       const expirationDate = new Date(createdAt);
       expirationDate.setDate(expirationDate.getDate() + subscription_plan.duration_days);
@@ -717,12 +788,11 @@ app.post('/change-pass', async (req, res) => {
 app.post('/create-checkout-session', async (req, res) => {
   const { subscription, userId } = req.body;
   if (req.isAuthenticated()){
-    console.log('subscription: ', subscription, userId);
     try {
       const  stringUserId = userId.toString();
       const sessionStripe = await stripe.checkout.sessions.create({
-        success_url: "http://easymenus.eu/success/" + userId + "/" + subscription,
-        cancel_url: "http://easymenus.eu/management/profile/"+ userId,
+        success_url: "https://31eb-83-64-176-124.ngrok-free.app/success/" + userId + "/" + subscription,
+        cancel_url: "https://31eb-83-64-176-124.ngrok-free.app/management/profile/"+ userId,
         line_items: [
           {
             price: process.env.PRICE_ID,
@@ -751,6 +821,7 @@ app.post('/create-checkout-session', async (req, res) => {
 });
 
 
+
 app.get('/success/:userId/:subscription', async (req, res) => {
   const userId = parseInt(req.params.userId);
   const subscription = req.params.subscription;
@@ -770,18 +841,51 @@ app.get('/success/:userId/:subscription', async (req, res) => {
       const session = await stripe.checkout.sessions.retrieve(response.stripe_session_id);
       if (session.payment_status === 'paid' && session.status === 'complete'){
         const customer_id = session.customer;
+        const stripe_subscripation_id = session.subscription;
+        const subscription = await stripe.subscriptions.retrieve(stripe_subscripation_id);
+        const price = subscription.plan.amount;
+        const product_id = subscription.plan.product;
+        const product = await stripe.products.retrieve(product_id);
+        const subscription_name = product.name;
+        console.log('subscription: ', product);
+        // today date
         const today = new Date();
-        let futureDate = new Date(today);
-        futureDate.setDate(today.getDate() + 35); // Add 35 days
         const start_date = await formatDate(today);
-        const end_date = await formatDate(futureDate);
+        // expire date
+        const stripeExpireDate = new Date(subscription.current_period_end * 1000); // Convert to milliseconds
+        stripeExpireDate.setDate(stripeExpireDate.getDate()); // Add 3 days
+        const end_date = await formatDate(stripeExpireDate);
+        console.log('start_date: ', start_date, 'end_date: ', end_date);
         const paid = true;
-        const respone_2 = await updateSubscription(userId, customer_id, session.id, start_date, end_date, 'activ', paid);
+        const respone_2 = await updateSubscription(userId, customer_id, session.id, start_date, end_date, 'activ', paid, stripe_subscripation_id);
+        const respone_3 = await updateSubscriptionPlan(subscription_name, userId, price, 30);
+        res.redirect('/management/profile/' + userId);
       }
     } catch (error) {
+      res.render('message', {message: 'Something went wrong, please try again.', link: '/management/profile/' + userId, name: 'profile'});
       console.log(error);
     }
   }
+});
+
+app.post('/cancel-subscription', async (req, res) => {
+  const { userId } = req.body;
+  const subscription = await selectSubscrptionByUserId(userId);
+  if (subscription && !subscription.stripe_subscription_id) {
+    return res.json({ success: false, message: 'You have no subscription to cancle.'});
+  }else if (!subscription){
+    return res.json({ success: false, message: 'You have no subscription to cancle.'});
+  } else if (subscription && subscription.stripe_subscription_id) {
+    try {
+      await stripe.subscriptions.update(subscription.stripe_subscription_id, {
+        cancel_at_period_end: true
+      });
+    } catch (error) {
+      res.json({ success: false, message: 'Something went wrong, please try again.'});
+      console.log(error);
+    }
+  }
+  res.json({ success: true, message: 'Subscription has been canceled. you still could use the Menu until the end of the period.'});
 });
 
 
