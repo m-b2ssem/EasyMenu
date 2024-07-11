@@ -91,7 +91,7 @@ const PORT = process.env.PORT;  // const PORT = 3000;
 const saltRounds = 10;
 
 // This is your Stripe CLI webhook secret for testing your endpoint locally.
-const endpointSecret = "whsec_bUPuNmswK3Qz2P585bl4hA4Grw1UuJS3";
+const endpointSecret = "whsec_xs9dh78DxeKiihZBFK8XO4aVahvRBYN5";
 
 app.post('/webhook', express.raw({type: 'application/json'}), async (request, response) => {
   const sig = request.headers['stripe-signature'];
@@ -114,7 +114,12 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
       break;
     case 'customer.subscription.deleted':
       const customerSubscriptionDeleted = event.data.object;
-      // Then define and call a function to handle the event customer.subscription.deleted
+      const userId = parseInt(subscription.metadata.userId, 10);
+      const user_subscription = await selectSubscrptionByUserId(userId);
+      if (user_subscription) {
+        const result = await updateSubscription(userId, null, null, null, null, 'canceled', false, null);
+        const result_2 = await updateSubscriptionPlan('none', userId, 0, 0);
+      }
       console.log('customer.subscription.deleted');
       break;
     case 'customer.subscription.updated':
@@ -129,12 +134,6 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (request, re
       break;
     case 'subscription_schedule.canceled':
       const subscriptionScheduleCanceled = event.data.object;
-      const userId = parseInt(subscription.metadata.userId, 10);
-      const user_subscription = await selectSubscrptionByUserId(userId);
-      if (user_subscription) {
-        const result = await updateSubscription(userId, null, null, null, null, 'canceled', false, null);
-        const result_2 = await updateSubscriptionPlan('none', userId, 0, 0);
-      }
       console.log('subscription_schedule.canceled');
       break;
     case 'subscription_schedule.completed':
