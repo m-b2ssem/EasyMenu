@@ -187,6 +187,7 @@ app.get('/', (req, res) => {
 
 // Optional: create a specific route for the sitemap
 app.get('/sitemap.xml', (req, res) => {
+  res.setHeader('Content-Type', 'application/xml');
   res.sendFile(path.join(__dirname, 'public', 'sitemap.xml'));
 });
 
