@@ -796,8 +796,8 @@ app.post('/create-checkout-session', async (req, res) => {
     try {
       const  stringUserId = userId.toString();
       const sessionStripe = await stripe.checkout.sessions.create({
-        success_url: "https://31eb-83-64-176-124.ngrok-free.app/success/" + userId + "/" + subscription,
-        cancel_url: "https://31eb-83-64-176-124.ngrok-free.app/management/profile/"+ userId,
+        success_url: "https://easymenus.eu//success/" + userId + "/" + subscription,
+        cancel_url: "https://easymenus.eu//management/profile/"+ userId,
         line_items: [
           {
             price: process.env.PRICE_ID,
