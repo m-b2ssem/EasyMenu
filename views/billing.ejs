@@ -112,16 +112,25 @@
                 <div class="container-fluid">
                     <div class="col" style="display: flex; flex-direction: column; align-items: center;">
                         <div class="col">
-                            <h3>User Information</h3>
-                        </div>
-                        <div class="col">
                             <div class="form-group">
                                 <label>Please choose the date you want the invoice for:</label>
-                                <input type="text" class="form-control form-control-1 input-sm from" placeholder="CheckIn">
+                                <input type="text" class="form-control form-control-1 input-sm from" placeholder="choose date">
                             </div>
                         </div>
                         <div class="col">
                             <label style="display: none; color: red;" id="error"></label>
+                        </div>
+                        <div class="col">
+                            <div id="invoice" style="display: none;">
+                                <label>Invoice Number: <span id="invoiceNumber"></span></label>
+                                <br>
+                                <label>Amount: <span id="invoiceAmount"></span></label>
+                                <br>
+                                <label>Created Date: <span id="invoiceDate"></span></label>
+                                <br>
+                                <br>
+                                <a href="#" id="invoiceLink"><button class="btn btn-primary">PDF Downlaod</button></a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -162,52 +171,9 @@
     
     <!-- Bootstrap Datepicker JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="/js/billing.js"></script>
     <script>
-        $(document).ready(function() {
-            var startDate = new Date();
-            var FromEndDate = new Date();
-
-            $('.from').datepicker({
-                autoclose: true,
-                minViewMode: 1,
-                format: 'mm/yyyy'
-            }).on('changeDate', function(selected){
-                startDate = new Date(selected.date.valueOf());
-                startDate.setDate(startDate.getDate(new Date(selected.date.valueOf())));
-                $('.to').datepicker('setStartDate', startDate);
-                const unixTimestamp = Math.floor(startDate.getTime() / 1000);
-                const error = document.getElementById('error');
-
-                fetch('/getInvoice', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        searchDate: unixTimestamp,
-                        userId: <%= user.user_id %>
-                    })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        if (data.url) {
-                            window.location.href = data.url;
-                        } else {
-                            error.innerHTML = data.message;
-                            error.style.display = 'block';
-                        }
-                    }else {
-                        error.innerHTML = data.message;
-                        error.style.display = 'block';
-                    }
-                })
-                .catch(err => {
-                    error.innerHTML = 'An error occured, please try again later';
-                    error.style.display = 'block';
-                });
-                    }); 
-        });
+        const userId = <%= user.user_id %>;
     </script>
     
 </body>

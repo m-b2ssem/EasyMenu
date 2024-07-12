@@ -774,29 +774,64 @@ app.get('/management/billing/:userid', async (req, res) => {
 
 app.post('/getInvoice', async (req, res) => {
   const userId = req.body.userId;
-  const searchDate = req.body.searchDate;
+  const searchDateString = req.body.searchDate;
+  const searchDate = new Date(searchDateString);
+
+  if (isNaN(searchDate.getTime())) {
+    return res.json({ success: false, message: 'Invalid date format' });
+  }
+
+  const year = searchDate.getUTCFullYear();
+  const month = searchDate.getUTCMonth() + 1; // 0-indexed, so January is 0, February is 1, etc.
+  if (month === 13)
+  {
+    month = 12;
+  }
+  // Get the start and end of the month in UTC
+  const startOfMonth = new Date(Date.UTC(year, month, 1));
+  const endOfMonth = new Date(Date.UTC(year, month + 1, 1));
   const subscription = await selectSubscrptionByUserId(userId);
   if (subscription && subscription.stripe_customer_id) {
     const customer = await stripe.customers.retrieve(subscription.stripe_customer_id);
     const invoices = await stripe.invoices.list({
       customer: customer.id,
-      created: {gte: searchDate}
+      created: {
+        gte: Math.floor(startOfMonth.getTime() / 1000),
+        lt: Math.floor(endOfMonth.getTime() / 1000)
+      }
     });
+
+    let invoiceList = [];
     if (invoices.data.length === 0) {
-      return res.json({ success: false, message: 'There is no invoice found for the chosen date.'});
-    }else if (invoices.data.length === 1) {
-      res.json({success: true, url: invoices.data[0].hosted_invoice_url});
-    }else{
+      return res.json({ success: false, message: 'There is no invoice found' });
+    } else if (invoices.data.length === 1) {
+      const invoice = invoices.data[0];
+      const invoiceRecreate = {
+        number: invoice.number,
+        date: invoice.created,
+        amount_: invoice.amount_due,
+        pdf: invoice.invoice_pdf
+      };
+      invoiceList.push(invoiceRecreate);
+      return res.json({ success: true, invoices: invoiceList });
+    } else {
       for (let i = 0; i < invoices.data.length; i++) {
-        if (invoices.data[i].hosted_invoice_url) {
-          return res.json({success: true, url: invoices.data[i].hosted_invoice_url});
+        if (invoices.data[i].invoice_pdf) {
+          const invoice = {
+            number: invoices.data[i].number,
+            date: invoices.data[i].created,
+            amount: invoices.data[i].amount_due,
+            pdf: invoices.data[i].invoice_pdf
+          };
+          invoiceList.push(invoice);
         }
       }
+      return res.json({ success: true, invoices: invoiceList });
     }
   }
-  res.json({ success: false, message: 'There is no invoice found for the chosen date.'});
-});
 
+  res.json({ success: false, message: 'There is no invoice found for the chosen date.' });
+});
 
 
 
