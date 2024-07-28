@@ -447,7 +447,7 @@
             });
 
             $('.orderCategory a').on('click', function () {
-
+                event.preventDefault();
                 // Get the text of the clicked item
                 var selectedText = $(this).text();
                 var selectedId = $(this).attr('id');
@@ -464,12 +464,15 @@
                         sortableList.empty(); // Clear the existing list
 
                         // Populate the sortable list with fetched categories
-                        data.categories.forEach(function (category) {
-                            var listItem = $('<li></li>')
-                                .attr('data-id', category.category_id)
-                                .text(category.category_name);
-                            sortableList.append(listItem);
-                        });
+                        if (data.categories)
+                        {
+                            data.categories.forEach(function (category) {
+                                var listItem = $('<li></li>')
+                                    .attr('data-id', category.category_id)
+                                    .text(category.category_name);
+                                sortableList.append(listItem);
+                            });
+                        }
 
                         // Re-initialize sortable after dynamically adding items
                         $("#sortable").sortable("refresh");
