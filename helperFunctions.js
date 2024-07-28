@@ -16,11 +16,79 @@ export async function createLangaugeList(language) {
         { name: 'Deutsch', code: 'de' }, // German
         { name: 'Türkçe', code: 'tr' }, // Turkish
         { name: 'Español', code: 'es' }, // Spanish
-        {name: 'français', code: 'fr'}, // French
-        {name: 'italiano', code: 'it'}, // Italian
-        {name: '日本語', code: 'ja'}, // Japanese
-        {name: 'Slovak', code: 'sk'}, // Slovak
+        { name: 'français', code: 'fr' }, // French
+        { name: 'italiano', code: 'it' }, // Italian
+        { name: '日本語', code: 'ja' }, // Japanese
+        { name: 'Slovak', code: 'sk' }, // Slovak
+        { name: 'Português', code: 'pt' }, // Portuguese
+        { name: 'Русский', code: 'ru' }, // Russian
+        { name: '中文', code: 'zh' }, // Chinese
+        { name: '한국어', code: 'ko' }, // Korean
+        { name: 'Dutch', code: 'nl' }, // Dutch
+        { name: 'ελληνικά', code: 'el' }, // Greek
+        { name: 'हिन्दी', code: 'hi' }, // Hindi
+        { name: 'ไทย', code: 'th' }, // Thai
+        { name: 'Svenska', code: 'sv' }, // Swedish
+        { name: 'Polski', code: 'pl' }, // Polish
+        { name: 'עברית', code: 'he' }, // Hebrew
+        { name: 'Suomi', code: 'fi' }, // Finnish
+        { name: 'Dansk', code: 'da' }, // Danish
+        { name: 'Norsk', code: 'no' }, // Norwegian
+        { name: 'Magyar', code: 'hu' }, // Hungarian
+        { name: 'Čeština', code: 'cs' }, // Czech
+        { name: 'Українська', code: 'uk' }, // Ukrainian
+        { name: 'Română', code: 'ro' }, // Romanian
+        { name: 'Bahasa Indonesia', code: 'id' }, // Indonesian
+        { name: 'Tiếng Việt', code: 'vi' }, // Vietnamese
+        { name: 'فارسی', code: 'fa' }, // Persian
+        { name: 'தமிழ்', code: 'ta' }, // Tamil
+        { name: 'తెలుగు', code: 'te' }, // Telugu
+        { name: 'മലയാളം', code: 'ml' }, // Malayalam
+        { name: 'বাংলা', code: 'bn' }, // Bengali
+        { name: 'ગુજરાતી', code: 'gu' }, // Gujarati
+        { name: 'ਪੰਜਾਬੀ', code: 'pa' }, // Punjabi
+        { name: 'اردو', code: 'ur' }, // Urdu
+        { name: 'Bahasa Melayu', code: 'ms' }, // Malay
+        { name: 'Filipino', code: 'fil' }, // Filipino
+        { name: 'slovenščina', code: 'sl' }, // Slovenian
+        { name: 'Hrvatski', code: 'hr' }, // Croatian
+        { name: 'Srpski', code: 'sr' }, // Serbian
+        { name: 'Bosanski', code: 'bs' }, // Bosnian
+        { name: 'Македонски', code: 'mk' }, // Macedonian
+        { name: 'Shqip', code: 'sq' }, // Albanian
+        { name: 'български', code: 'bg' }, // Bulgarian
+        { name: 'Eesti', code: 'et' }, // Estonian
+        { name: 'Latviešu', code: 'lv' }, // Latvian
+        { name: 'Lietuvių', code: 'lt' }, // Lithuanian
+        { name: 'Galego', code: 'gl' }, // Galician
+        { name: 'Català', code: 'ca' }, // Catalan
+        { name: 'Íslenska', code: 'is' }, // Icelandic
+        { name: 'Malti', code: 'mt' }, // Maltese
+        { name: 'ქართული', code: 'ka' }, // Georgian
+        { name: 'Հայերեն', code: 'hy' }, // Armenian
+        { name: 'Azərbaycanca', code: 'az' }, // Azerbaijani
+        { name: 'қазақ тілі', code: 'kk' }, // Kazakh
+        { name: 'Ўзбек', code: 'uz' }, // Uzbek
+        { name: 'Кыргызча', code: 'ky' }, // Kyrgyz
+        { name: 'नेपाली', code: 'ne' }, // Nepali
+        { name: 'සිංහල', code: 'si' }, // Sinhala
+        { name: 'Kiswahili', code: 'sw' }, // Swahili
+        { name: 'Amharic', code: 'am' }, // Amharic
+        { name: 'Yorùbá', code: 'yo' }, // Yoruba
+        { name: 'Igbo', code: 'ig' }, // Igbo
+        { name: 'Hausa', code: 'ha' }, // Hausa
+        { name: 'Sesotho', code: 'st' }, // Sesotho
+        { name: 'Xitsonga', code: 'ts' }, // Tsonga
+        { name: 'isiZulu', code: 'zu' }, // Zulu
+        { name: 'isiXhosa', code: 'xh' }, // Xhosa
+        { name: 'Luganda', code: 'lg' }, // Luganda
+        { name: 'मराठी', code: 'mr' }, // Marathi
+        { name: 'ಕನ್ನಡ', code: 'kn' }, // Kannada
+        { name: 'беларуская', code: 'be' }, // Belarusian
+        { name: 'Монгол', code: 'mn' }, // Mongolian
+        { name: 'Kurdî', code: 'ku' }, // Kurdish
     ];
+    
 
     const primaryLanguage = allLanguages.find(lang => lang.name === language);
     if (!primaryLanguage) {
