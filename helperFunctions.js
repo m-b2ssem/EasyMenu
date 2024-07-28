@@ -99,6 +99,125 @@ export async function createLangaugeList(language) {
     return [primaryLanguage, ...otherLanguages];
 }
 
+// Adjusted language list with ISO 639-1 codes where available
+export async function createCurrencyList(currency) {
+    const allCurrencies = [
+        { name: 'Euro', code: 'EUR', sign: '€' },
+        { name: 'Pound Sterling', code: 'GBP', sign: '£' },
+        { name: 'United States Dollar', code: 'USD', sign: '$' },
+        { name: 'ريال', code: 'SAR', sign: '﷼' }, // Saudi Riyal
+        { name: 'Türk Lirası', code: 'TRY', sign: '₺' }, // Turkish Lira
+        { name: '日本円', code: 'JPY', sign: '¥' }, // Japanese Yen
+        { name: 'Российский рубль', code: 'RUB', sign: '₽' }, // Russian Ruble
+        { name: '人民币', code: 'CNY', sign: '¥' }, // Chinese Yuan
+        { name: '대한민국 원', code: 'KRW', sign: '₩' }, // South Korean Won
+        { name: 'भारतीय रुपया', code: 'INR', sign: '₹' }, // Indian Rupee
+        { name: 'บาทไทย', code: 'THB', sign: '฿' }, // Thai Baht
+        { name: 'Svenska Kronor', code: 'SEK', sign: 'kr' }, // Swedish Krona
+        { name: 'Polski Złoty', code: 'PLN', sign: 'zł' }, // Polish Zloty
+        { name: 'שקל ישראלי חדש', code: 'ILS', sign: '₪' }, // Israeli Shekel
+        { name: 'Danske Kroner', code: 'DKK', sign: 'kr' }, // Danish Krone
+        { name: 'Norske Kroner', code: 'NOK', sign: 'kr' }, // Norwegian Krone
+        { name: 'Magyar Forint', code: 'HUF', sign: 'Ft' }, // Hungarian Forint
+        { name: 'Česká Koruna', code: 'CZK', sign: 'Kč' }, // Czech Koruna
+        { name: 'Українська гривня', code: 'UAH', sign: '₴' }, // Ukrainian Hryvnia
+        { name: 'Leu românesc', code: 'RON', sign: 'lei' }, // Romanian Leu
+        { name: 'Rupiah Indonesia', code: 'IDR', sign: 'Rp' }, // Indonesian Rupiah
+        { name: 'Đồng Việt Nam', code: 'VND', sign: '₫' }, // Vietnamese Dong
+        { name: 'ریال ایران', code: 'IRR', sign: '﷼' }, // Iranian Rial
+        { name: 'বাংলাদেশী টাকা', code: 'BDT', sign: '৳' }, // Bangladeshi Taka
+        { name: 'پاکستانی روپیہ', code: 'PKR', sign: '₨' }, // Pakistani Rupee
+        { name: 'Ringgit Malaysia', code: 'MYR', sign: 'RM' }, // Malaysian Ringgit
+        { name: 'Piso ng Pilipinas', code: 'PHP', sign: '₱' }, // Philippine Peso
+        { name: 'Hrvatska Kuna', code: 'HRK', sign: 'kn' }, // Croatian Kuna
+        { name: 'Српски динар', code: 'RSD', sign: 'дин' }, // Serbian Dinar
+        { name: 'Konvertibilna marka', code: 'BAM', sign: 'KM' }, // Bosnia and Herzegovina Convertible Mark
+        { name: 'Македонски денар', code: 'MKD', sign: 'ден' }, // Macedonian Denar
+        { name: 'Lek Shqiptar', code: 'ALL', sign: 'L' }, // Albanian Lek
+        { name: 'Български лев', code: 'BGN', sign: 'лв' }, // Bulgarian Lev
+        { name: 'Íslensk króna', code: 'ISK', sign: 'kr' }, // Icelandic Krona
+        { name: 'ქართული ლარი', code: 'GEL', sign: '₾' }, // Georgian Lari
+        { name: 'Հայկական դրամ', code: 'AMD', sign: '֏' }, // Armenian Dram
+        { name: 'Azərbaycan Manatı', code: 'AZN', sign: '₼' }, // Azerbaijani Manat
+        { name: 'Қазақстан теңгесі', code: 'KZT', sign: '₸' }, // Kazakhstani Tenge
+        { name: 'Oʻzbekiston soʻmi', code: 'UZS', sign: 'сўм' }, // Uzbekistani Som
+        { name: 'Кыргыз сом', code: 'KGS', sign: 'с' }, // Kyrgyzstani Som
+        { name: 'नेपाली रुपैंयाँ', code: 'NPR', sign: 'रू' }, // Nepalese Rupee
+        { name: 'ශ්‍රී ලංකා රුපියල', code: 'LKR', sign: 'රු' }, // Sri Lankan Rupee
+        { name: 'Shilingi ya Tanzania', code: 'TZS', sign: 'TSh' }, // Tanzanian Shilling
+        { name: 'የኢትዮጵያ ብር', code: 'ETB', sign: 'Br' }, // Ethiopian Birr
+        { name: 'Naira', code: 'NGN', sign: '₦' }, // Nigerian Naira
+        { name: 'Lesotho Loti', code: 'LSL', sign: 'L' }, // Lesotho Loti
+        { name: 'Rand', code: 'ZAR', sign: 'R' }, // South African Rand
+        { name: 'Ugandan Shilling', code: 'UGX', sign: 'USh' }, // Ugandan Shilling
+        { name: 'Беларускі рубель', code: 'BYN', sign: 'Br' }, // Belarusian Ruble
+        { name: 'Монгол төгрөг', code: 'MNT', sign: '₮' }, // Mongolian Tögrög
+        { name: 'Australian Dollar', code: 'AUD', sign: '$' },
+        { name: 'Canadian Dollar', code: 'CAD', sign: '$' },
+        { name: 'Swiss Franc', code: 'CHF', sign: 'CHF' },
+        { name: 'Singapore Dollar', code: 'SGD', sign: '$' },
+        { name: 'New Zealand Dollar', code: 'NZD', sign: '$' },
+        { name: 'Hong Kong Dollar', code: 'HKD', sign: '$' },
+        { name: 'Real Brasileiro', code: 'BRL', sign: 'R$' }, // Brazilian Real
+        { name: 'Peso Mexicano', code: 'MXN', sign: '$' }, // Mexican Peso
+        { name: 'ދިވެހިރުފިޔާ', code: 'MVR', sign: 'Rf' }, // Maldivian Rufiyaa
+        { name: 'دينار', code: 'KWD', sign: 'دينار' }, // Kuwaiti Dinar
+        { name: 'جنيه مصري', code: 'EGP', sign: '£' }, // Egyptian Pound
+        { name: 'ليرة', code: 'LBP', sign: 'ليرة' }, // Lebanese Pound
+        { name: 'درهم مغربي', code: 'MAD', sign: 'DH' }, // Moroccan Dirham
+        { name: 'Peso Argentino', code: 'ARS', sign: '$' }, // Argentine Peso
+        { name: 'Peso Chileno', code: 'CLP', sign: '$' }, // Chilean Peso
+        { name: 'Peso Colombiano', code: 'COP', sign: '$' }, // Colombian Peso
+        { name: 'Sol Peruano', code: 'PEN', sign: 'S/.' }, // Peruvian Sol
+        { name: 'Peso Uruguayo', code: 'UYU', sign: '$' }, // Uruguayan Peso
+        { name: 'Guaraní Paraguayo', code: 'PYG', sign: '₲' }, // Paraguayan Guarani
+        { name: 'Boliviano', code: 'BOB', sign: 'Bs.' }, // Bolivian Boliviano
+        { name: 'Bolívar Soberano', code: 'VES', sign: 'Bs.S' }, // Venezuelan Bolívar
+        { name: 'Colón Costarricense', code: 'CRC', sign: '₡' }, // Costa Rican Colón
+        { name: 'Peso Cubano', code: 'CUP', sign: '$' }, // Cuban Peso
+        { name: 'Peso Dominicano', code: 'DOP', sign: 'RD$' }, // Dominican Peso
+        { name: 'Quetzal Guatemalteco', code: 'GTQ', sign: 'Q' }, // Guatemalan Quetzal
+        { name: 'Lempira Hondureño', code: 'HNL', sign: 'L' }, // Honduran Lempira
+        { name: 'Córdoba Nicaragüense', code: 'NIO', sign: 'C$' }, // Nicaraguan Córdoba
+        { name: 'Balboa Panameño', code: 'PAB', sign: 'B/.' }, // Panamanian Balboa
+        { name: 'Trinidad and Tobago Dollar', code: 'TTD', sign: '$' },
+        { name: 'Jamaican Dollar', code: 'JMD', sign: '$' },
+        { name: 'Gourde', code: 'HTG', sign: 'G' }, // Haitian Gourde
+        { name: 'Cedi', code: 'GHS', sign: '₵' }, // Ghanaian Cedi
+        { name: 'Franc CFA', code: 'XAF', sign: 'CFA' }, // Cameroonian Franc
+        { name: 'Shilingi ya Kenya', code: 'KES', sign: 'KSh' }, // Kenyan Shilling
+        { name: 'Pula', code: 'BWP', sign: 'P' }, // Botswanan Pula
+        { name: 'Namibian Dollar', code: 'NAD', sign: '$' },
+        { name: 'Kwacha', code: 'ZMW', sign: 'ZK' }, // Zambian Kwacha
+        { name: 'Kwanza', code: 'AOA', sign: 'Kz' }, // Angolan Kwanza
+        { name: 'Metical', code: 'MZN', sign: 'MT' }, // Mozambican Metical
+        { name: 'Dalasi', code: 'GMD', sign: 'D' }, // Gambian Dalasi
+        { name: 'Franc Guinéen', code: 'GNF', sign: 'FG' }, // Guinean Franc
+        { name: 'Leone', code: 'SLL', sign: 'Le' }, // Sierra Leonean Leone
+        { name: 'Liberian Dollar', code: 'LRD', sign: '$' },
+        { name: 'Franc CFA', code: 'XOF', sign: 'CFA' }, // West African CFA franc
+        { name: 'Ouguiya', code: 'MRU', sign: 'UM' }, // Mauritanian Ouguiya
+        { name: 'Ariary', code: 'MGA', sign: 'Ar' }, // Malagasy Ariary
+        { name: 'Franc Rwandais', code: 'RWF', sign: 'RF' }, // Rwandan Franc
+        { name: 'Franc Burundais', code: 'BIF', sign: 'FBu' }, // Burundian Franc
+        { name: 'Franc Congolais', code: 'CDF', sign: 'FC' }, // Congolese Franc
+        { name: 'Franc Djibouti', code: 'DJF', sign: 'Fdj' }, // Djiboutian Franc
+        { name: 'Shilingi ya Somalia', code: 'SOS', sign: 'S' }, // Somali Shilling
+        { name: 'Rupee', code: 'SCR', sign: '₨' }, // Seychellois Rupee
+        { name: 'Franc Comorien', code: 'KMF', sign: 'CF' }, // Comorian Franc
+        { name: 'Nakfa', code: 'ERN', sign: 'Nfk' }, // Eritrean Nakfa
+        { name: 'Rupee', code: 'MUR', sign: '₨' }, // Mauritian Rupee
+    ];
+
+    const primaryCurrency = allCurrencies.find(lang => lang.sign === currency);
+    if (!primaryCurrency) {
+        return allCurrencies; // Return all languages if the input language is not found
+    }
+
+    const otherCurrencies = allCurrencies.filter(lang => lang.name !== currency);
+    return [primaryCurrency, ...otherCurrencies];
+}
+
 
 export async function convertArrayBufferToBase64(buffer) {
     return  Buffer.from(buffer).toString('base64');

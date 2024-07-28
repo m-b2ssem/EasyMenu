@@ -313,6 +313,23 @@ export async function updateLangauge(langauge, menu_id) {
     }
 }
 
+export async function updateCurrency(menu_id, currency) {
+    const db = await createDbClient();
+    try {
+        await db.connect();
+        const result = await db.query("UPDATE menus SET menu_currency = $1 WHERE menu_id = $2",
+            [currency, menu_id]);
+        if (result.rowCount > 0) {
+            return true;
+        }
+        return false;
+    } catch (error) {
+        throw error;
+    } finally {
+        await db.end();
+    }
+}
+
 export async function getItemsByuserId(user_id) {
     const db = await createDbClient();
     try {

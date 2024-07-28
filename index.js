@@ -49,8 +49,9 @@ import {
   selectUserByToken,
   updatePassword,
   updatecategoryStatus,
+  updateCurrency,
 } from './querys.js';
-import {createLangaugeList, convertArrayBufferToBase64, cehckSizeandConvertTOBytea, formatDate, parsePrice} from './helperFunctions.js';
+import {createLangaugeList, createCurrencyList,convertArrayBufferToBase64, cehckSizeandConvertTOBytea, formatDate, parsePrice} from './helperFunctions.js';
 import {sendEmail, generateResetToken, sendEmailJana} from './sendEmail.js';
 import passport from 'passport';
 import { Strategy } from 'passport-local';
@@ -348,8 +349,8 @@ app.get('/menu/:menuid/:res', async (req, res) => {
     if (!categories) {
       categories = [];
     }
-    const currency = '€';
     const bachground_color = menu_design.background_color;
+    const currency = menu.menu_currency;
     res.render('horizontal_menu.ejs', {
       'categories': categories,
       'backgroundImage': logo,
@@ -377,12 +378,14 @@ app.get('/management/menu/:userid', async (req, res) => {
 
       const menu_name = 'https://www.easymenus.eu/menu/' + menu.menu_id +'/' + name_of_menu;
       const langauges = await createLangaugeList(menu.menu_language);
+      const currencies = await createCurrencyList(menu.menu_currency);
       const image = await 'data:image/png;base64,' + await convertArrayBufferToBase64(menu.qr_code);
       const menuDesign = await getDesignByMenuId(menu.menu_id);
       res.render('menu', {
         'user': req.user ,
         'year': new Date().getFullYear(),
         'langauges': langauges,
+        'currencies': currencies,
         'menu_name': menu_name,
         'image': image,
         'background_color': menuDesign.background_color,
@@ -435,6 +438,18 @@ app.post('/updateLangauge', async (req, res) => {
   res.json({ success: true });
 });
 
+app.post('/updateCurrency', async (req, res) => {
+  let {currency, menuId }= req.body;
+  menuId = parseInt(menuId);
+
+  console.log (currency, menuId);
+  const  result = await updateCurrency(menuId, currency);
+  if (!result) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  res.json({ success: true });
+});
+
 
 
 
@@ -464,7 +479,7 @@ app.post('/add-category', async (req, res) => {
   if (!result) {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
-  res.redirect('/management/category/' + userId);
+  res.json({ success: true });
 });
 
 app.post('/deletecategory', async (req, res) => {

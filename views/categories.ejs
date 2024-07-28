@@ -271,7 +271,7 @@
                 </div>
             </div>
             <div style="border-bottom-style: solid; margin:40px auto; width: 40%; text-align: center;"></div>
-            <form action="/add-category" method="post">
+            <form id="addCategoryForm">
                 <div style="position: relative; margin-top: 15px;">
                     <div class="col" style="text-align: center;"><label class="col-form-label"
                             style="position: relative;">Category Name</label></div>
@@ -553,6 +553,35 @@
                     }).catch((error) => {
                         somethingWrong('messageForsection1', 'Failed to update category. please try again.');
                         $('#updateModal').modal('hide');
+                    });
+            });
+
+            $('#addCategoryForm').on('submit', function (e) {
+                e.preventDefault();
+                const categoryName = $('input[name="categoryName"]').val();
+                const menuId = $('#menuId').val();
+                fetch('/add-category', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        categoryName: categoryName,
+                        menuId: menuId
+                    }),
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('addCategoryForm').reset();
+                            success('messageForsection3', 'Category added successfully');
+                            setTimeout(() => {
+                                document.getElementById('messageForsection3').style.display = 'none';
+                            }, 3000);
+                        } else {
+                            somethingWrong('messageForsection3', 'Failed to add category. please try again.');
+                        }
+                    }).catch((error) => {
+                        somethingWrong('messageForsection3', 'Failed to add category. please try again.');
                     });
             });
         });
