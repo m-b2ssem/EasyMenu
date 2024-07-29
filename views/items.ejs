@@ -836,6 +836,9 @@
                     message.style.display = 'block';
                     message.style.color = 'green';
                     $('#updateItemModal').modal('hide');
+                    setTimeout(() => {
+                        message.style.display = 'none';
+                    }, 5000);
                 } else {
                     const message = document.getElementById('updateError');
                     message.innerText = data.message;
@@ -877,6 +880,9 @@
                     message.innerText = 'Item added successfully';
                     message.style.display = 'block';
                     message.style.color = 'green';
+                    setTimeout(() => {
+                        message.style.display = 'none';
+                    }, 5000);
                 } else {
                     const message = document.getElementById('messageForAdd');
                     message.innerText = data.message;
