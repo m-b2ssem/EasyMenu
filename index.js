@@ -1149,6 +1149,11 @@ app.post('/jana', storage_jana.single('manuscript_file'), async (req, res) => {
   res.json({ success: true,  message: 'Váš formulár bol úspešne vyplnený.' });
 });
 
+// Catch-all route to handle 404 errors
+app.use((req, res, next) => {
+  res.status(404).sendFile(path.join(__dirname, '/public/pages/404.html'));
+});
+
 
 
 app.listen(PORT, () => {

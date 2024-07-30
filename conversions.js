@@ -28,7 +28,7 @@ export async function sendMetaConversionEvent(userId, eventId,company_name ,emai
     const url = `https://graph.facebook.com/v11.0/${pixelId}/events?access_token=${accessToken}`;
 
     try {
-        const response = await axios.post(url, { data: [event], test_event_code: 'TEST94273' });
+        const response = await axios.post(url, { data: [event]});
     } catch (error) {
         if (error.response) {
             console.error('Error sending conversion event to Meta:', error.response.data);
