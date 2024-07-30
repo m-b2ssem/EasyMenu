@@ -58,6 +58,7 @@ function correctTranslations() {
         "beverages": "Beverages",
         "Warm starters": "Warm Appetizers",
         "girl": "grill",
+        "Hauptgang": "Hauptgerichte",
         // Add more mappings as needed
     };
 
