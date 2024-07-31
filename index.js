@@ -233,7 +233,7 @@ app.post('/forgot-password', async (req, res) => {
   try {
     const user = await selectUserByEmail(lowerCaseEmail);
 
-    if (!user) {
+    if (!user.rows[0]) {
       return res.render('message.ejs', { message: 'something went wrong, please try again',
         link: '/forgot-password',
         name: 'forgot password'
