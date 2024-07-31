@@ -14,7 +14,7 @@ import {
   insertMenu,
   insertDesign,
   deleteItem,
-  findHeighestPriority,
+  selectUserByConfirmToken,
   insertItem,
   insertSubscriptionPlan,
   getItemsByCategory,
@@ -32,10 +32,14 @@ import {
   getLogoImage,
   updateItemPriority,
   selectUserById,
+  getUserByEmail,
+  updateEmail,
   getMenuByUserId,
   getMenuByMenuId,
   getItemByItemId,
   updateItem,
+  updateConfirmToken,
+  updateEmailVerified,
   getCategoryByCategoryId,
   updateItemStatus,
   updateCategoryName,
@@ -46,7 +50,7 @@ import {
   updateSubscriptionPlan,
   deleteAccount,
   updateResetPassword,
-  selectUserByToken,
+  selectUserByPassToken,
   updatePassword,
   updatecategoryStatus,
   updateCurrency,
@@ -261,7 +265,7 @@ app.post('/forgot-password', async (req, res) => {
 
 app.get('/reset-password', async (req, res) => {
   const token = req.query.token;
-  const user = await selectUserByToken(token);
+  const user = await selectUserByPassToken(token);
   const now = new Date(Date.now());
   const expire = user.reset_password_expires < now;
 
@@ -276,7 +280,7 @@ app.get('/reset-password', async (req, res) => {
 app.post('/reset-password', async (req, res) => {
   const { token, password } = req.body;
   const now = new Date(Date.now());
-  const user = await selectUserByToken(token);
+  const user = await selectUserByPassToken(token);
   const expire = user.reset_password_expires < now;
   
 
@@ -368,10 +372,18 @@ app.get('/menu/:menuid/:res', async (req, res) => {
 
 
 app.get('/management/menu/:userid', async (req, res) => {
-  const urlid = parseInt(req.params.userid);
+  const userId = parseInt(req.params.userid);
   if (req.isAuthenticated()) {
-    if (urlid === req.user.user_id) {
-      const menus = await getMenuByUserId(urlid);
+    if (userId === req.user.user_id) {
+      const menus = await getMenuByUserId(userId);
+      const account = await selectUserById(userId);
+      if (account.rows.length > 0) {
+        if (account.rows[0].email_verified === false) {
+          return res.render('convermation.ejs',{
+            'user': account.rows[0],
+          });
+        }
+      }
       const menu = menus[0];
       let name_of_menu =  menu.menu_name.replace(/\s+/g, '');
       name_of_menu = name_of_menu.toLowerCase();
@@ -455,13 +467,13 @@ app.post('/updateCurrency', async (req, res) => {
 
 
 app.get('/management/category/:userid', async (req, res) => {
-  const urlid = parseInt(req.params.userid);
+  const userId = parseInt(req.params.userid);
   const user = req.user;
 
   if (req.isAuthenticated()) {
-    if (urlid === req.user.user_id) {
+    if (userId === req.user.user_id) {
       const categories = await getCategoriesByUserId(req.user.user_id);
-      const menus = await getMenuByUserId(urlid);
+      const menus = await getMenuByUserId(userId);
       res.render('categories', {'user': user, 'categories': categories, 'year': new Date().getFullYear(), 'menus': menus});
     } else {
       res.redirect('/login');
@@ -713,9 +725,9 @@ app.get('/get-category-name', async (req, res) => {
 
 // tp render the info inside the ejs items page
 app.get('/management/items/:userid', async(req, res) => {
-  const urlid = parseInt(req.params.userid);
+  const userId = parseInt(req.params.userid);
   if (req.isAuthenticated()) {
-    if (urlid === req.user.user_id) {
+    if (userId === req.user.user_id) {
       const categories = await getCategoriesByUserId(req.user.user_id);
       const items = await getItemsByuserId(req.user.user_id);
       res.render('items', {'user': req.user, 'year': new Date().getFullYear(), 'categories': categories, 'items': items});
@@ -773,9 +785,9 @@ app.get('/management/profile/:user_id', async (req, res) => {
 });
 
 app.get('/management/billing/:userid', async (req, res) => {
-  const urlid = parseInt(req.params.userid);
+  const userId = parseInt(req.params.userid);
   if (req.isAuthenticated()) {
-    if (urlid === req.user.user_id) {
+    if (userId === req.user.user_id) {
       res.render('billing', {'user': req.user,
         invoices: null,
       });
@@ -1014,6 +1026,68 @@ app.post('/delete-account', async (req, res) => {
   res.json({ success: true });
 });
 
+app.post('/change-email', async (req, res) => {
+  const { newEmail, oldEmail ,userId } = req.body;
+  const lowerCaseEmail = newEmail.toLowerCase();
+  const result = await getUserByEmail(lowerCaseEmail);
+  if (result.rows.length > 0) {
+    return res.json({ success: false, message: 'This email address already exists, please choose another one or login with the existing one.'});
+  }
+  const result2 = await updateEmail(userId, lowerCaseEmail);
+  if (!result2) {
+    return res.json({ success: false, message: 'Something went wrong, please try again.'});
+  }
+  const token = await generateResetToken();
+  await updateConfirmToken(userId, token);
+  let confirmTemplate = fs.readFileSync(path.join(__dirname, '/public/pages/confirm-template.html'), 'utf8');
+  confirmTemplate = confirmTemplate.replace('%link%', 'https://easymenus.eu/confirm-email/' + token);
+  await sendEmail(lowerCaseEmail, 'Confirm your email address', confirmTemplate);
+  res.json({ success: true });
+});
+
+app.post('/resend-confirmation-email', async (req, res) => {
+  try {
+    const { email, userId } = req.body;
+    const token = await generateResetToken();
+    const result = await updateConfirmToken(userId, token);
+    if (!result) {
+      return res.json({ success: false, message: 'Something went wrong, please try again.' });
+    }
+    let confirmTemplate = fs.readFileSync(path.join(__dirname, '/public/pages/confirm-template.html'), 'utf8');
+    confirmTemplate = confirmTemplate.replace('%link%', 'https://easymenus.eu/confirm-email/' + token);
+    await sendEmail(email, 'Confirm your email address', confirmTemplate);
+    res.json({ success: true, message: 'Email has been sent.' });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false });
+  }
+});
+
+app.get('/confirm-email/:token', async (req, res) => {
+  const token = req.params.token;
+  const result = await selectUserByConfirmToken(token);
+  if (result) {
+    const result2 = await updateEmailVerified(result.user_id);
+    if (!result2) {
+      let registerTemplate = fs.readFileSync(path.join(__dirname, '/public/pages/register-template.html'), 'utf8');
+
+      await sendEmail(result.email, 'Welcome to Easy Menu – Your Registration is Complete!', registerTemplate);
+      return res.render('message.ejs', { message: 'Something went wrong, please try again.',
+        link: '/login',
+        name: 'login'
+       });
+    }
+    return res.render('message.ejs', { message: 'Your email has been confirmed, please login.',
+      link: '/login',
+      name: 'login'
+     });
+  } else {
+    return res.render('message.ejs', { message: 'The link is invalid, please try again.',
+      link: '/login',
+      name: 'login'
+     });
+    }
+  });
 
 
 app.post('/register', async (req, res) => {
@@ -1039,10 +1113,23 @@ app.post('/register', async (req, res) => {
         const result_2 = await insertMenu(result.rows[0].user_id, campanyName);
         const result_3 = await insertDesign(result_2.rows[0].menu_id);
         const result_4 = await insertSubscriptionPlan('free_trial', result.rows[0].user_id, 0, 30);
-        let registerTemplate = fs.readFileSync(path.join(__dirname, '/public/pages/register-template.html'), 'utf8');
-
-        await sendEmail(lowerCaseEmail, 'Welcome to Easy Menu – Your Registration is Complete!', registerTemplate);
         const result_user = result.rows[0];
+        const token = await generateResetToken();
+        const _5 = await updateConfirmToken(result_user.user_id, token);
+        let confirmTemplate = fs.readFileSync(path.join(__dirname, '/public/pages/confirm-template.html'), 'utf8');
+        confirmTemplate = confirmTemplate.replace('%link%', 'https://easymenus.eu/confirm-email/' + token);
+        await sendEmail(email, 'Confirm your email address', confirmTemplate);
+
+        const daley = 1000 * 60 * 120; // 2 hours
+        setTimeout(()  => {
+          const account = selectUserById(result_user.user_id);
+          if (account.rows.length > 0) {
+            const user = account.rows[0];
+            if (!user.email_verified) {
+              deleteAccount(result_user.user_id);
+            }
+          }
+        }, daley);
 
         req.login(result_user, async (err) => {
           if (err) {

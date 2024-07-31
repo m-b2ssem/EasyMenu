@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Easy Menu</title>
+    <link rel="icon" href="/assets/images/logo.ico" type="image/x-icon">
+
+    <!-- Custom fonts for this template-->
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-NJ44ZN37');</script>
+    <!-- End Google Tag Manager -->
+</head>
+
+<body id="page-top">
+
+    <!-- ***** Preloader Start ***** -->
+    <div id="js-preloader" class="js-preloader">
+        <div class="preloader-inner">
+            <span class="dot"></span>
+            <div class="dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+    <!-- ***** Preloader End ***** -->
+
+    <!-- ***** Header Area Start ***** -->
+    <link rel="alternate" hreflang="en" href="https://easymenus.eu">
+    <link rel="alternate" hreflang="de" href="https://de.easymenus.eu">
+    <script type="text/javascript" src="https://cdn.weglot.com/weglot.min.js"></script>
+    <script>
+        Weglot.initialize({
+            api_key: 'wg_ccdc61525b763853033f4669bd1f972d2'
+        });
+    </script>
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+                        <!-- Nav Item - Alerts -->
+                        <li class="nav-item dropdown no-arrow mx-1">
+                        </li>
+
+                        <div class="topbar-divider d-none d-sm-block"></div>
+
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.company_name %></span>
+                                <img class="img-profile rounded-circle" src="/img/undraw_profile.svg">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Logout
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid d-flex justify-content-center align-items-center" style="height: 100vh;">
+                    <div class="text-center">
+                        <h3>Email Verification</h3>
+                        <p>We have sent you a confirmation email.</p>
+                        <p>You haven't confirmed your address yet. Please confirm it to create your menu.</p>
+                        <p>Your account will be automatically deleted within two hours if you do not confirm it.</p>
+                        <p>Your email address: <%= user.email %></p>
+                        <button id="changeEmailButton" class="btn btn-primary">Change Email Address</button>
+                        <button id="resendEmailButton" class="btn btn-secondary">Resend Confirmation Email</button>
+                        <br>
+                        <p id="errorMessage1" style="display: none; color: red;"></p>
+
+                        <!-- Form to change email address, hidden by default -->
+                        <div id="changeEmailForm" style="display: none; margin-top: 20px;">
+                            <form id="emailChangeForm">
+                                <div class="form-group">
+                                    <label for="newEmail">New Email Address</label>
+                                    <input type="email" class="form-control" id="newEmail" name="newEmail" required>
+                                </div>
+                                <button type="submit" class="btn btn-success">Update Email</button>
+                            </form>
+                            <br>
+                            <p id="errorMessage" style="display: none; color: red;"></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <%- include("footer.ejs") %>
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <%- include("logoutModal.ejs") %>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="/js/sb-admin-2.min.js"></script>
+
+    <script>
+        window.onload = function() {
+            document.getElementById('emailChangeForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const message = document.getElementById('errorMessage');
+                const newEmail = document.getElementById('newEmail').value;
+
+                fetch('/change-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ newEmail: newEmail, oldEmail: '<%= user.email %>', userId: '<%= user.user_id %>'})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        message.style.display = 'none';
+                        alert(data.message);
+                        window.location.reload();
+                    } else {
+                        message.style.display = 'block';
+                        message.innerText = data.message;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+            document.getElementById('changeEmailButton').addEventListener('click', function() {
+                document.getElementById('changeEmailForm').style.display = 'block';
+            });
+
+            document.getElementById('resendEmailButton').addEventListener('click', function() {
+                const message = document.getElementById('errorMessage1');
+                fetch('/resend-confirmation-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: '<%= user.email %>', userId: '<%= user.user_id %>'})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                    } else {
+                        message.style.display = 'block';
+                        message.innerText = 'An error occurred. Please try again later.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        };
+    </script>
+
+</body>
+
+</html>

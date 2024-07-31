@@ -798,7 +798,7 @@ export async function updateResetPassword(email, token, resetPasswordExpires) {
     }
 }
 
-export async function selectUserByToken(token){
+export async function selectUserByPassToken(token){
     const db = await createDbClient();
     try {
         await db.connect();
@@ -847,6 +847,84 @@ export async function updatecategoryStatus(category_id, status) {
     }
 }
 
+export async function getUserByEmail(email) {
+    const db = await createDbClient();
+    try {
+        await db.connect();
+        const result = await db.query("SELECT * FROM users WHERE email = $1",
+            [email]);
+        return result;
+    } catch (error) {
+        throw error;
+    } finally {
+        await db.end();
+    }
+}
+
+export async function updateEmail(user_id, email) {
+    const db = await createDbClient();
+    try {
+        await db.connect();
+        const result = await db.query("UPDATE users SET email = $1 WHERE user_id = $2",
+            [email, user_id]);
+        if (result.rowCount > 0) {
+            return true;
+        }
+        return false;
+    } catch (error) {
+        throw error;
+    } finally {
+        await db.end();
+    }
+}
+
+export async function updateConfirmToken(user_id, token) {
+    const db = await createDbClient();
+    try {
+        await db.connect();
+        const result = await db.query("UPDATE users SET verification_token = $1 WHERE user_id = $2",
+            [token, user_id]);
+        if (result.rowCount > 0) {
+            return true;
+        }
+        return false;
+    } catch (error) {
+        throw error;
+    } finally {
+        await db.end();
+    }
+}
+
+export async function selectUserByConfirmToken(token){
+    const db = await createDbClient();
+    try {
+        await db.connect();
+        const result = await db.query("SELECT * FROM users WHERE verification_token = $1",
+            [token]);
+        return result.rows[0];
+    } catch (error) {
+        throw error;
+    } finally {
+        await db.end();
+    }
+}
+
+export async function updateEmailVerified(user_id) {
+    const db = await createDbClient();
+    try {
+        await db.connect();
+        const result = await db.query("UPDATE users SET email_verified = true WHERE user_id = $1",
+            [user_id]);
+        if (result.rowCount > 0) {
+            return true;
+        }
+        return false;
+    } catch (error) {
+        throw error;
+    } finally {
+        await db.end();
+    }
+}
 
 /*export async function setQRcode (db) {
     const toQrcode = 'https://www.easymenus.eu/menu/3/rafidain';
