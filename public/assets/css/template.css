@@ -144,6 +144,7 @@ html,
 body {
   background: #fff;
   font-family: 'Roboto', sans-serif;
+  height: 100%;
 }
 
 ::selection {
@@ -1361,7 +1362,7 @@ The Clients
     height: 200px;
   }
   .tutorual-video{
-    margin-top: 40px;
+    margin-top: 0px;
   }
 }
 
