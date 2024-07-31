@@ -1069,18 +1069,15 @@ app.get('/confirm-email/:token', async (req, res) => {
   if (result) {
     const result2 = await updateEmailVerified(result.user_id);
     if (!result2) {
-      let registerTemplate = fs.readFileSync(path.join(__dirname, '/public/pages/register-template.html'), 'utf8');
-
-      await sendEmail(result.email, 'Welcome to Easy Menu – Your Registration is Complete!', registerTemplate);
       return res.render('message.ejs', { message: 'Something went wrong, please try again.',
         link: '/login',
         name: 'login'
        });
     }
-    return res.render('message.ejs', { message: 'Your email has been confirmed, please login.',
-      link: '/login',
-      name: 'login'
-     });
+    let registerTemplate = fs.readFileSync(path.join(__dirname, '/public/pages/register-template.html'), 'utf8');
+
+    await sendEmail(result.email, 'Welcome to Easy Menu – Your Registration is Complete!', registerTemplate);
+    return res.redirect('/management/menu/' + result.user_id);
   } else {
     return res.render('message.ejs', { message: 'The link is invalid, please try again.',
       link: '/login',
