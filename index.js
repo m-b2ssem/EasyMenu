@@ -1088,7 +1088,7 @@ app.get('/confirm-email/:token', async (req, res) => {
 
 app.post('/track', async (req, res) => {
     const eventData = req.body;
-  
+    console.log(eventData);
     try {
       const response = await axios.post('https://graph.facebook.com/v11.0/8004482946310463/events', {
         data: {
