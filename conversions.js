@@ -6,7 +6,7 @@ import crypto from 'crypto';
 
 // Function to send conversion event to Meta
 export async function sendMetaConversionEvent(userId, eventId,company_name ,email, clientIpAddress, userAgent, event_name, eventSourceUrl, event_time) {
-    const accessToken = 'EAAnGQW7VNUIBO4skZAEJjJsEF0IAeguQc6bwnZBuJTv8a0POQt29hglibGOK5IjOUmnyQowX2c7WcB1ZAZCtSGEnba38KJgreVvuEgi3IqjadZCQK90HMSwUhc1cqzNPEYSxXu0b8mVSsuIYdTi5jHZBA7Lg7n2fF2dQmmEkUBBOK9ZAy58fEquOoRN0BlTb43IOgZDZD';
+    const accessToken = 'EAAnGQW7VNUIBO6p4y4lr0wfikcJ2ftdXjNF1R2ce8Iz3PcwYMtdXtpp71j7yIuAblF3MwM8BbctzV8whZC82uosU3G2p2ZAac33t5IXoetF9UQ9VMRhtI4xzKb5F858CoZCRCoKSjQQIuBY5PYyVJQRAlKDJa7BQzPT3WKLn2nIEIe9HQpVhgHh0OZCe2STYZBQZDZD';
     const pixelId = '8004482946310463';
     const hashedEmail = await hashData(email);
     const hashUserId = await hashData(userId.toString());

@@ -65,6 +65,7 @@ import  fs  from 'fs';
 import { sendMetaConversionEvent, hashData } from './conversions.js';
 import { v4 as uuidv4 } from 'uuid';
 import { render } from 'ejs';
+import axios from 'axios';
 
 
 let stripe_key = process.env.STRIPE_KEY;
@@ -1092,24 +1093,27 @@ app.get('/confirm-email/:token', async (req, res) => {
     }
   });
 
-app.post('/track', async (req, res) => {
+
+  app.post('/track', async (req, res) => {
     const eventData = req.body;
+    const accessToken = 'EAAnGQW7VNUIBO6p4y4lr0wfikcJ2ftdXjNF1R2ce8Iz3PcwYMtdXtpp71j7yIuAblF3MwM8BbctzV8whZC82uosU3G2p2ZAac33t5IXoetF9UQ9VMRhtI4xzKb5F858CoZCRCoKSjQQIuBY5PYyVJQRAlKDJa7BQzPT3WKLn2nIEIe9HQpVhgHh0OZCe2STYZBQZDZD';
+    const pixelId = '8004482946310463';
+    const url = `https://graph.facebook.com/v11.0/${pixelId}/events?access_token=${accessToken}`;
     console.log(eventData);
-    console.log('this is the date to send to facebook');
+    console.log('this is the data to send to facebook');
+
     try {
-      const response = await axios.post('https://graph.facebook.com/v11.0/8004482946310463/events', {
-        data: {
-          access_token: 'EAAnGQW7VNUIBOZBM0H0Jcgi8IRlwCzQSshG73yEePNSN9tbC6KGajE3EULfMZC3QH9wOBU0QVa8WRCIksYsU4PXNHZCLYZAnNlcU8DVSjBQ5p7vYI8NGuQ69mS8iYj3BwdZB6UMCylLAMmYgFB0PcLg6dNL95t8xS0FeeO0xrCuv08U9ExOlgbBcwAjjVZCGvcBQZDZD',
-          data: [eventData],
-          test_event_code: 'TEST12735'
-        },
-      });
-  
-      res.status(200).send(response.data);
+        const response = await axios.post(url, {
+            data: [eventData],
+        });
+
+        res.status(200).send(response.data);
     } catch (error) {
-      res.status(500).send(error.response.data);
+      console.log(error);
+        res.status(500).send(error.response.data);
     }
-  });
+});
+
 
 
 app.post('/register', async (req, res) => {
