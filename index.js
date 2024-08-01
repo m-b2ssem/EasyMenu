@@ -1095,11 +1095,13 @@ app.get('/confirm-email/:token', async (req, res) => {
 app.post('/track', async (req, res) => {
     const eventData = req.body;
     console.log(eventData);
+    console.log('this is the date to send to facebook');
     try {
       const response = await axios.post('https://graph.facebook.com/v11.0/8004482946310463/events', {
         data: {
           access_token: 'EAAnGQW7VNUIBOZBM0H0Jcgi8IRlwCzQSshG73yEePNSN9tbC6KGajE3EULfMZC3QH9wOBU0QVa8WRCIksYsU4PXNHZCLYZAnNlcU8DVSjBQ5p7vYI8NGuQ69mS8iYj3BwdZB6UMCylLAMmYgFB0PcLg6dNL95t8xS0FeeO0xrCuv08U9ExOlgbBcwAjjVZCGvcBQZDZD',
           data: [eventData],
+          test_event_code: 'TEST12735'
         },
       });
   
