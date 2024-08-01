@@ -1105,8 +1105,9 @@ app.get('/confirm-email/:token', async (req, res) => {
     try {
         const response = await axios.post(url, {
             data: [eventData],
+            test_event_code: 'TEST12735',
         });
-
+        console.log("response is: ", response.data);
         res.status(200).send(response.data);
     } catch (error) {
       console.log(error);
