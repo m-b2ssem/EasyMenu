@@ -86,6 +86,8 @@
     <script>
       $('#registerForm').on('submit', function(event) {
         event.preventDefault();
+        const eventId = adsmuraiEventId || 'default-event-id';
+        console.log('Event ID: ' + eventId);
         const formData = {
           campanyName: $('#campanyName').val(),
           email: $('#email').val(),
