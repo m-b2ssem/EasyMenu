@@ -6,8 +6,8 @@ import crypto from 'crypto';
 
 // Function to send conversion event to Meta
 export async function sendMetaConversionEvent(userId, eventId,company_name ,email, clientIpAddress, userAgent, event_name, eventSourceUrl, event_time) {
-    const accessToken = 'EAAwSU08tu9cBO1FDoC78tdRi9bwUEZATaVZAaZATRQZBZAvOrOKWFxKWo44tKctvaAHPRueKChwsPB1EsFCesLYCDDoOtrs8S6lsGdYIZCVSIX99epiEsfd9ml3xgKovsLRZBX1kALtdquD3odSd70v5zcDrS2TQZBpBca0YHGndmpD1JsixphJsInArSKLzP4ZAjfgZDZD';
-    const pixelId = '401424272934424';
+    const accessToken = 'EAAnGQW7VNUIBO4skZAEJjJsEF0IAeguQc6bwnZBuJTv8a0POQt29hglibGOK5IjOUmnyQowX2c7WcB1ZAZCtSGEnba38KJgreVvuEgi3IqjadZCQK90HMSwUhc1cqzNPEYSxXu0b8mVSsuIYdTi5jHZBA7Lg7n2fF2dQmmEkUBBOK9ZAy58fEquOoRN0BlTb43IOgZDZD';
+    const pixelId = '8004482946310463';
     const hashedEmail = await hashData(email);
     const hashUserId = await hashData(userId.toString());
 
@@ -28,7 +28,7 @@ export async function sendMetaConversionEvent(userId, eventId,company_name ,emai
     const url = `https://graph.facebook.com/v11.0/${pixelId}/events?access_token=${accessToken}`;
 
     try {
-        const response = await axios.post(url, { data: [event]});
+        const response = await axios.post(url, { data: [event], test_event_code: 'TEST12735'});
     } catch (error) {
         if (error.response) {
             console.error('Error sending conversion event to Meta:', error.response.data);

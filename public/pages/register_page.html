@@ -100,12 +100,24 @@
           success: function(response) {
             //alert(response.message);
             if (response.success) {
-              fbq('track', 'CompleteRegistration', {
-                external_id: response.userId.toString(),
-              }, {
-                  eventID: response.eventId // Use the event ID from the server
+              fetch('https://easymenus.eu//track', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  event_name: 'CompleteRegistration',
+                  event_time: Math.floor(Date.now() / 1000),
+                  user_data: {
+                    em: response.hashEmail,
+                    client_ip_address: response.clientIp,
+                    client_user_agent: response.clientUserAgent,
+                  },
+                  event_source_url: window.location.href,
+                  action_source: 'website'
+                })
               });
-              window.location.href = '/completed-registration/' + response.userId;
+              window.location.href = '/management/menu/' + response.userId;
             }
           },
           error: function(xhr) {

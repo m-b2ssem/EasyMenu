@@ -376,6 +376,9 @@ app.get('/management/menu/:userid', async (req, res) => {
   if (req.isAuthenticated()) {
     if (userId === req.user.user_id) {
       const menus = await getMenuByUserId(userId);
+      if (menus.length === 0) {
+        return res.redirect('/login');
+      }
       const account = await selectUserById(userId);
       if (account.rows.length > 0) {
         if (account.rows[0].email_verified === false) {
@@ -391,7 +394,7 @@ app.get('/management/menu/:userid', async (req, res) => {
       const menu_name = 'https://www.easymenus.eu/menu/' + menu.menu_id +'/' + name_of_menu;
       const langauges = await createLangaugeList(menu.menu_language);
       const currencies = await createCurrencyList(menu.menu_currency);
-      const image = await 'data:image/png;base64,' + await convertArrayBufferToBase64(menu.qr_code);
+      const image =  'data:image/png;base64,' + await convertArrayBufferToBase64(menu.qr_code);
       const menuDesign = await getDesignByMenuId(menu.menu_id);
       res.render('menu', {
         'user': req.user ,
@@ -963,7 +966,6 @@ app.get('/success/:userId/:subscription', async (req, res) => {
         const product_id = subscription.plan.product;
         const product = await stripe.products.retrieve(product_id);
         const subscription_name = product.name;
-        console.log('subscription: ', product);
         // today date
         const today = new Date();
         const start_date = await formatDate(today);
@@ -971,7 +973,6 @@ app.get('/success/:userId/:subscription', async (req, res) => {
         const stripeExpireDate = new Date(subscription.current_period_end * 1000); // Convert to milliseconds
         stripeExpireDate.setDate(stripeExpireDate.getDate()); // Add 3 days
         const end_date = await formatDate(stripeExpireDate);
-        console.log('start_date: ', start_date, 'end_date: ', end_date);
         const paid = true;
         const respone_2 = await updateSubscription(userId, customer_id, session.id, start_date, end_date, 'activ', paid, stripe_subscripation_id);
         const respone_3 = await updateSubscriptionPlan(subscription_name, userId, price, 30);
@@ -1008,7 +1009,6 @@ app.post('/cancel-subscription', async (req, res) => {
 
 app.post('/delete-account', async (req, res) => {
   const { userId } = req.body;
-  console.log(userId);
 
 
   const subscription = await selectSubscrptionByUserId(userId);
@@ -1086,6 +1086,23 @@ app.get('/confirm-email/:token', async (req, res) => {
     }
   });
 
+app.post('/track', async (req, res) => {
+    const eventData = req.body;
+  
+    try {
+      const response = await axios.post('https://graph.facebook.com/v11.0/8004482946310463/events', {
+        data: {
+          access_token: 'EAAnGQW7VNUIBOZBM0H0Jcgi8IRlwCzQSshG73yEePNSN9tbC6KGajE3EULfMZC3QH9wOBU0QVa8WRCIksYsU4PXNHZCLYZAnNlcU8DVSjBQ5p7vYI8NGuQ69mS8iYj3BwdZB6UMCylLAMmYgFB0PcLg6dNL95t8xS0FeeO0xrCuv08U9ExOlgbBcwAjjVZCGvcBQZDZD',
+          data: [eventData],
+        },
+      });
+  
+      res.status(200).send(response.data);
+    } catch (error) {
+      res.status(500).send(error.response.data);
+    }
+  });
+
 
 app.post('/register', async (req, res) => {
   const { campanyName, email, password } = req.body;
@@ -1117,20 +1134,22 @@ app.post('/register', async (req, res) => {
         confirmTemplate = confirmTemplate.replace('%link%', 'https://easymenus.eu/confirm-email/' + token);
         await sendEmail(email, 'Confirm your email address', confirmTemplate);
 
-        const daley = 1000 * 60 * 120; // 2 hours
-        setTimeout(()  => {
-          const account = selectUserById(result_user.user_id);
-          if (account.rows.length > 0) {
+        const daley = 1000 * 60 * 2; // 2 hours
+        setTimeout( async () => {
+          const account = await selectUserById(result_user.user_id);
+          console.log("check to delete");
+          if (account && account.rows &&account.rows.length > 0) {
             const user = account.rows[0];
             if (!user.email_verified) {
-              deleteAccount(result_user.user_id);
+              await deleteAccount(result_user.user_id);
+              console.log("deleted");
             }
           }
         }, daley);
 
         req.login(result_user, async (err) => {
           if (err) {
-            console.log(err);
+            console.log("error is: ",err);
             return res.status(500).json({ success: false, message: 'Login failed, please try again.' });
           } else {
             const eventId = uuidv4(); // Generate a unique event_id
@@ -1139,12 +1158,18 @@ app.post('/register', async (req, res) => {
             const hashEmail = await hashData(lowerCaseEmail);
             const event_time =  Math.floor(new Date() / 1000);
             // Send event to Meta Conversion API
-            try {
+            /*try {
               await sendMetaConversionEvent(result_user.user_id, eventId,campanyName,lowerCaseEmail, clientIpAddress, clientUserAgent, event_name, eventSourceUrl, event_time);
             } catch (error) {
               console.error('Error sending conversion event to Meta:', error);
-            }
-            return res.status(200).json({ success: true, message: 'Registration successful.', userId: result_user.user_id, eventId: eventId, hashUserId: hashUserId, hashEmail: hashEmail});
+            }*/
+            return res.status(200).json({ success: true, message: 'Registration successful.', userId: result_user.user_id,
+              eventId: eventId,
+              hashUserId: hashUserId,
+              hashEmail: hashEmail,
+              clientIp: clientIpAddress,
+              clientUserAgent: clientUserAgent
+            });
           }
         });
       }
