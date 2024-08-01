@@ -388,6 +388,12 @@ app.get('/management/menu/:userid', async (req, res) => {
         }
       }
       const menu = menus[0];
+      if (!menu) {
+        return res.redirect('/login');
+      }
+      if (!menu.menu_name) {
+        return res.redirect('/login');
+      }
       let name_of_menu =  menu.menu_name.replace(/\s+/g, '');
       name_of_menu = name_of_menu.toLowerCase();
 
