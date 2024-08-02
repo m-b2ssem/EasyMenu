@@ -123,7 +123,8 @@
                 client_ip_address: response.clientIp,
                 client_user_agent: response.clientUserAgent,
                 event_source_url: window.location.href,
-                event_id: response.eventId
+              },{
+                  eventID: response.eventId // Use the event ID from the server
               });
               window.location.href = '/management/menu/' + response.userId;
             }
