@@ -1126,9 +1126,9 @@ app.get('/track' , async (req, res) => {
       console.log("message is: ", response.data.message);
       res.status(200).send(response.data);
   } catch (error) {
-    console.log(error);
+      console.log(error.message);
       res.status(500).send(error.response.data);
-  }
+    }
 });
 
 
