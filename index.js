@@ -55,7 +55,7 @@ import {
   updatecategoryStatus,
   updateCurrency,
 } from './querys.js';
-import {createLangaugeList, createCurrencyList,convertArrayBufferToBase64, cehckSizeandConvertTOBytea, formatDate, parsePrice} from './helperFunctions.js';
+import {createLangaugeList, createCurrencyList,convertArrayBufferToBase64, cehckSizeandConvertTOBytea, formatDate, parsePrice, generateNumericEventId} from './helperFunctions.js';
 import {sendEmail, generateResetToken, sendEmailJana} from './sendEmail.js';
 import passport from 'passport';
 import { Strategy } from 'passport-local';
@@ -1163,7 +1163,7 @@ app.post('/register', async (req, res) => {
             console.log("error is: ",err);
             return res.status(500).json({ success: false, message: 'Login failed, please try again.' });
           } else {
-            const eventId = uuidv4(); // Generate a unique event_id
+            const eventId = generateNumericEventId(); // Generate a unique event_id
             const event_name = 'CompleteRegistration';
             const hashUserId = await hashData(result_user.user_id.toString());
             const hashEmail = await hashData(lowerCaseEmail);

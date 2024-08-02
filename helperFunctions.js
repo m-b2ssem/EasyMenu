@@ -275,3 +275,9 @@ export async function parsePrice(price) {
         return NaN; // or handle the invalid input as needed
     }
 }
+
+export async function generateNumericEventId() {
+    const timestamp = Date.now().toString(); // Current timestamp
+    const randomNum = Math.floor(Math.random() * 100000).toString(); // Random 5-digit number
+    return timestamp + randomNum;
+  }
