@@ -1136,9 +1136,12 @@ app.get('/track', async (req, res) => {
     action_source: cleanedParams.action_source,
     event_source_url: cleanedParams.event_source_url,
     event_time: parseInt(cleanedParams.event_time, 10),
-    fbp: cleanedParams.fbp,
-    fbc: cleanedParams.fbc,
   };
+
+  /*user_data: {
+    fbp: cleanedParams.fbp,
+    fbc: cleanedParams.fbc
+  },*/
 
   try {
     const response = await axios.post(url, { data: [event], test_event_code: 'TEST12735' });
