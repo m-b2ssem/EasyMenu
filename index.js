@@ -1115,7 +1115,7 @@ app.get('/track', async (req, res) => {
   const accessToken = 'EAAnGQW7VNUIBO6p4y4lr0wfikcJ2ftdXjNF1R2ce8Iz3PcwYMtdXtpp71j7yIuAblF3MwM8BbctzV8whZC82uosU3G2p2ZAac33t5IXoetF9UQ9VMRhtI4xzKb5F858CoZCRCoKSjQQIuBY5PYyVJQRAlKDJa7BQzPT3WKLn2nIEIe9HQpVhgHh0OZCe2STYZBQZDZD';
   const pixelId = '8004482946310463';
   const url = `https://graph.facebook.com/v11.0/${pixelId}/events?access_token=${accessToken}`;
-
+  console.log("event name: ", cleanedParams.event_name);
   const event = {
     event_name: cleanedParams.event_name,
     event_id: cleanedParams.event_id,
@@ -1124,18 +1124,11 @@ app.get('/track', async (req, res) => {
     event_time: parseInt(cleanedParams.event_time, 10),
     user_data: {
       fbp: cleanedParams.fbp,
+      fbc: cleanedParams.fbc,
       client_ip_address: clientIp,
       client_user_agent: req.headers['user-agent'],
   },
   };
-
-  /*user_data: {
-    fbp: cleanedParams.fbp,
-    fbc: cleanedParams.fbc,
-    client_ip_address: req.ip,
-    client_user_agent: req.headers['user-agent']
-  },*/
-
   try {
     const response = await axios.post(url, { data: [event], test_event_code: 'TEST12735' });
     console.log("response is: ", response.data);
