@@ -1129,8 +1129,6 @@ app.get('/track' , async (req, res) => {
     console.log(error);
       res.status(500).send(error.response.data);
   }
-
-  res.status(400).send('Bad request');
 });
 
 
