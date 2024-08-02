@@ -1125,6 +1125,8 @@ app.get('/track', async (req, res) => {
   }
 
   console.log("cleaned params", cleanedParams);
+  console.log(req.ip);
+  console.log(req.headers['user-agent']);
 
   const accessToken = 'EAAnGQW7VNUIBO6p4y4lr0wfikcJ2ftdXjNF1R2ce8Iz3PcwYMtdXtpp71j7yIuAblF3MwM8BbctzV8whZC82uosU3G2p2ZAac33t5IXoetF9UQ9VMRhtI4xzKb5F858CoZCRCoKSjQQIuBY5PYyVJQRAlKDJa7BQzPT3WKLn2nIEIe9HQpVhgHh0OZCe2STYZBQZDZD';
   const pixelId = '8004482946310463';
@@ -1136,11 +1138,17 @@ app.get('/track', async (req, res) => {
     action_source: cleanedParams.action_source,
     event_source_url: cleanedParams.event_source_url,
     event_time: parseInt(cleanedParams.event_time, 10),
+    user_data: {
+    client_ip_address: req.ip,
+    client_user_agent: req.headers['user-agent'],
+  },
   };
 
   /*user_data: {
     fbp: cleanedParams.fbp,
-    fbc: cleanedParams.fbc
+    fbc: cleanedParams.fbc,
+    client_ip_address: req.ip,
+    client_user_agent: req.headers['user-agent']
   },*/
 
   try {
