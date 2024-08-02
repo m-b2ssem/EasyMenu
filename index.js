@@ -1139,7 +1139,7 @@ app.get('/track', async (req, res) => {
   }
 });
 
-app.get('/facebook-track', async (req, res) => {
+/*app.get('/facebook-track', async (req, res) => {
   const parameters = req.query;
 
   // Remove additional quotes from parameter values
@@ -1176,7 +1176,7 @@ app.get('/facebook-track', async (req, res) => {
     console.log(error.response.data);
     res.status(500).send(error.response.data);
   }
-});
+});*/
 
 
 
