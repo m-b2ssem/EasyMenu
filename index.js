@@ -1163,7 +1163,8 @@ app.post('/register', async (req, res) => {
             console.log("error is: ",err);
             return res.status(500).json({ success: false, message: 'Login failed, please try again.' });
           } else {
-            const eventId = generateNumericEventId(); // Generate a unique event_id
+            const eventId = await generateNumericEventId(); // Generate a unique event_id
+            console.log('event_id:', eventId);
             const event_name = 'CompleteRegistration';
             const hashUserId = await hashData(result_user.user_id.toString());
             const hashEmail = await hashData(lowerCaseEmail);
