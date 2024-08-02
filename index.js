@@ -1136,10 +1136,8 @@ app.get('/track', async (req, res) => {
     action_source: cleanedParams.action_source,
     event_source_url: cleanedParams.event_source_url,
     event_time: parseInt(cleanedParams.event_time, 10),
-    user_data: {
-      fbp: cleanedParams.fbp,
-      fbc: cleanedParams.fbc
-    },
+    fbp: cleanedParams.fbp,
+    fbc: cleanedParams.fbc,
   };
 
   try {
