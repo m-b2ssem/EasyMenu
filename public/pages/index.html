@@ -73,7 +73,7 @@ https://templatemo.com/tm-570-chain-app-dev
         <div class="col-12">
           <nav class="main-nav">
             <!-- ***** Logo Start ***** -->
-            <a href="/" class="logo">
+            <a href="https://easymenus.eu/" class="logo">
               <img src="/assets//images/logo.png" alt="Easy menu" style="max-height: 300px; max-width: 120px;">
             </a>
             <!-- ***** Logo End ***** -->
@@ -570,6 +570,34 @@ function showCookies(event) {
     // Disable advertising cookies
   }
 }*/
+
+window.onload = function() {
+	   var utmParams = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
+    var currentUrlParams = new URLSearchParams(window.location.search);
+
+    if (utmParams.some(param => currentUrlParams.has(param))) {
+        var utmString = "?" + utmParams
+            .filter(param => currentUrlParams.has(param))
+            .map(param => param + "=" + currentUrlParams.get(param))
+            .join("&");
+		
+      document.querySelectorAll('a[href]').forEach(function(anchor) {
+        console.log(anchor);
+          var href = new URL(anchor.href, window.location.origin);
+          if (href.origin === window.location.origin && href.pathname !== window.location.pathname) {
+              href.search += (href.search ? "&" : "") + utmString.substring(1);
+              anchor.href = href.toString();
+          }
+      });
+		
+      /*document.querySelectorAll('.beratung-button a').forEach(function(button) {
+              var href = new URL(button.href, window.location.origin);
+        var newHref = href + utmString.toString();
+        button.setAttribute('href', newHref);
+              console.log(newHref);
+          });*/
+    }
+}
 
   </script>
 

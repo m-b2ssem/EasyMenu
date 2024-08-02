@@ -1113,6 +1113,14 @@ app.get('/confirm-email/:token', async (req, res) => {
     }
 });
 
+app.get('track' , async (req, res) => {
+  const parameters = req.query;
+  console.log("this is the params",parameters);
+  const body = req.body;
+  console.log("this is the body",body);
+  res.status(400).send('Bad request');
+});
+
 
 
 app.post('/register', async (req, res) => {
