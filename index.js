@@ -1129,7 +1129,7 @@ app.get('/track', async (req, res) => {
   },
   };
   try {
-    const response = await axios.post(url, { data: [event], test_event_code: 'TEST45831' });
+    const response = await axios.post(url, { data: [event]});
     console.log("response is: ", response.data);
     res.status(200).send(response.data);
   } catch (error) {
