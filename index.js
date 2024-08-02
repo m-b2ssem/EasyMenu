@@ -1115,6 +1115,7 @@ app.get('/confirm-email/:token', async (req, res) => {
 
 app.get('/track' , async (req, res) => {
   const parameters = req.query;
+  console.log("this is the params",parameters);
   const paramsJson = JSON.stringify(parameters);
   console.log("this is the params",paramsJson);
   const accessToken = 'EAAnGQW7VNUIBO6p4y4lr0wfikcJ2ftdXjNF1R2ce8Iz3PcwYMtdXtpp71j7yIuAblF3MwM8BbctzV8whZC82uosU3G2p2ZAac33t5IXoetF9UQ9VMRhtI4xzKb5F858CoZCRCoKSjQQIuBY5PYyVJQRAlKDJa7BQzPT3WKLn2nIEIe9HQpVhgHh0OZCe2STYZBQZDZD';
