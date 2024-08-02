@@ -1115,9 +1115,21 @@ app.get('/confirm-email/:token', async (req, res) => {
 
 app.get('/track' , async (req, res) => {
   const parameters = req.query;
-  console.log("this is the params",parameters);
-  const body = req.body;
-  console.log("this is the body",body);
+  const paramsJson = JSON.stringify(parameters);
+  console.log("this is the params",paramsJson);
+  const accessToken = 'EAAnGQW7VNUIBO6p4y4lr0wfikcJ2ftdXjNF1R2ce8Iz3PcwYMtdXtpp71j7yIuAblF3MwM8BbctzV8whZC82uosU3G2p2ZAac33t5IXoetF9UQ9VMRhtI4xzKb5F858CoZCRCoKSjQQIuBY5PYyVJQRAlKDJa7BQzPT3WKLn2nIEIe9HQpVhgHh0OZCe2STYZBQZDZD';
+  const pixelId = '8004482946310463';
+  const url = `https://graph.facebook.com/v11.0/${pixelId}/events?access_token=${accessToken}`;
+  try {
+      const  response = await axios.post(url, { data: [paramsJson], test_event_code: 'TEST12735'});
+      console.log("response is: ", response.data);
+      console.log("message is: ", response.data.message);
+      res.status(200).send(response.data);
+  } catch (error) {
+    console.log(error);
+      res.status(500).send(error.response.data);
+  }
+
   res.status(400).send('Bad request');
 });
 
