@@ -86,8 +86,6 @@
     <script>
       $('#registerForm').on('submit', function(event) {
         event.preventDefault();
-        const eventId = adsmuraiEventId || 'default-event-id';
-        console.log('Event ID: ' + eventId);
         const formData = {
           campanyName: $('#campanyName').val(),
           email: $('#email').val(),
@@ -116,8 +114,16 @@
                     client_user_agent: response.clientUserAgent,
                   },
                   event_source_url: window.location.href,
-                  action_source: 'website'
+                  action_source: 'website',
+                  event_id: response.eventId
                 })
+              });
+              fbq('track', 'CompleteRegistration', {
+                em: response.hashEmail,
+                client_ip_address: response.clientIp,
+                client_user_agent: response.clientUserAgent,
+                event_source_url: window.location.href,
+                event_id: response.eventId
               });
               window.location.href = '/management/menu/' + response.userId;
             }
