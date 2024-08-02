@@ -1145,7 +1145,7 @@ app.post('/register', async (req, res) => {
         confirmTemplate = confirmTemplate.replace('%link%', 'https://easymenus.eu/confirm-email/' + token);
         await sendEmail(email, 'Confirm your email address', confirmTemplate);
 
-        const daley = 1000 * 60 * 2; // 2 hours
+        const daley = 1000 * 60 * 120; // 2 hours
         setTimeout( async () => {
           const account = await selectUserById(result_user.user_id);
           console.log("check to delete");
