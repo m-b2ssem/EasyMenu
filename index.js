@@ -1129,7 +1129,7 @@ app.get('/track', async (req, res) => {
   },
   };
   try {
-    const response = await axios.post(url, { data: [event], test_event_code: 'TEST12735' });
+    const response = await axios.post(url, { data: [event], test_event_code: 'TEST45831' });
     console.log("response is: ", response.data);
     res.status(200).send(response.data);
   } catch (error) {
@@ -1139,7 +1139,7 @@ app.get('/track', async (req, res) => {
   }
 });
 
-/*app.get('/facebook-track', async (req, res) => {
+app.get('/facebook-track', async (req, res) => {
   const parameters = req.query;
 
   // Remove additional quotes from parameter values
@@ -1168,7 +1168,7 @@ app.get('/track', async (req, res) => {
   },
   };
   try {
-    const response = await axios.post(url, { data: [event], test_event_code: 'TEST12735' });
+    const response = await axios.post(url, { data: [event], test_event_code: 'TEST45831' });
     console.log("response is: ", response.data);
     res.status(200).send(response.data);
   } catch (error) {
@@ -1176,7 +1176,7 @@ app.get('/track', async (req, res) => {
     console.log(error.response.data);
     res.status(500).send(error.response.data);
   }
-});*/
+});
 
 
 
