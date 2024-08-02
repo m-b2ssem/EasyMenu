@@ -1113,7 +1113,7 @@ app.get('/confirm-email/:token', async (req, res) => {
     }
 });
 
-app.get('track' , async (req, res) => {
+app.get('/track' , async (req, res) => {
   const parameters = req.query;
   console.log("this is the params",parameters);
   const body = req.body;
