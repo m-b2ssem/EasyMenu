@@ -220,12 +220,12 @@ app.get('/forgot-password', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/pages/forgot-password.html'));
 });
 
-app.get('/completed-registration/:userid', (req, res) => {
-  const userId = parseInt(req.params.userid);
-  console.log(req);
+app.get('/completed-registration', (req, res) => {
+  const params = req.query;
+  console.log(params);
   res.sendFile(path.join(__dirname, '/public/pages/complete_registration.html'));
 });
-
+8004482946310463
 
 app.post('/forgot-password', async (req, res) => {
   const { email } = req.body;
@@ -1072,6 +1072,7 @@ app.post('/resend-confirmation-email', async (req, res) => {
 
 app.get('/confirm-email/:token', async (req, res) => {
   const token = req.params.token;
+  const parameters = req.query;
   const result = await selectUserByConfirmToken(token);
   if (result) {
     const result2 = await updateEmailVerified(result.user_id);
@@ -1082,48 +1083,31 @@ app.get('/confirm-email/:token', async (req, res) => {
        });
     }
     let registerTemplate = fs.readFileSync(path.join(__dirname, '/public/pages/register-template.html'), 'utf8');
-
     await sendEmail(result.email, 'Welcome to Easy Menu – Your Registration is Complete!', registerTemplate);
-    return res.redirect('/management/menu/' + result.user_id);
+
+    let link = '/completed-registration';
+    let params = new URLSearchParams(parameters).toString();
+    if (params) {
+      link += `?${params}`;
+    }
+    return res.redirect(link);
   } else {
     return res.render('message.ejs', { message: 'The link is invalid, please try again.',
       link: '/login',
       name: 'login'
      });
     }
-  });
-
-
-  app.post('/track', async (req, res) => {
-    const eventData = req.body;
-    const accessToken = 'EAAnGQW7VNUIBO6p4y4lr0wfikcJ2ftdXjNF1R2ce8Iz3PcwYMtdXtpp71j7yIuAblF3MwM8BbctzV8whZC82uosU3G2p2ZAac33t5IXoetF9UQ9VMRhtI4xzKb5F858CoZCRCoKSjQQIuBY5PYyVJQRAlKDJa7BQzPT3WKLn2nIEIe9HQpVhgHh0OZCe2STYZBQZDZD';
-    const pixelId = '8004482946310463';
-    const url = `https://graph.facebook.com/v11.0/${pixelId}/events?access_token=${accessToken}`;
-    console.log(eventData);
-    console.log('this is the data to send to facebook');
-
-    try {
-        const  response = await axios.post(url, { data: [eventData]});
-        console.log("response is: ", response.data);
-        console.log("message is: ", response.data.message);
-        res.status(200).send(response.data);
-    } catch (error) {
-      console.log(error);
-        res.status(500).send(error.response.data);
-    }
 });
 
 
 app.get('/track', async (req, res) => {
   const parameters = req.query;
-  console.log("this is the params", parameters);
 
   // Remove additional quotes from parameter values
   const cleanedParams = {};
   for (const [key, value] of Object.entries(parameters)) {
     cleanedParams[key] = value.replace(/^"|"$/g, '');
   }
-  console.log("cleaned params", cleanedParams);
   console.log(req.headers['user-agent']);
   // Extract IP address
   const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
@@ -1155,7 +1139,6 @@ app.get('/track', async (req, res) => {
   try {
     const response = await axios.post(url, { data: [event], test_event_code: 'TEST12735' });
     console.log("response is: ", response.data);
-    console.log("message is: ", response.data.message);
     res.status(200).send(response.data);
   } catch (error) {
     console.log(error.message);
@@ -1171,6 +1154,7 @@ app.post('/register', async (req, res) => {
   const clientIpAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   const clientUserAgent = req.headers['user-agent'];
   const eventSourceUrl = req.headers['referer'];
+
 
   if (!campanyName || !email || !password) {
     return res.status(400).json({ success: false, message: 'Please fill all fields.' });
@@ -1193,18 +1177,22 @@ app.post('/register', async (req, res) => {
         const token = await generateResetToken();
         const _5 = await updateConfirmToken(result_user.user_id, token);
         let confirmTemplate = fs.readFileSync(path.join(__dirname, '/public/pages/confirm-template.html'), 'utf8');
-        confirmTemplate = confirmTemplate.replace('%link%', 'https://easymenus.eu/confirm-email/' + token);
+        const parameters = req.body.parameters;
+        console.log("parameters", parameters);
+        let link = 'https://easymenus.eu/confirm-email/' + token + '?'
+        if (parameters){
+          link = link + parameters;
+        }
+        confirmTemplate = confirmTemplate.replace('%link%', link);
         await sendEmail(email, 'Confirm your email address', confirmTemplate);
 
-        const daley = 1000 * 60 * 120; // 2 hours
+        const daley = 1000 * 60 * 1; // 2 hours
         setTimeout( async () => {
           const account = await selectUserById(result_user.user_id);
-          console.log("check to delete");
           if (account && account.rows &&account.rows.length > 0) {
             const user = account.rows[0];
             if (!user.email_verified) {
               await deleteAccount(result_user.user_id);
-              console.log("deleted");
             }
           }
         }, daley);
@@ -1214,25 +1202,7 @@ app.post('/register', async (req, res) => {
             console.log("error is: ",err);
             return res.status(500).json({ success: false, message: 'Login failed, please try again.' });
           } else {
-            const eventId = await generateNumericEventId(); // Generate a unique event_id
-            console.log('event_id:', eventId);
-            const event_name = 'CompleteRegistration';
-            const hashUserId = await hashData(result_user.user_id.toString());
-            const hashEmail = await hashData(lowerCaseEmail);
-            const event_time =  Math.floor(new Date() / 1000);
-            // Send event to Meta Conversion API
-            /*try {
-              await sendMetaConversionEvent(result_user.user_id, eventId,campanyName,lowerCaseEmail, clientIpAddress, clientUserAgent, event_name, eventSourceUrl, event_time);
-            } catch (error) {
-              console.error('Error sending conversion event to Meta:', error);
-            }*/
-            return res.status(200).json({ success: true, message: 'Registration successful.', userId: result_user.user_id,
-              eventId: eventId,
-              hashUserId: hashUserId,
-              hashEmail: hashEmail,
-              clientIp: clientIpAddress,
-              clientUserAgent: clientUserAgent
-            });
+            return res.status(200).json({ success: true, message: 'Registration successful.', userId: result_user.user_id,});
           }
         });
       }

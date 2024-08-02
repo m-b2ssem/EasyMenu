@@ -34,7 +34,7 @@
                   <div class="col-md-6 col-lg-7 d-flex align-items-center">
                     <div class="card-body p-4 p-lg-5 text-black">
       
-                      <h1>You have completed you registration, in 3 second you will be froword to the menu page</h1>
+                      <h1>You have completed your registration, enjoy creating your menu.</h1>
                       <br>
                       <div class="pt-1 mb-4">
                         <button  id="registerid" data-mdb-button-init data-mdb-ripple-init class="btn btn-dark btn-lg btn-block">GO</button>
@@ -49,16 +49,5 @@
       </section>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        // Extract userId from the URL
-        const userId = window.location.pathname.split('/').pop();
-        
-        // Redirect to the menu page after 3 seconds
-        setTimeout(function(){
-          window.location.href = '/management/menu/' + userId;
-        }, 2000);
-      });
-    </script>
 </body>
 </html>

@@ -86,10 +86,12 @@
     <script>
       $('#registerForm').on('submit', function(event) {
         event.preventDefault();
+        const parameters = new URLSearchParams(window.location.search);
         const formData = {
           campanyName: $('#campanyName').val(),
           email: $('#email').val(),
-          password: $('#password').val()
+          password: $('#password').val(),
+          parameters: parameters.toString()
         };
 
         $.ajax({
@@ -100,7 +102,7 @@
           success: function(response) {
             //alert(response.message);
             if (response.success) {
-              fetch('https://easymenus.eu/track', {
+              /*fetch('https://easymenus.eu/track', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json'
@@ -125,7 +127,7 @@
                 event_source_url: window.location.href,
               },{
                   eventID: response.eventId // Use the event ID from the server
-              });
+              });*/
               window.location.href = '/management/menu/' + response.userId;
             }
           },
