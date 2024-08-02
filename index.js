@@ -1103,7 +1103,7 @@ app.get('/confirm-email/:token', async (req, res) => {
     console.log('this is the data to send to facebook');
 
     try {
-        const  response = await axios.post(url, { data: [eventData], test_event_code: 'TEST12735'});
+        const  response = await axios.post(url, { data: [eventData]});
         console.log("response is: ", response.data);
         console.log("message is: ", response.data.message);
         res.status(200).send(response.data);
