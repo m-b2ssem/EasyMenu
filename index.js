@@ -1125,9 +1125,10 @@ app.get('/track', async (req, res) => {
   }
   console.log(req);
   console.log("cleaned params", cleanedParams);
-  console.log(req.ip);
   console.log(req.headers['user-agent']);
-
+  // Extract IP address
+  const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  console.log("Client IP: ", clientIp);
   const accessToken = 'EAAnGQW7VNUIBO6p4y4lr0wfikcJ2ftdXjNF1R2ce8Iz3PcwYMtdXtpp71j7yIuAblF3MwM8BbctzV8whZC82uosU3G2p2ZAac33t5IXoetF9UQ9VMRhtI4xzKb5F858CoZCRCoKSjQQIuBY5PYyVJQRAlKDJa7BQzPT3WKLn2nIEIe9HQpVhgHh0OZCe2STYZBQZDZD';
   const pixelId = '8004482946310463';
   const url = `https://graph.facebook.com/v11.0/${pixelId}/events?access_token=${accessToken}`;
@@ -1140,7 +1141,7 @@ app.get('/track', async (req, res) => {
     event_time: parseInt(cleanedParams.event_time, 10),
     user_data: {
       fbp: cleanedParams.fbp,
-      client_ip_address: req.ip,
+      client_ip_address: clientIp,
       client_user_agent: req.headers['user-agent'],
   },
   };
