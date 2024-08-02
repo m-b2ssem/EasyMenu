@@ -1123,7 +1123,7 @@ app.get('/track', async (req, res) => {
   for (const [key, value] of Object.entries(parameters)) {
     cleanedParams[key] = value.replace(/^"|"$/g, '');
   }
-
+  console.log(req);
   console.log("cleaned params", cleanedParams);
   console.log(req.ip);
   console.log(req.headers['user-agent']);
@@ -1139,8 +1139,9 @@ app.get('/track', async (req, res) => {
     event_source_url: cleanedParams.event_source_url,
     event_time: parseInt(cleanedParams.event_time, 10),
     user_data: {
-    client_ip_address: req.ip,
-    client_user_agent: req.headers['user-agent'],
+      fbp: cleanedParams.fbp,
+      client_ip_address: req.ip,
+      client_user_agent: req.headers['user-agent'],
   },
   };
 
