@@ -1123,7 +1123,6 @@ app.get('/track', async (req, res) => {
   for (const [key, value] of Object.entries(parameters)) {
     cleanedParams[key] = value.replace(/^"|"$/g, '');
   }
-  console.log(req);
   console.log("cleaned params", cleanedParams);
   console.log(req.headers['user-agent']);
   // Extract IP address
