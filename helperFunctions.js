@@ -1,9 +1,11 @@
 import sharp from 'sharp';
-import fs from 'fs';
-import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { name } from 'ejs';
+import fs from 'fs';
+import puppeteer from 'puppeteer';
+import path from 'path';
+
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -280,4 +282,4 @@ export async function generateNumericEventId() {
     const timestamp = Date.now().toString(); // Current timestamp
     const randomNum = Math.floor(Math.random() * 100000).toString(); // Random 5-digit number
     return timestamp + randomNum;
-  }
+}

@@ -63,6 +63,7 @@ import bcrypt from 'bcrypt';
 import multer from 'multer';
 import  fs  from 'fs';
 import { sendMetaConversionEvent, hashData } from './conversions.js';
+import { generatePdf } from './generatePdf/generatePdf.js';
 import { v4 as uuidv4 } from 'uuid';
 import { render } from 'ejs';
 import axios from 'axios';
@@ -1179,6 +1180,123 @@ app.get('/facebook-track', async (req, res) => {
 });
 
 
+/*
+
+app.get('/payment', async (req, res) => {
+  const user = await selectUserById(61);
+  let retrieve = null;
+  if (user) {
+    retrieve = await stripe.accounts.retrieve(user.rows[0].stripe_account_id);
+  }
+  console.log("retrive", retrieve);
+  let identity = null;
+  if (retrieve && (
+    retrieve.requirements.currently_due.includes('individual.verification.document') || 
+    retrieve.requirements.past_due.includes('individual.verification.document') || 
+    retrieve.requirements.eventually_due.includes('individual.verification.document'))) {
+
+  const newLink = await stripe.accountLinks.create({
+    account: user.rows[0].stripe_account_id,
+    refresh_url: 'https://e784-83-64-176-124.ngrok-free.app/reauth',
+    return_url: 'https://e784-83-64-176-124.ngrok-free.app/payment?account_id=' + user.rows[0].stripe_account_id,
+    type: 'account_onboarding',
+    collect: 'eventually_due',
+  });
+
+  return res.redirect(newLink.url);
+}
+  res.render('payment.ejs',{ 
+    user: user.rows[0],
+    identity: null,
+  });
+});
+
+
+
+/*the stripe test api key
+AT642026702101114359
+sk_test_51POgvPKtWY2YbQ9R5p483tB6SmRmMVE8mseaPBTZC2sjB2qX1cSAI43cPffcaHfrq8I21Jk83vf0Gn0dSTWPMAwQ00t4XpmXO8
+
+*/
+
+
+/*the stripe  api key
+
+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
+
+
+
+
+
+app.post('/create-stripe-account-link', async (req, res) => {
+  const userId = req.body.userId;
+  const account = await stripe.accounts.create({
+    type: 'standard',
+  });
+  console.log("this is the account info ", account);
+  const accountLink = await stripe.accountLinks.create({
+      account: account.id,
+      refresh_url: 'https://e784-83-64-176-124.ngrok-free.app/reauth',
+      return_url: 'https://e784-83-64-176-124.ngrok-free.app/payment?account_id=' + account.id,
+      type: 'account_onboarding',
+  });
+  console.log("this is the account info ", accountLink);
+  res.json({ url: accountLink.url });
+});
+
+app.get('/return', async (req, res) => {
+  res.render('message.ejs', { message: 'Your account has been created successfully.', link: '/login', name: 'login' });
+});
+
+app.get('/checkout', async (req, res) => {
+  res.render('checkout.ejs',{
+    stripeId: 'acct_1PkT5S4FIrOn9nTr',
+  });
+});
+
+
+app.post('/create-payment-intent', async (req, res) => {
+  const { amount, stripeId } = req.body;
+  const session = await stripe.accounts.retrieve('acct_1PkT5S4FIrOn9nTr');
+  const payment = await stripe.paymentIntents.create({
+    amount: 25.000,
+    currency: 'eur',
+    payment_method_types: ['card'],
+    application_fee_amount: 123,
+    transfer_data: {
+      destination: stripeId,
+    },
+  });
+  console.log("this is the payment", payment); 
+  const session = await stripe.checkout.sessions.create(
+  {
+      line_items: [
+        {
+          price_data: {
+            currency: 'eur',
+            product_data: {
+              name: 'bananas',
+            },
+            unit_amount: 12,
+          },
+          quantity: 1,
+        }
+      ],
+      mode: 'payment',
+      success_url: `https://e784-83-64-176-124.ngrok-free.app/?session_id=` + stripeId,
+    },
+    {
+      stripeAccount: '{{acct_1PkT5S4FIrOn9nTr}}',
+    }
+  );
+  console.log("this is the session", session);
+  //res.redirect(session.url);
+  res.json({ success: true });
+});*/
+
+
+
+
 
 app.post('/register', async (req, res) => {
   const { campanyName, email, password } = req.body;
@@ -1326,6 +1444,48 @@ app.post('/jana', storage_jana.single('manuscript_file'), async (req, res) => {
 app.use((req, res, next) => {
   res.status(404).sendFile(path.join(__dirname, '/public/pages/404.html'));
 });
+
+/*(async () => {
+  const htmlContent = fs.readFileSync(path.join(__dirname, '/public/pages/menu-template.html'), 'utf8');
+
+
+  const imagePath = path.join(__dirname, 'template-background.png');
+  const image = fs.readFileSync(imagePath);
+  // Convert the image to base64
+  const base64Image = image.toString('base64');
+  const mimeType = 'image/png'; // Adjust if your image is of a different type
+  const base64ImageSrc = `data:${mimeType};base64,${base64Image}`;
+  let updatedHtmlContent = htmlContent.replace('template-background.png', base64ImageSrc);
+  const menu = await getCategoriesWithItems(3);
+  const categories = '<div class="section"><h2>[category]</h2></div>';
+  const itemH = '<div class="item"><div class="item-name">[item-name]</div><div class="item-price">[item-dis]</div></div>';
+  let menuHtml = '';
+  let countItems = 0;
+  if (menu) {
+    for (const category of menu) {
+        let categoryHtml = categories.replace('[category]', category.category_name);
+        let itemsHtml = '';
+        for (const item of category.items) {
+            let itemHtml = itemH;
+            itemHtml = itemHtml.replace('[item-name]', item.item_name);
+            itemHtml = itemHtml.replace('[item-dis]', item.description);
+            itemsHtml += itemHtml;
+            countItems++;
+            if (countItems === 14) {
+                itemsHtml += '<div style="break-after:page"></div>';
+                countItems = 0;
+            }
+        }
+        categoryHtml += itemsHtml;
+        menuHtml += categoryHtml;
+    }
+  }
+  console.log(menuHtml);
+  updatedHtmlContent = updatedHtmlContent.replace('[menu]', menuHtml);
+  const pdf = await generatePdf(updatedHtmlContent);
+
+  fs.writeFileSync(path.join(__dirname, 'menu.pdf'), pdf);
+})();*/
 
 
 

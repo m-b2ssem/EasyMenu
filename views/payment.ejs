@@ -2,95 +2,41 @@
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-
-    <title>Easy Menu</title>
-    <link rel="icon" href="/assets/images/logo.ico" type="image/x-icon">
-
-
-    <!-- Custom fonts for this template-->
+    <title>Payment Settings</title>
+    <link rel="icon" href="/assets//images/logo.ico" type="image/x-icon">
     <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-
-    <!-- Custom styles for this template-->
     <link href="/css/sb-admin-2.min.css" rel="stylesheet">
-    
-    <!-- Bootstrap Datepicker CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
-
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-NJ44ZN37');</script>
-    <!-- End Google Tag Manager -->
 </head>
 
 <body id="page-top">
 
-  <!-- ***** Preloader Start ***** -->
-  <div id="js-preloader" class="js-preloader">
-    <div class="preloader-inner">
-      <span class="dot"></span>
-      <div class="dots">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-    </div>
-  </div>
-  <!-- ***** Preloader End ***** -->
-
-  <!-- ***** Header Area Start ***** -->
-  <link rel="alternate" hreflang="en" href="https://easymenus.eu">
-<link rel="alternate" hreflang="de" href="https://de.easymenus.eu">
-<script type="text/javascript" src="https://cdn.weglot.com/weglot.min.js"></script>
-<script>
-    Weglot.initialize({
-        api_key: 'wg_ccdc61525b763853033f4669bd1f972d2'
-    });
-</script>
-
-    <!-- Page Wrapper -->
     <div id="wrapper">
-
         <!-- Sidebar -->
         <%- include("sidebar.ejs") %>
-
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
-
             <!-- Main Content -->
             <div id="content">
-
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
-                    <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
-
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
-
                         <div class="topbar-divider d-none d-sm-block"></div>
-
-                        <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= user.company_name %></span>
-                                <img class="img-profile rounded-circle"
-                                    src="/img/undraw_profile.svg">
+                                <img class="img-profile rounded-circle" src="/img/undraw_profile.svg">
                             </a>
-                            <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
                                 <a class="dropdown-item" href="/management/profile/<%= user.user_id %>">
@@ -104,49 +50,45 @@
                                 </a>
                             </div>
                         </li>
-
                     </ul>
-
                 </nav>
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-                    <div class="col" style="display: flex; flex-direction: column; align-items: center;">
-                        <div class="col">
-                            <div class="form-group">
-                                <label>Please choose the date you want the invoice for:</label>
-                                <input type="text" class="form-control form-control-1 input-sm from" placeholder="choose date">
-                            </div>
-                        </div>
-                        <div class="col">
-                            <label style="display: none; color: red;" id="error"></label>
-                        </div>
-                        <div class="col">
-                            <div id="invoice" style="display: none;">
-                                <label>Invoice Number: <span id="invoiceNumber"></span></label>
-                                <br>
-                                <label>Amount: <span id="invoiceAmount"></span></label>
-                                <br>
-                                <label>Created Date: <span id="invoiceDate"></span></label>
-                                <br>
-                                <br>
-                                <a href="#" id="invoiceLink"><button class="btn btn-primary">PDF Downlaod</button></a>
-                            </div>
-                        </div>
+
+                    <!-- Stripe Setup Section -->
+                    <div style="border-bottom-style: solid; padding: 20px;">
+                        <h3>Stripe Setup</h3>
+                        <button id="setup-stripe" class="btn btn-primary">Connect with Stripe</button>
+                        <div id="stripe-status" style="margin-top: 10px;"></div>
+                        <% if (identity) { %>
+                            <button id="verify-button" data-identity="<%= identity %>" class="btn btn-primary">Verify Identity</button>
+                        <% } %>
                     </div>
+
+                    <!-- PayPal Setup Section -->
+                    <div style="border-bottom-style: solid; padding: 20px;">
+                        <h3>PayPal Setup</h3>
+                        <form id="paypal-form">
+                            <div class="form-group">
+                                <label for="paypalEmail">PayPal Email:</label>
+                                <input type="email" class="form-control" id="paypalEmail" name="paypalEmail" required value="<%= user.paypalEmail %>">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save PayPal Settings</button>
+                        </form>
+                        <div id="paypal-status" style="margin-top: 10px;"></div>
+                    </div>
+
                 </div>
                 <!-- /.container-fluid -->
 
             </div>
             <!-- End of Main Content -->
-
             <!-- Footer -->
             <%- include("footer.ejs") %>
-
         </div>
         <!-- End of Content Wrapper -->
-
     </div>
     <!-- End of Page Wrapper -->
 
@@ -157,27 +99,57 @@
 
     <!-- Logout Modal-->
     <%- include("logoutModal.ejs") %>
-    
+
     <!-- Bootstrap core JavaScript-->
+    <script src="https://js.stripe.com/v3/"></script>
     <script src="/vendor/jquery/jquery.min.js"></script>
     <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- Core plugin JavaScript-->
     <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
     <!-- Custom scripts for all pages-->
     <script src="/js/sb-admin-2.min.js"></script>
-    <!-- Page level plugins -->
-    <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
-    <!-- Page level custom scripts -->
-    <script src="/js/demo/datatables-demo.js"></script>
-    
-    <!-- Bootstrap Datepicker JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-    <script src="/js/billing.js"></script>
+
     <script>
-        const userId = <%= user.user_id %>;
+        document.getElementById('setup-stripe').addEventListener('click', async () => {
+            const response = await fetch('/create-stripe-account-link', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: '<%= user.user_id %>'})
+            });
+            const { url } = await response.json();
+            window.location = url;
+        });
+
+        document.getElementById('verify-button').addEventListener('click', async () => {
+            try {
+                const sessionId = document.getElementById('verify-button').getAttribute('data-identity');
+                const stripe = Stripe('pk_test_51POgvPKtWY2YbQ9RBUzTvfLwPk9DrQ4shZmfBtVydJHEsGEoCUo8Xxydkf08KQUw7YEY9oSkoNkiXC5uNdD8sd3o00B0pCADmi');
+                stripe.verifyIdentity(sessionId);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        document.getElementById('paypal-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const paypalEmail = document.getElementById('paypalEmail').value;
+            const response = await fetch('/update-paypal-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ paypalEmail })
+            });
+            const result = await response.json();
+            const statusDiv = document.getElementById('paypal-status');
+            if (result.success) {
+                statusDiv.textContent = 'PayPal email updated successfully!';
+                statusDiv.style.color = 'green';
+            } else {
+                statusDiv.textContent = 'Error updating PayPal email.';
+                statusDiv.style.color = 'red';
+            }
+        });
     </script>
-    
+
 </body>
 
 </html>
