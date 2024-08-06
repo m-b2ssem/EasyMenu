@@ -63,7 +63,7 @@ import bcrypt from 'bcrypt';
 import multer from 'multer';
 import  fs  from 'fs';
 import { sendMetaConversionEvent, hashData } from './conversions.js';
-import { generatePdf } from './generatePdf/generatePdf.js';
+import { generatePdf } from './services/generatePdf.js';
 import { v4 as uuidv4 } from 'uuid';
 import { render } from 'ejs';
 import axios from 'axios';
@@ -1330,7 +1330,7 @@ app.use((req, res, next) => {
   res.status(404).sendFile(path.join(__dirname, '/public/pages/404.html'));
 });
 
-/*(async () => {
+(async () => {
   const htmlContent = fs.readFileSync(path.join(__dirname, '/public/pages/menu-template.html'), 'utf8');
 
 
@@ -1370,7 +1370,7 @@ app.use((req, res, next) => {
   const pdf = await generatePdf(updatedHtmlContent);
 
   fs.writeFileSync(path.join(__dirname, 'menu.pdf'), pdf);
-})();*/
+})();
 
 
 
