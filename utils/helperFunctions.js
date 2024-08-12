@@ -289,3 +289,42 @@ export async function generateNumericEventId() {
     return timestamp + randomNum;
 }
 
+
+
+export const codeIsValid = (code) => {
+    try {
+        const filePath = path.join(__dirname, '../utils/purchase_ready_codes.csv');
+
+        // Read the file synchronously
+        const data = fs.readFileSync(filePath, 'utf8');
+
+        // Split the file into an array of lines (codes)
+        let codes = data.split('\n').map(line => line.trim()); // Trim each line to avoid extra spaces
+
+        // Trim the input code as well
+        code = code.trim();
+
+        // Find the index of the code
+        const index = codes.indexOf(code);
+
+        if (index !== -1) {
+            // If the code exists, remove it
+            codes.splice(index, 1);
+
+            // Join the remaining codes back into a single string
+            const updatedData = codes.join('\n');
+
+            // Write the updated data back to the file synchronously
+            fs.writeFileSync(filePath, updatedData, 'utf8');
+
+            // Return true if the code was found and deleted
+            return true;
+        } else {
+            // Return false if the code was not found
+            return false;
+        }
+    } catch (err) {
+        console.error("An error occurred:", err);
+        return false;
+    }
+}

@@ -54,6 +54,10 @@ router.get('/register', (req, res) => {
 res.sendFile(path.join(__dirname, '../public/pages/register_page.html'));
 });
 
+router.get('/register/code', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/pages/register_page_with_code.html'));
+});
+
 router.get('/forgot-password', (req, res) => {
 res.sendFile(path.join(__dirname, '../public/pages/forgot-password.html'));
 });

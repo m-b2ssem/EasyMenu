@@ -21,6 +21,7 @@ import passport from "passport";
 import { insertMenu , insertDesign } from "../models/menuModel.js";
 import  { insertSubscriptionPlan } from "../models/subscriptionModel.js";
 import { Strategy } from "passport-local";
+import { codeIsValid } from "../utils/helperFunctions.js"
 
 
 
@@ -29,7 +30,7 @@ const __dirname = path.dirname(__filename);
 const saltRounds = 10;
 
 export const register = async (req, res) => {
-  const { campanyName, email, password } = req.body;
+  const { campanyName, email, password, code } = req.body;
   const clientIpAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   const clientUserAgent = req.headers['user-agent'];
   const eventSourceUrl = req.headers['referer'];
@@ -51,7 +52,9 @@ export const register = async (req, res) => {
         const result = await insertUser(campanyName, lowerCaseEmail, hash);
         const result_2 = await insertMenu(result.rows[0].user_id, campanyName);
         const result_3 = await insertDesign(result_2.rows[0].menu_id);
-        const result_4 = await insertSubscriptionPlan('free_trial', result.rows[0].user_id, 0, 30);
+        let planName = 'free_trial';
+        let days = 30;
+        const result_4 = await insertSubscriptionPlan(planName, result.rows[0].user_id, 0, days);
         const result_user = result.rows[0];
         const token = await generateResetToken();
         const _5 = await updateConfirmToken(result_user.user_id, token);
@@ -64,7 +67,73 @@ export const register = async (req, res) => {
         confirmTemplate = confirmTemplate.replace('%link%', link);
         await sendEmail(email, 'Confirm your email address', confirmTemplate);
 
-        const daley = 1000 * 60 * 1; // 2 hours
+        const daley = 1000 * 60 * 120; // 2 hours
+        setTimeout( async () => {
+          const account = await selectUserById(result_user.user_id);
+          if (account && account.rows &&account.rows.length > 0) {
+            const user = account.rows[0];
+            if (!user.email_verified) {
+              await deleteAccount(result_user.user_id);
+            }
+          }
+        }, daley);
+
+        req.login(result_user, async (err) => {
+          if (err) {
+            console.log("error is: ",err);
+            return res.status(500).json({ success: false, message: 'Login failed, please try again.' });
+          } else {
+            return res.status(200).json({ success: true, message: 'Registration successful.', userId: result_user.user_id,});
+          }
+        });
+      }
+    });
+  }
+};
+
+export const registerWihtCode = async (req, res) => {
+  const { campanyName, email, password, code } = req.body;
+
+
+
+  if (!campanyName || !email || !password) {
+    return res.status(400).json({ success: false, message: 'Please fill all fields.' });
+  }
+
+  const lowerCaseEmail = email.toLowerCase();
+  const checkIfExist = await checkIfUserExist(lowerCaseEmail);
+  if (checkIfExist) {
+    return res.status(409).json({ success: false, message: 'This email address already exists.' });
+  } else {
+    bcrypt.hash(password, saltRounds, async (err, hash) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: 'Something went wrong, please try again.' });
+      } else {
+        let planName = '';
+        let days = 0;
+        if (codeIsValid(code) === true){
+          planName = 'Lifetime';
+          days = 1000000;
+        } else{
+          return res.status(400).json({ success: false, message: 'unvaliad code' });
+        }
+        const result = await insertUser(campanyName, lowerCaseEmail, hash);
+        const result_2 = await insertMenu(result.rows[0].user_id, campanyName);
+        const result_3 = await insertDesign(result_2.rows[0].menu_id);
+        const result_4 = await insertSubscriptionPlan(planName, result.rows[0].user_id, 0, days);
+        const result_user = result.rows[0];
+        const token = await generateResetToken();
+        const _5 = await updateConfirmToken(result_user.user_id, token);
+        let confirmTemplate = fs.readFileSync(path.join(__dirname, '../public/pages/confirm-template.html'), 'utf8');
+        const parameters = req.body.parameters;
+        let link = 'https://easymenus.eu/confirm-email/' + token + '?'
+        if (parameters){
+          link = link + parameters;
+        }
+        confirmTemplate = confirmTemplate.replace('%link%', link);
+        await sendEmail(email, 'Confirm your email address', confirmTemplate);
+
+        const daley = 1000 * 60 * 120; // 2 hours
         setTimeout( async () => {
           const account = await selectUserById(result_user.user_id);
           if (account && account.rows &&account.rows.length > 0) {

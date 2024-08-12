@@ -7,6 +7,7 @@ import {
     register,
     login,
     logout,
+    registerWihtCode,
 } from '../controllers/authController.js';
 import { isAuthenticated } from '../middlewares/authLoggrdin.js';
 import { deleteAccountApi } from '../controllers/userController.js';
@@ -15,6 +16,7 @@ import passport from 'passport';
 const router = Router();
 
 router.post('/register', register);
+router.post('/register-code', registerWihtCode);
 router.post('/login', passport.authenticate('local', { failureRedirect: '/login/failed' }), login);
 router.get('/logout', logout);
 router.post('/forgot-password', forgotPassword);
