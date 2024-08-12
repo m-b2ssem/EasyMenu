@@ -52,6 +52,29 @@
             justify-content: center;
             text-align: center;
         }
+        .form-group {
+        margin-bottom: 20px;
+        }
+
+        .original-price {
+        text-decoration: line-through;
+        font-size: 16px;
+        color: #999;
+        margin-right: 10px;
+        }
+
+        .discounted-price {
+        font-size: 18px;
+        font-weight: bold;
+        color: #f00;
+        }
+
+        .discount-notice {
+        font-size: 14px;
+        color: #f00;
+        margin-left: 5px;
+        }
+
     </style>
 </head>
 
@@ -157,11 +180,29 @@
                             <div class="form-group">
                                 <label for="subscription">Select Subscription:</label>
                                 <select class="form-control" id="subscription" name="subscription">
-                                    <option value="basic">Basic</option>
+                                    <option value="basic">Standard Plan</option>
                                     <!--<option value="standard">Standard</option>
                                     <option value="premium">Premium</option>-->
                                 </select>
                             </div>
+
+                            <!-- Payment Frequency Section -->
+                            <div class="form-group">
+                                <label>Choose Billing Period:</label><br>
+                                <label for="monthly">
+                                    <input type="radio" id="monthly" name="billing_period" value="monthly" checked>
+                                    <span class="original-price">29€</span>
+                                    <span class="discounted-price">19€</span> 
+                                    <span class="discount-notice">-34% Monthly</span>
+                                </label><br>
+                                <label for="yearly">
+                                    <input type="radio" id="yearly" name="billing_period" value="yearly">
+                                    <span class="original-price">348€</span>
+                                    <span class="discounted-price">121€</span> 
+                                    <span class="discount-notice">-65% Yearly</span>
+                                </label>
+                            </div>
+
                             <button type="submit" class="btn btn-primary">Subscribe</button>
                         </form>
                     </div>
@@ -250,8 +291,7 @@
     <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
-    <!-- Page level custom scripts -->
-    <script src="/js/demo/datatables-demo.js"></script>
+
     
 <script>
     async function changePass(event) {
@@ -285,8 +325,8 @@
     async function changeSubscrption(event) {
         event.preventDefault();
         const subscription = document.getElementById('subscription').value;
+        const billing_period = document.querySelector('input[name="billing_period"]:checked').value;
         const userId = '<%= user.user_id %>';
-        console.log(subscription);
 
         try {
             const response = await fetch('/create-checkout-session', {
@@ -294,7 +334,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ subscription, userId })
+                body: JSON.stringify({ subscription, userId, billing_period })
             });
 
             const { url } = await response.json();

@@ -1,22 +1,21 @@
-import Stripe from "stripe";
-import { STRIPE_WEBHOOK_SECRET, STRIPE_KEY } from "../config/config.js";
+import { STRIPE_WEBHOOK_SECRET, stripe } from "../config/config.js";
 import {
     selectSubscrptionByUserId,
     updateSubscription,
     updateSubscriptionPlan,
-  } from '../models/subscriptionModel.js';
+} from '../models/subscriptionModel.js';
 
 
-const stripe = new Stripe(STRIPE_KEY);
 
 
 export const stripeWebhook =  async (request, response) => {
+  console.log("webhook");
     const sig = request.headers['stripe-signature'];
   
     let event;
   
     try {
-      event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+      event = stripe.webhooks.constructEvent(request.body, sig, STRIPE_WEBHOOK_SECRET);
     } catch (err) {
       response.status(400).send(`Webhook Error: ${err.message}`);
       return;

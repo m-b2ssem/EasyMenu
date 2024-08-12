@@ -226,12 +226,12 @@ export const convertArrayBufferToBase64 = async (buffer) => {
     return  Buffer.from(buffer).toString('base64');
 }
 
-export const generateResetToken =  () => {
+export const generateResetToken = async () => {
     return crypto.randomBytes(32).toString('hex');
 }
 
 
-export async function cehckSizeandConvertTOBytea(file) {
+export const cehckSizeandConvertTOBytea = async (file) => {
     try {
         const compressedImageBuffer = await sharp(file.buffer)
         .resize({ // Resize the image
@@ -253,7 +253,7 @@ export async function cehckSizeandConvertTOBytea(file) {
     }
 }
 
-export async function  formatDate(date) {
+export const  formatDate = async (date) => {
     const pad = (num, size) => String(num).padStart(size, '0');
 
     const year = date.getFullYear();

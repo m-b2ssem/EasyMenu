@@ -2259,3 +2259,29 @@ responsive
 .success {
   color: green;
 }
+
+.pricing-item-pro {
+  position: relative;
+}
+
+.original-price {
+  text-decoration: line-through;
+  font-size: 16px;
+  color: #999;
+  margin-right: 10px;
+}
+
+.discounted-price {
+  font-size: 24px;
+  font-weight: bold;
+  color: #f00;
+}
+
+.discount-notice {
+  font-size: 14px;
+  color: #f00;
+  display: block;
+  margin-top: 5px;
+}
+
+

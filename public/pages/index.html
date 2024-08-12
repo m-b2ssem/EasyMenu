@@ -37,6 +37,7 @@ https://templatemo.com/tm-570-chain-app-dev
     <link rel="stylesheet" href="/assets/css/template.css">
     <link rel="stylesheet" href="/assets/css/animated.css">
     <link rel="stylesheet" href="/assets/css/owl.css">
+
   </head>
 
 <body>
@@ -291,6 +292,17 @@ https://templatemo.com/tm-570-chain-app-dev
           </div>
         </div>
       </div>
+      <div class="row mt-5">
+        <div class="col-lg-12 text-center">
+          <div class="section-heading">
+            <h4>We Do the Work for You</h4>
+            <p>Don't want to create the menu yourself? No problem! Just send us a PDF of your menu, and we'll handle the rest. Your beautifully menu will be ready in no time.</p>
+            <div class="border-button mt-3">
+              <a href="https://wa.me/+4368181520584" target="_blank" class="btn btn-success">Contact Us on WhatsApp</a>
+            </div>
+          </div>
+        </div>
+      </div>      
     </div>
   </div>
   
@@ -310,24 +322,56 @@ https://templatemo.com/tm-570-chain-app-dev
         </div>
         <div class="col-lg-4">
           <div class="pricing-item-pro">
-            <span class="price">€23</span>
-            <h4>Standard Plan App</h4>
-            <div class="icon">
+            <span class="original-price">€29</span>
+            <span class="discounted-price">€19</span>
+            <h4>Standard Plan Monthly</h4>
+            <span class="discount-notice">-34% for monthly plan</span>
+            <!--<div class="icon">
               <img src="/assets/images/pricing-table-01.png" alt="">
-            </div>
+            </div>-->
             <ul>
-              <li>Unlimated item</li>
-              <li>Unlimated Categories</li>
+              <li>Unlimited items</li>
+              <li>Unlimited Categories</li>
               <li>Match the Background color of your restaurant</li>
               <li class="non-function">Restaurant Website</li>
               <li class="non-function">Multiple Menus</li>
               <li class="non-function">More Options</li>
             </ul>
             <div class="border-button">
-              <a href="#" id="basic" onclick="submitForm(event,'basic')">Purchase This Plan Now</a>
+              <a href="/login" id="basic">Start Free Trail</a>
+            </div>
+            <div>
+              <p>*No Credit Card Required</p>
             </div>
           </div>
         </div>
+        
+        <div class="col-lg-4">
+          <div class="pricing-item-pro">
+            <span class="original-price">€348</span>
+            <span class="discounted-price">€121</span>
+            <h4>Standard Plan Yearly</h4>
+            <span class="discount-notice">-65% for yearly plan</span>
+            <!--<div class="icon">
+              <img src="/assets/images/pricing-table-01.png" alt="">
+            </div>-->
+            <ul>
+              <li>Unlimited items</li>
+              <li>Unlimited Categories</li>
+              <li>Match the Background color of your restaurant</li>
+              <li class="non-function">Restaurant Website</li>
+              <li class="non-function">Multiple Menus</li>
+              <li class="non-function">More Options</li>
+            </ul>
+            <div class="border-button">
+              <a href="/login" id="basic" >Start Free Trail</a>
+            </div>
+            <div>
+              <p>*No Credit Card Required</p>
+            </div>
+          </div>
+        </div>
+        
         <!--<div class="col-lg-4">
           <div class="pricing-item-pro">
             <span class="price">€25</span>
@@ -373,6 +417,7 @@ https://templatemo.com/tm-570-chain-app-dev
   </div> 
 
 
+
   <footer id="newsletter">
     <div class="container">
       <div class="row">
@@ -410,10 +455,10 @@ https://templatemo.com/tm-570-chain-app-dev
           <div class="footer-widget">
             <h4>About Us</h4>
             <ul>
-              <li><a href="#">Home</a></li>
-              <li><a href="#">Services</a></li>
-              <li><a href="#">About</a></li>
-              <li><a href="#">Pricing</a></li>
+              <li><a href="#top">Home</a></li>
+              <li><a href="#services">Services</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#pricing">Pricing</a></li>
             </ul>
           </div>
         </div>
@@ -489,121 +534,9 @@ https://templatemo.com/tm-570-chain-app-dev
   <script src="/assets/js/popup.js"></script>
   <script src="/assets/js/custom.js"></script>
   <script src="/assets/js/purchases.js"></script>
+  <script src="/assets/js/cookies.js"></script>
+  <script src="/assets/js/tracking.js"></script>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-    // Check if cookie preferences are already saved
-    const savedPreferences = localStorage.getItem('cookiePreferences');
-  
-  if (!savedPreferences) {
-    // Show the cookie consent popup if no preferences are found
-    const cookieConsentPopup = document.getElementById('cookieConsentPopup');
-    cookieConsentPopup.style.display = 'block';
-  } else {
-    // Apply the saved cookie preferences
-    const preferences = JSON.parse(savedPreferences);
-    //applyCookiePreferences(preferences);
-  }
-});
-
-function acceptAllCookies() {
-  // Set all cookie preferences to true
-  document.getElementById('performanceCookies').checked = true;
-  document.getElementById('functionalityCookies').checked = true;
-  document.getElementById('advertisingCookies').checked = true;
-  
-  saveCookiePreferences();
-}
-
-function saveCookiePreferences() {
-  const performanceCookies = document.getElementById('performanceCookies').checked;
-  const functionalityCookies = document.getElementById('functionalityCookies').checked;
-  const advertisingCookies = document.getElementById('advertisingCookies').checked;
-  
-  // Save preferences to localStorage or send to server
-  localStorage.setItem('cookiePreferences', JSON.stringify({
-    performanceCookies,
-    functionalityCookies,
-    advertisingCookies
-  }));
-  
-  // Hide the cookie consent popup
-  document.getElementById('cookieConsentPopup').style.display = 'none';
-}
-
-function showCookies(event) {
-  event.preventDefault();
-  let savedPreferences = localStorage.getItem('cookiePreferences');
-  savedPreferences = JSON.parse(savedPreferences);
-
-  const performanceCookies = document.getElementById('performanceCookies');
-  const functionalityCookies = document.getElementById('functionalityCookies');
-  const advertisingCookies = document.getElementById('advertisingCookies');
-
-  performanceCookies.checked = savedPreferences.performanceCookies;
-  functionalityCookies.checked = savedPreferences.functionalityCookies;
-  advertisingCookies.checked = savedPreferences.advertisingCookies;
-  
-  document.getElementById('cookieConsentPopup').style.display = 'block';
-}
-
-/*function applyCookiePreferences(preferences) {
-  // Logic to enable/disable cookies based on preferences
-  console.log('Applying cookie preferences:', preferences);
-
-  // Example of handling different types of cookies
-  if (preferences.performanceCookies) {
-    // Enable performance cookies
-  } else {
-    // Disable performance cookies
-  }
-
-  if (preferences.functionalityCookies) {
-    // Enable functionality cookies
-  } else {
-    // Disable functionality cookies
-  }
-
-  if (preferences.advertisingCookies) {
-    // Enable advertising cookies
-  } else {
-    // Disable advertising cookies
-  }
-}*/
-
-window.onload = function() {
-    var utmParams = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
-    var currentUrlParams = new URLSearchParams(window.location.search);
-
-    // Check if any UTM parameters are present in the current URL
-    var hasUtmParams = utmParams.some(param => currentUrlParams.has(param));
-
-    // If no UTM parameters are present, set utm_source to 'website'
-    if (!hasUtmParams) {
-        currentUrlParams.set('utm_source', 'website');
-    }
-
-    var utmString = "?" + utmParams
-        .filter(param => currentUrlParams.has(param))
-        .map(param => param + "=" + currentUrlParams.get(param))
-        .join("&");
-
-    document.querySelectorAll('a[href]').forEach(function(anchor) {
-        var href = new URL(anchor.href, window.location.origin);
-        if (href.origin === window.location.origin && href.pathname !== window.location.pathname) {
-            href.search += (href.search ? "&" : "") + utmString.substring(1);
-            anchor.href = href.toString();
-        }
-    });
-
-    var logoAnchor = document.querySelector('.logo');
-    if (logoAnchor) {
-        var newUrl = 'https://easymenus.eu' + utmString;
-        logoAnchor.setAttribute('href', newUrl);
-    }
-}
-
-  </script>
 
 </body>
 </html>
