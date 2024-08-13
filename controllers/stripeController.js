@@ -22,7 +22,7 @@ export const createCheckoutSession =  async (req, res) => {
       let sessionStripe = null;
       if (billing_period === 'monthly'){
         sessionStripe = await stripe.checkout.sessions.create({
-          success_url: "http://localhost:8080/success/" + userId + "/" + billing_period,
+          success_url: "https://easymenus.eu/success/" + userId + "/" + billing_period,
           cancel_url: "https://easymenus.eu/management/profile/"+ userId,
           line_items: [
           {
@@ -36,7 +36,7 @@ export const createCheckoutSession =  async (req, res) => {
         //success_url: "http://localhost:8080/success/" + userId + "/" + subscription,
         //success_url: "https://easymenus.eu/success/" + userId + "/" + subscription,
         sessionStripe = await stripe.checkout.sessions.create({
-          success_url: "http://localhost:8080/success/" + userId + "/" + billing_period,
+          success_url: "https://easymenus.eu/success/" + userId + "/" + billing_period,
           cancel_url: "https://easymenus.eu/management/profile/"+ userId,
           line_items: [
           {

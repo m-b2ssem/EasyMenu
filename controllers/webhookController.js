@@ -30,11 +30,13 @@ export const stripeWebhook =  async (request, response) => {
         break;
       case 'customer.subscription.deleted':
         const customerSubscriptionDeleted = event.data.object;
-        const userId = parseInt(subscription.metadata.userId, 10);
-        const user_subscription = await selectSubscrptionByUserId(userId);
-        if (user_subscription) {
-          const result = await updateSubscription(userId, null, null, null, null, 'canceled', false, null);
-          const result_2 = await updateSubscriptionPlan('none', userId, 0, 0);
+        const userId = parseInt(customerSubscriptionDeleted.metadata.userId, 10);
+        if (userId){
+          const user_subscription = await selectSubscrptionByUserId(userId);
+          if (user_subscription) {
+            const result = await updateSubscription(userId, null, null, null, null, 'canceled', false, null);
+            const result_2 = await updateSubscriptionPlan('none', userId, 0, 0);
+          }
         }
         console.log('customer.subscription.deleted');
         break;
