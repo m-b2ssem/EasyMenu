@@ -98,9 +98,9 @@ export async function insertDesign(menu_id) {
 }
 
 export const getCategoriesByMenuId = async (menu_id) => {
+    const db = await pool.connect();
     try {
-        pool.connect();
-        const result = await pool.query("SELECT * FROM categories WHERE menu_id = $1 ORDER BY priority DESC",
+        const result = await db.query("SELECT * FROM categories WHERE menu_id = $1 ORDER BY priority DESC",
             [menu_id]);
         if (result.rows.length > 0) {
             return result.rows;
@@ -108,6 +108,8 @@ export const getCategoriesByMenuId = async (menu_id) => {
         return null;
     } catch (error) {
         throw error;
+    } finally {
+        db.release();
     }
 }
 
