@@ -172,19 +172,30 @@ $(function() {
       });
   });
 
-  function onScroll(event){
-      var scrollPos = $(document).scrollTop();
-      $('.nav a').each(function () {
-          var currLink = $(this);
-          var refElement = $(currLink.attr("href"));
-          if (refElement.position().top <= scrollPos && refElement.position().top + refElement.height() > scrollPos) {
-              $('.nav ul li a').removeClass("active");
-              currLink.addClass("active");
-          }
-          else{
-              currLink.removeClass("active");
-          }
-      });
+  function onScroll(event) {
+    var scrollPos = $(document).scrollTop();
+    $('.nav a').each(function () {
+        var currLink = $(this);
+        var refElement = $(currLink.attr("href"));
+
+        if (refElement.length) {
+            var elementPosition = refElement.position();
+            if (elementPosition) {
+                if (elementPosition.top <= scrollPos && elementPosition.top + refElement.height() > scrollPos) {
+                    $('.nav ul li a').removeClass("active");
+                    currLink.addClass("active");
+                } else {
+                    currLink.removeClass("active");
+                }
+            } else {
+                // Handle the case where position() returns undefined
+                currLink.removeClass("active");
+            }
+        } else {
+            // Handle the case where refElement is not found
+            currLink.removeClass("active");
+        }
+    });
   }
 
 
