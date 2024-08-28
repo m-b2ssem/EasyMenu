@@ -21,7 +21,7 @@ export const insertCategory = async (menu_id, category_name, user_id) => {
             "INSERT INTO categories (menu_id, category_name, user_id) VALUES($1, $2, $3) RETURNING *",
             [menu_id, category_name, user_id]);
         if (result.rows.length > 0) {
-            return true;
+            return result.rows[0];
         } 
         return null;
     } catch (error) {

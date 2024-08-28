@@ -4,6 +4,7 @@ html {
   scroll-behavior: smooth;
 }
 
+
 div.scrollmenu::-webkit-scrollbar {
     display: none;
   }
@@ -257,4 +258,18 @@ div.scrollmenu::-webkit-scrollbar {
   .modal-header .food-type-info {
     max-width: 40px;
     max-height: 40px;
+}
+
+.responsive-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%; /* Ensure the container doesn't exceed the width of its parent */
+  overflow: hidden; /* Hide any overflow */
+}
+
+.logo-image {
+  max-width: 100%; /* Ensure the image scales down if it's too wide */
+  max-height: 100%; /* Set a maximum height for the image */
+  object-fit: contain; /* Maintain aspect ratio */
 }
