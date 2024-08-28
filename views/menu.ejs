@@ -343,13 +343,26 @@
             event.preventDefault();
             const form = event.target;
             const formData = new FormData(form);
-            console.log('Form data:', formData);
-            console.log('Form data:', form);
+            
+            // Get the file input element
+            const fileInput = form.querySelector('input[name="image"]');
+            const file = fileInput.files[0];
+
+            const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+            
+            if (file.size > maxSize) {
+                alert('File is too large. Please select a file smaller than 10MB.');
+                return; // Stop the form submission
+            }
             try {
-                const response = await fetch('/uplaod-logo-image', {
+                const response = await fetch('/upload-logo-image', {
                     method: 'POST',
                     body: formData
                 });
+
+                if (!response.ok) {
+                    alert("Image upload failed. Please try again with smaller image");
+                }
                 const data = await response.json();
                 if (data.success) {
                     alert('Image was asuccessfully uploaded');
@@ -358,9 +371,9 @@
                 } else {
                     alert('Failed to add item please try again');
                 }
-                console.log(data);
             } catch (error) {
                 console.error('Error:', error);
+                alert('Failed to add item please try again.');
             }
         }
     </script>

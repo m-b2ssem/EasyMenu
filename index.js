@@ -40,14 +40,14 @@ app.use(session({
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({limit: '10mb',extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(webhookRoutes);
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 app.use(pdfRoutes);
 app.use(staticRoutes);

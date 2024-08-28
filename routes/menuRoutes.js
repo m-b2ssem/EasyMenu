@@ -8,12 +8,14 @@ import {
   getMenu,
 } from '../controllers/menuController.js';
 
-const storage = multer();
+const storage = multer({
+  limits: { fileSize: 10 * 1024 * 1024 }
+});
 const router = Router();
 
 router.get('/menu/:menuid/:res', getMenu);
 
-router.post('/uplaod-logo-image', storage.single('image'), uploadLogoImage);
+router.post('/upload-logo-image', storage.single('image'), uploadLogoImage);
 router.post('/updateColor', updateColor);
 router.post('/updateLangauge', updateLanguage);
 router.post('/updateCurrency', updateTheCurrency);
