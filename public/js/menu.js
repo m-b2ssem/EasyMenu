@@ -96,3 +96,10 @@ window.onclick = function (event) {
 
 
 document.documentElement.style.scrollBehavior = "smooth";
+
+ // Hide the loading screen once the page is fully loaded
+ window.addEventListener('load', function() {
+  setTimeout(() => {
+    document.getElementById('loading-screen').style.display = 'none';
+  }, 1000);
+});

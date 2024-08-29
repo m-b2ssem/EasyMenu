@@ -22,6 +22,11 @@
 </head>
 
 <body data-bs-spy="scroll" data-bs-target="#categories-list" data-bs-offset="50">
+
+     <!-- Loading Screen -->
+     <div id="loading-screen">
+        <span class="loader"></span>
+    </div>
     <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NJ44ZN37"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -33,7 +38,7 @@
     <div class="responsive-image">
         <img src="<%= backgroundImage %>" alt="Restaurant Logo" class="logo-image">
     </div>
-    <div class="container"  style="padding-top:40px; padding-bottom:60px;">
+    <div class="container" id="translate"  style="padding-top:40px; padding-bottom:60px;">
         <div>
             <div class="col scrollmenu" id="categories-list">
                 <% categories.forEach(function (category) { %>

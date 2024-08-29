@@ -52,7 +52,7 @@ function applyCustomStyles() {
 }
 
 // Function to correct wrong translations in the DOM
-function correctTranslations() {
+async function correctTranslations() {
     var wrongWords = {
         "The soup": "Soup",
         "beverages": "Beverages",
@@ -96,7 +96,15 @@ window.addEventListener("load", function () {
 
 // Wait for the iframe to load and then apply styles
 window.addEventListener("change", function () {
-    setTimeout(function(){
-        correctTranslations();
+
+    document.getElementById('loading-screen').style.display = 'Block';
+    
+    document.getElementsByClassName('loader')[0].style.display = 'Block';
+
+    setTimeout(async function(){
+        await correctTranslations();
     }, 500);
+    setTimeout(function(){
+        document.getElementById('loading-screen').style.display = 'none';
+    }, 1000);
   });
