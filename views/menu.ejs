@@ -28,6 +28,8 @@
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-NJ44ZN37');</script>
     <!-- End Google Tag Manager -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+
 </head>
 
 <body id="page-top">
@@ -193,7 +195,7 @@
                     <div style="border-bottom-style: solid; margin:40px auto; width: 40%; text-align: center;"></div>
                     <div class="d-flex justify-content-center" style="margin-top: 40px; margin-bottom:40px; text-align: center;color: var(--bs-btn-disabled-color);">
                         <div class="col text-center" style="height: 128px; width: 128px;" id="qrcode">
-                            <img src="<%= image %>" alt="QR Code" style="max-height: 100%; max-width: 100%;">
+                            <img src="" id="qrcode-id" alt="QR Code" style="max-height: 100%; max-width: 100%;">
                         </div>
                     </div>
                     <div class="text-center">
@@ -237,8 +239,6 @@
          document.getElementById('colorPicker').addEventListener('change', function() {
         const selectedColor = this.value;
         const dataId = this.dataset.id;
-        console.log('Selected color:', selectedColor);
-        console.log('Data ID:', dataId);
         
         // Send the selected color to the server
         fetch('/updateColor', {
@@ -307,12 +307,20 @@
     });
 
     download = () => {
-        const dataId = document.getElementById('qrcode').dataset.id;
         const link = document.createElement('a');
         link.download = 'QRCode.png';
-        link.href = document.getElementById('qrcode').children[0].src;
+        link.href = document.getElementById('qrcode-id').src;
         link.click();
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var menu_url = "<%= menu_name %>";
+        var qrcode_img = document.getElementById('qrcode-id');
+        var qr = qrcode(10, 'M');
+        qr.addData(menu_url);
+        qr.make();
+        qrcode_img.src = qr.createDataURL(10);
+    });
     </script>
 
         <script>

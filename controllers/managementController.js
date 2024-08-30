@@ -42,9 +42,6 @@ export const manageMenuPage = async (req, res) => {
       "https://www.easymenus.eu/menu/" + menu.menu_id + "/" + name_of_menu;
     const langauges = await createLangaugeList(menu.menu_language);
     const currencies = await createCurrencyList(menu.menu_currency);
-    const image =
-      "data:image/png;base64," +
-      (await convertArrayBufferToBase64(menu.qr_code));
     const menuDesign = await getDesignByMenuId(menu.menu_id);
     res.render("menu", {
       user: req.user,
@@ -52,7 +49,6 @@ export const manageMenuPage = async (req, res) => {
       langauges: langauges,
       currencies: currencies,
       menu_name: menu_name,
-      image: image,
       background_color: menuDesign.background_color,
       menu_id: menu.menu_id,
     });
