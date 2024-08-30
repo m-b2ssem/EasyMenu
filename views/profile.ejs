@@ -19,6 +19,7 @@
 
     <!-- Custom styles for this template-->
     <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/profile.css">
     <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -27,81 +28,10 @@
     })(window,document,'script','dataLayer','GTM-NJ44ZN37');</script>
     <!-- End Google Tag Manager -->
 
-    <style>
-        .sortable-list {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            width: 300px;
-            margin: 0 auto;
-        }
-
-        .sortable-list li {
-            margin: 5px 0;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            cursor: move;
-            border-radius: 8px;
-        }
-
-        .centered-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-        .form-group {
-        margin-bottom: 20px;
-        }
-
-        .original-price {
-        text-decoration: line-through;
-        font-size: 16px;
-        color: #999;
-        margin-right: 10px;
-        }
-
-        .discounted-price {
-        font-size: 18px;
-        font-weight: bold;
-        color: #f00;
-        }
-
-        .discount-notice {
-        font-size: 14px;
-        color: #f00;
-        margin-left: 5px;
-        }
-
-    </style>
 </head>
 
 <body id="page-top">
 
-  <!-- ***** Preloader Start ***** -->
-  <div id="js-preloader" class="js-preloader">
-    <div class="preloader-inner">
-      <span class="dot"></span>
-      <div class="dots">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-    </div>
-  </div>
-  <!-- ***** Preloader End ***** -->
-
-  <!-- ***** Header Area Start ***** -->
-  <link rel="alternate" hreflang="en" href="https://easymenus.eu">
-<link rel="alternate" hreflang="de" href="https://de.easymenus.eu">
-<script type="text/javascript" src="https://cdn.weglot.com/weglot.min.js"></script>
-<script>
-    Weglot.initialize({
-        api_key: 'wg_ccdc61525b763853033f4669bd1f972d2'
-    });
-</script>
 
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -167,6 +97,7 @@
                         <p><strong>Current Subscription: </strong> <%= subscription_plan.plan_name %></p>
                         <p><strong>Total Durations : </strong> <%= subscription_plan.duration_days %> days</p>
                         <p><strong>Status : </strong> <%= subscription_plan.status %></p>
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#changeEmailModal">Change Email</button>
                         <button class="btn btn-danger" value="<%= user.user_id %>">Cancel Subscription</button>
                         <div class="col" style="display: none; margin-top: 20px;" id="cancelLebal">
                             <label>suc</label>
@@ -265,6 +196,60 @@
         </div>
         <!-- End of Content Wrapper -->
 
+        <!-- Change Email Modal -->
+<div class="modal fade" id="changeEmailModal" tabindex="-1" role="dialog" aria-labelledby="changeEmailModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changeEmailModalLabel">Change Email Address</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form onsubmit="sendVerificationCode(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="newEmail">New Email Address:</label>
+                        <input type="email" class="form-control" id="newEmail" name="newEmail" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Verification Code</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Verification Code Modal -->
+<div class="modal fade" id="verifyEmailModal" tabindex="-1" role="dialog" aria-labelledby="verifyEmailModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="verifyEmailModalLabel">Verify Email Address</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form onsubmit="verifyEmail(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="verificationCode">Verification Code Numbers:</label>
+                        <input type="number" class="form-control" id="verificationCode" name="verificationCode" required>
+                        <input type="hidden" id="pendingEmail" name="pendingEmail">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Verify</button>
+                    
+                    <div>
+                        <br>
+                        <span id="errorLabel2" style="display:none ; color: red;"></span>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
     </div>
     <!-- End of Page Wrapper -->
 
@@ -286,122 +271,42 @@
 
     <!-- Custom scripts for all pages-->
     <script src="/js/sb-admin-2.min.js"></script>
-
-    <!-- Page level plugins -->
-    <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
-
-    
-<script>
-    async function changePass(event) {
-        event.preventDefault();
-        
-        const currentPassword = document.getElementById('currentPassword').value;
-        const newPassword = document.getElementById('newPassword').value;
-        const userId = document.getElementById('userId').value;
-        const errorLabel = document.getElementById('errorLabel');
-        const from = document.getElementById('changePass');
-        
-        const response = await fetch('/change-pass', {
+    <script>
+        document.querySelector('button[value="<%= user.user_id %>"]').addEventListener('click', async (event) => {
+    event.preventDefault();
+    const userId = event.target.value;
+    try {
+        const response = await fetch('/cancel-subscription', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ currentPassword, newPassword, userId })
+            body: JSON.stringify({ userId })
         });
 
         const result = await response.json();
-
+        const cancelLebal = document.getElementById('cancelLebal');
         if (result.success) {
-            alert('Password changed successfully!');
-            errorLabel.style.display = 'none';
-            window.location.reload();
+            cancelLebal.style.color = 'green';
+            cancelLebal.innerHTML = result.message;
+            cancelLebal.style.display = 'block';
         } else {
-            errorLabel.style.display = 'block';
-        }
-    }
-
-    async function changeSubscrption(event) {
-        event.preventDefault();
-        const subscription = document.getElementById('subscription').value;
-        const billing_period = document.querySelector('input[name="billing_period"]:checked').value;
-        const userId = '<%= user.user_id %>';
-
-        try {
-            const response = await fetch('/create-checkout-session', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ subscription, userId, billing_period })
-            });
-
-            const { url } = await response.json();
-            window.location = url;
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
-    async function deleteAccount(event) {
-        event.preventDefault();
-        const userId = event.target.userId.value;
-
-        try {
-            const response = await fetch('/delete-account', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ userId })
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                alert('Account deleted successfully!');
-                window.location = '/';
-            } else {
-                alert('An error occurred. Please try again.');
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
-    document.querySelector('button[value="<%= user.user_id %>"]').addEventListener('click', async (event) => {
-        event.preventDefault();
-        const userId = event.target.value;
-        console.log(userId);
-        try {
-            const response = await fetch('/cancel-subscription', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ userId })
-            });
-
-            const result = await response.json();
-            const cancelLebal = document.getElementById('cancelLebal');
-            if (result.success) {
-                cancelLebal.style.color = 'green';
-                cancelLebal.innerHTML = result.message;
-                cancelLebal.style.display = 'block';
-            } else {
-                cancelLebal.style.color = 'red';
-                cancelLebal.innerHTML = result.message;
-                cancelLebal.style.display = 'block';
-            }
-        } catch (err) {
             cancelLebal.style.color = 'red';
-            cancelLebal.innerHTML = 'An error occurred. Please try again.';
+            cancelLebal.innerHTML = result.message;
             cancelLebal.style.display = 'block';
         }
-    });
+    } catch (err) {
+        cancelLebal.style.color = 'red';
+        cancelLebal.innerHTML = 'An error occurred. Please try again.';
+        cancelLebal.style.display = 'block';
+    }
+});
+    </script>
 
-</script>
+    <!-- Page level plugins -->
+    <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="/js/profile.js"></script>
 
 </body>
 

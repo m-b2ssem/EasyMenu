@@ -18,17 +18,8 @@ document.addEventListener("DOMContentLoaded", function () {
     var activeLinkOffsetLeft = activeLink.offsetLeft;
 
     // Calculate the scroll position to center the active link
-    var scrollPosition =
-      activeLinkOffsetLeft - scrollmenuWidth / 2 + activeLinkWidth / 2;
+    var scrollPosition = activeLinkOffsetLeft - scrollmenuWidth / 2 + activeLinkWidth / 2;
 
-    /*// Ensure the scroll position doesn't exceed the scrollable range
-    var maxScrollPosition = scrollmenu.scrollWidth - scrollmenuWidth;
-    if (scrollPosition > maxScrollPosition) {
-      scrollPosition = maxScrollPosition;
-    }
-    if (scrollPosition < 0) {
-      scrollPosition = 0;
-    }*/
 
       var maxScrollPosition = scrollmenu.scrollWidth - scrollmenuWidth;
       scrollPosition = Math.max(0, Math.min(scrollPosition, maxScrollPosition));
@@ -38,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
       behavior: "smooth",
     });
   });
+
 
   // Add click event listener to the nav-links for smooth scroll
   var navLinks = document.querySelectorAll("#categories-list .nav-link");
@@ -58,8 +50,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // JavaScript to handle the modal
 var modal = document.getElementById("myModal");
-var span = document.getElementsByClassName("close")[0];
+var span = document.getElementById('close-menu');
 
+span.onclick = function() {
+  modal.style.display = "none";
+  document.body.classList.remove("modal-open");
+}
 function openModal(name, price, description, image, allergies, foodType) {
   document.getElementById("modalItemName").innerText = name;
   document.getElementById("modalPrice").innerText = price;
@@ -82,8 +78,15 @@ function openModal(name, price, description, image, allergies, foodType) {
   }
   document.getElementById("modalFoodTypeImage").src = foodTypeImage;
 
+
+  var load = document.getElementById("loadingScreen");
+  load.style.display = "block";
   modal.style.display = "block";
+  setTimeout(() => {
+    load.style.display = "none";
+  }, 500);
   document.body.classList.add("modal-open");
+
 }
 
 window.onclick = function (event) {
@@ -103,3 +106,9 @@ document.documentElement.style.scrollBehavior = "smooth";
     document.getElementById('loading-screen').style.display = 'none';
   }, 1000);
 });
+
+function CloseModel() {
+  console.log("close model");
+  modal.style.display = "none";
+  document.body.classList.remove("modal-open");
+}

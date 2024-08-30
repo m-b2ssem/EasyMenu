@@ -1,0 +1,64 @@
+/* Hide spinners in Chrome, Safari, Edge, and Opera */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    margin: 0; 
+}
+
+/* Hide spinners in Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Optional: Hide the spinner controls in Internet Explorer 10+ */
+input[type=number]::-ms-inner-spin-button, 
+input[type=number]::-ms-outer-spin-button {
+    display: none;
+}
+
+.sortable-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 300px;
+    margin: 0 auto;
+}
+
+.sortable-list li {
+    margin: 5px 0;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    cursor: move;
+    border-radius: 8px;
+}
+
+.centered-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+.form-group {
+margin-bottom: 20px;
+}
+
+.original-price {
+text-decoration: line-through;
+font-size: 16px;
+color: #999;
+margin-right: 10px;
+}
+
+.discounted-price {
+font-size: 18px;
+font-weight: bold;
+color: #f00;
+}
+
+.discount-notice {
+font-size: 14px;
+color: #f00;
+margin-left: 5px;
+}
