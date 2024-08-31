@@ -7,6 +7,7 @@ import {
   insertItem,
   updateItem,
   getItemsByCategory,
+  deleteItemImageDb
 } from '../models/itemModel.js';
 import { cehckSizeandConvertTOBytea, parsePrice } from '../utils/helperFunctions.js';
 
@@ -136,4 +137,14 @@ export const getItem = async (req, res) => {
     return res.json({ success: false, message: 'Something went wrong, please try again.' });
   }
   res.json({ item });
+};
+
+
+export const deleteItemImage = async (req, res) => {
+  const itemId = parseInt(req.body.itemId);
+  const result = await deleteItemImageDb(itemId);
+  if (!result) {
+    return res.json({ success: false, message: 'Item doen not exist.' });
+  }
+  res.json({ success: true });
 };

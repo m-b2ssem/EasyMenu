@@ -39,8 +39,7 @@ div.scrollmenu::-webkit-scrollbar {
     text-decoration: none;
     border-radius: 8px;
   }
-  
-  
+
   .custom-card {
     position: relative;
     display: flex;
@@ -52,60 +51,70 @@ div.scrollmenu::-webkit-scrollbar {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     max-width: 500px;
     margin: 20px auto;
-  }
-  
-  .custom-card img {
+}
+
+.custom-card img {
     width: 80px;
     height: 80px;
     border-radius: 8px;
     object-fit: cover;
-  }
-  
-  .custom-card .card-content {
+}
+
+.custom-card .card-content {
     flex-grow: 1;
     padding-left: 15px;
-  }
-  
-  .custom-card .card-content h5 {
+}
+
+.custom-card .card-content h5 {
     margin: 0;
     font-size: 16px;
     font-weight: bold;
-  }
-  
-  .custom-card .card-content .price {
-    margin: 0px 0;
+}
+
+.custom-card .card-content .price-container {
+    display: flex;
+    align-items: center;
+}
+
+.custom-card .card-content .price {
+    margin: 0;
     font-size: 14px;
     color: #333;
-  }
-  
-  .custom-card .card-content .description {
+}
+
+.custom-card .card-content .food-type-icon {
+    margin-left: 8px;
+}
+
+.custom-card .card-content .description {
+    margin: 5px 0;
+    font-size: 12px;
+    color: #777;
+}
+
+.custom-card .card-content .allergy-letter {
     margin: 0;
     font-size: 12px;
     color: #777;
-  }
-  .custom-card .card-content .allergy-letter {
-    margin: 0;
-    font-size: 12px;
-    color: #777;
-  }
-  allergy-letter
+}
+
 .items {
     background-color: rgba(245, 245, 245, 0.493);
     border-radius: 4px;
-  }
+}
 
-  .link {
+.link {
     color: #333;
     text-decoration: none;
     position: relative;
-  }
-  
-  .vegan-badge {
-    position: absolute;
-    top: 20px;
-    right: 8px;
-    /* Adjust the size of the image or add padding as needed */
 }
+
+.vegan-badge,
+.vegetarian-badge {
+    max-width: 15px;
+    max-height: 15px;
+}
+
 
         /* Add this CSS to your horizontalmenu.css file */
         .modal {

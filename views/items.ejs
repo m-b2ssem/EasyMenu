@@ -152,6 +152,9 @@
                                 image*</label>
                             <input type="file" class="form-control" id="updateItemImage" name="image" accept="image/*">
                         </div>
+                        <div>
+                            <button class="btn btn-danger" id="deleteImageButton">delete existing image</button>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -586,17 +589,45 @@
             $("#sortable").disableSelection();
         });
 
+        document.getElementById('deleteImageButton').addEventListener('click', function () {
+            event.preventDefault();
+            var itemId = document.getElementById('itemId').value;
+            fetch('/delete-item-image', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ itemId: itemId }),
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        success('updateError', 'Image deleted successfully');
+                    } else {
+                        somethingWrong('messageForUpdate', 'Failed to delete the image, please try again');
+                    }
+                }).catch((error) => {
+                    somethingWrong('messageForUpdate', 'Failed to delete the image, please try again');
+                    console.error('Error:', error);
+                });
+        });
+
         document.getElementById('addAllergyBtn').addEventListener('click', function () {
             const inputContainer = document.getElementById('allergyInputs');
+            const AllergyAddButton = document.getElementById('AllergyAddButton');
+            if (AllergyAddButton) {
+                return;
+            }
             const form = document.getElementById('itemForm');
             const input = document.createElement('input');
             input.type = 'text';
+            input.id = 'AllergyInput';
             input.style = 'margin-top: 5px; border-radius: 8px; box-shadow: 1px 1px 5px var(--bs-blue);';
             input.placeholder = 'The Letter of the allergy';
 
             const addButton = document.createElement('button');
             addButton.type = 'button';
             addButton.textContent = 'Add';
+            addButton.id = 'AllergyAddButton';
             addButton.classList.add('btn', 'btn-primary');
             addButton.style = 'margin-left: 5px;';
             addButton.onclick = function () {
@@ -678,7 +709,6 @@
                     allergies.forEach(allergy => {
                         addAllergyLabel(allergy, updateAllergyList);
                     });
-
                     $('#updateAllergies').val(allergies.join(','));
 
                     // Fetch the category name
@@ -845,6 +875,8 @@
                 alert('Please choose a category.');
                 return;
             }
+            const AllergyAddButton = document.getElementById('AllergyAddButton');
+            const AllergyInputs = document.getElementById('allergyInputs');
             const formData = new FormData(form);
             try {
                 const response = await fetch('/additem', {
@@ -859,6 +891,8 @@
                     message.innerText = 'Item added successfully';
                     message.style.display = 'block';
                     message.style.color = 'green';
+                    AllergyAddButton.remove();
+                    AllergyInputs.remove();
                     setTimeout(() => {
                         message.style.display = 'none';
                     }, 5000);

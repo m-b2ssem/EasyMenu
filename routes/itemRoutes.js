@@ -8,7 +8,8 @@ import {
   addItem,
   updateItemController,
   getItems,
-  getItem
+  getItem,
+  deleteItemImage
 } from '../controllers/itemController.js';
 
 const storage = multer();
@@ -22,5 +23,6 @@ router.post('/additem', storage.single('image'), addItem);
 router.post('/update-item', storage.single('image'), updateItemController);
 router.get('/get-items', getItems);
 router.get('/get-item', getItem);
+router.post('/delete-item-image', deleteItemImage);
 
 export default router;

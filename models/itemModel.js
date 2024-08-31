@@ -132,3 +132,19 @@ export const updateItemStatus = async (item_id, status) => {
         db.release();
     }
 }
+
+export const deleteItemImageDb = async (item_id) => {
+    const db = await pool.connect();
+    try {
+        const result = await db.query("UPDATE items SET image = null WHERE item_id = $1",
+            [item_id]);
+        if (result.rowCount > 0) {
+            return true;
+        }
+        return false;
+    } catch (error) {
+        throw error;
+    } finally {
+        db.release();
+    }
+}

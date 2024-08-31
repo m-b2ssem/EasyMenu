@@ -54,23 +54,16 @@
                             <div>
                                 <%  category.items.forEach(function (item) { %>
                                     <div class="custom-card" onclick="openModal('<%= item.item_name %>', '<%= item.price %> <%= currency %>', '<%= item.description %>', '<%= item.image ? item.image : '/img/light_gray.jpg' %>', '<%= item.allergies %>', '<%= item.food_type %>')">
-                                        <% if (item.image) { %>
-                                            <img src="<%= item.image %>" alt="<%= item.item_name %>">
-                                        <% } else { %>
-                                            <img src="/img/light_gray.jpg" alt="light_gray photo">
-                                        <% } %>
                                         <div class="card-content">
                                             <h5><%= item.item_name %></h5>
-                                            <% if (item.food_type === 'Vegan') { %>
-                                                <div class="vegan-badge">
-                                                    <img src="/img/vegan.jpg" style="max-width: 30px; max-height: 30px;" alt="">
-                                                </div>
-                                            <% } else if (item.food_type === 'Vegetarian') { %>
-                                                <div class="vegan-badge">
-                                                    <img src="/img/vegetarian.jpg" style="max-width: 30px; max-height: 30px;" alt="">
-                                                </div>
-                                            <% } %>
-                                            <div class="price"><%= item.price %> <%= currency %></div>
+                                            <div class="price-container">
+                                                <div class="price"><%= item.price %> <%= currency %></div>
+                                                <% if (item.food_type === 'Vegan') { %>
+                                                    <img class="food-type-icon vegan-badge" src="/img/vegan.svg" alt="Vegan">
+                                                <% } else if (item.food_type === 'Vegetarian') { %>
+                                                    <img class="food-type-icon vegetarian-badge" src="/img/vegan.svg" alt="Vegetarian">
+                                                <% } %>
+                                            </div>
                                             <div class="description"><%= item.description.length > 120 ? item.description.substring(0, 120) + '...' : item.description %></div>
                                             <div class="allergy-letter">
                                                 <% if (item.allergies) { %>
@@ -80,7 +73,10 @@
                                                 <% } %>
                                             </div>
                                         </div>
-                                    </div>
+                                        <% if (item.image) { %>
+                                            <img src="<%= item.image %>" alt="<%= item.item_name %>">
+                                        <% } %>
+                                    </div>                                    
                                 <% }); %>
                             </div>
                         </div>
