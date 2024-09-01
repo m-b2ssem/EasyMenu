@@ -200,3 +200,223 @@ app.post('/create-payment-intent', async (req, res) => {
   //res.redirect(session.url);
   res.json({ success: true });
 });*/
+
+
+
+// {
+//   "userId": "101",
+//   "menuId": "96",
+//   "categories": [
+//       {
+//           "name": "example 1",
+//           "items": [
+//               {
+//                   "name": "Hamburger Classic",
+//                   "price": 12.90,
+//                   "description": "Ca. 150g frisches Rindfleisch, Essiggurken, Tomaten, Zwiebeln, Petersilie, Moment-Soße, Pommes frites",
+//                   "image_url": "https://example.com/hamburger",
+//                 },
+//               {
+//                   "name": "Cheeseburger",
+//                   "price": 13.40,
+//                   "description": "Ca. 150g frisches Rindfleisch, Käse, Essiggurken, Tomaten, Zwiebeln, Petersilie, Moment-Soße, Pommes frites",
+//                   "image_url": "https://example.com/cheeseburger",
+//                 },
+//           ]
+//       },
+//       "name": "example 2",
+//           "items": [
+//               {
+//                   "name": "Hamburger Classic",
+//                   "price": 12.90,
+//                   "description": "Ca. 150g frisches Rindfleisch, Essiggurken, Tomaten, Zwiebeln, Petersilie, Moment-Soße, Pommes frites",
+//                   "image_url": "https://example.com/hamburger",
+//                 },
+//               {
+//                   "name": "Cheeseburger",
+//                   "price": 13.40,
+//                   "description": "Ca. 150g frisches Rindfleisch, Käse, Essiggurken, Tomaten, Zwiebeln, Petersilie, Moment-Soße, Pommes frites",
+//                   "image_url": "https://example.com/cheeseburger",
+//                 },
+//           ]
+//       }
+//   ]
+// }
+
+
+{
+  "userId": "101",
+  "menuId": "96",
+  "categories": [
+    {
+      "name": "Vorspeisen",
+      "items": [
+        {
+          "name": "Cacik - Tzatziki",
+          "price": 5.90,
+          "description": "Knoblauch-Joghurt mit Gurken"
+        },
+        {
+          "name": "Hummus",
+          "price": 6.50,
+          "description": "Kichererbsenpüree mit Sesampaste"
+        },
+        {
+          "name": "Haydari",
+          "price": 6.50,
+          "description": "Passierter Joghurt mit Knoblauch"
+        },
+        {
+          "name": "Sigara Böregi",
+          "price": 7.50,
+          "description": "Blätterteigröllchen mit Kuhkäse, Petersilie und Joghurt"
+        }
+      ]
+    },
+    {
+      "name": "Suppen",
+      "items": [
+        {
+          "name": "Rote Linsensuppe",
+          "price": 5.90,
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "Salate",
+      "items": [
+        {
+          "name": "Grüner Salat",
+          "price": 7.50,
+          "description": "Mit gewürfelten Gurken garniert und Zwiebelringen"
+        },
+        {
+          "name": "Hirtensalat",
+          "price": 7.90,
+          "description": "Mit Gurke, Zwiebeln, Oliven und Petersilie"
+        },
+        {
+          "name": "Thunfisch Salat",
+          "price": 9.50,
+          "description": "Mit Saisonsalat und Thunfisch"
+        },
+        {
+          "name": "Gemischter Salat",
+          "price": 9.90,
+          "description": "Mit Rotkraut, Mais, Karotten, Tomaten, Gurken, Paprika und Petersilie"
+        }
+      ]
+    },
+    {
+      "name": "Grillgerichte",
+      "items": [
+        {
+          "name": "Lammspieß",
+          "price": 16.99,
+          "description": "Mit Salat und Reis"
+        },
+        {
+          "name": "Gemischter Lamm- und Hühnerspieß",
+          "price": 16.50,
+          "description": "Mit Salat und Reis"
+        },
+        {
+          "name": "Adana - Lammhackfleischspieß",
+          "price": 15.99,
+          "description": "Leicht scharf, mit Salat und Reis"
+        },
+        {
+          "name": "Beyti - Adana gerollt im Tortilla",
+          "price": 15.90,
+          "description": "Mit Tomaten, Joghurtsauce und Reis"
+        },
+        {
+          "name": "Hühnerspieß",
+          "price": 14.50,
+          "description": "Mit Salat und Reis"
+        },
+        {
+          "name": "Hühnerflügel",
+          "price": 13.50,
+          "description": "Mit Salat und Reis"
+        },
+        {
+          "name": "Faschiertes Laibchen vom Kalb und Rind",
+          "price": 13.50,
+          "description": "Mit Salat und Reis"
+        },
+        {
+          "name": "Cevapcici",
+          "price": 13.90,
+          "description": "Mit Salat und Reis"
+        }
+      ]
+    },
+    {
+      "name": "Vegetarisches",
+      "items": [
+        {
+          "name": "Gemischter Grillteller (vegetarisch)",
+          "price": 10.99,
+          "description": "Paprika, Melanzani, Zucchini, Salat, Pommes frites"
+        }
+      ]
+    },
+    {
+      "name": "Sandwich - Wrap",
+      "items": [
+        {
+          "name": "Köfte Dürüm",
+          "price": 8.90,
+          "description": "Mit gebackenem Kalbshackfleisch, Salat, Zwiebeln und Tomaten"
+        },
+        {
+          "name": "Adana Dürüm",
+          "price": 8.90,
+          "description": "Mit Lammhackfleisch vom Spieß, Salat, Zwiebeln und Tomaten"
+        },
+        {
+          "name": "Falafel Dürüm",
+          "price": 7.90,
+          "description": "Frittierte Bällchen aus Kichererbsen"
+        },
+        {
+          "name": "Dürüm (vegetarisch)",
+          "price": 7.90,
+          "description": "Mit Kuhkäse, grünem Salat, Tomaten und Joghurtsauce"
+        },
+        {
+          "name": "Tavuk Sis Dürüm",
+          "price": 8.90,
+          "description": "Gerollter Wrap mit Hühnerspieß, Salat, Zwiebeln und Tomaten"
+        }
+      ]
+    },
+    {
+      "name": "Pide Spezialitäten",
+      "items": [
+        {
+          "name": "Lahmacun",
+          "price": 6.90,
+          "description": "Mit Lamm-Hackfleisch, dazu Salat"
+        },
+        {
+          "name": "Kusbasi Pide",
+          "price": 9.90,
+          "description": "Mit Käse, klein geschnittenem Lammfleisch und Gemüse"
+        },
+        {
+          "name": "Kiymali Pide",
+          "price": 9.90,
+          "description": "Mit faschiertem Fleisch"
+        },
+        {
+          "name": "Peynirli Pide",
+          "price": 9.50,
+          "description": "Mit Käse"
+        }
+      ]
+    }
+  ]
+}
