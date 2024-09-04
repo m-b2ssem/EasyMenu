@@ -13,15 +13,30 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+const password = process.env.EMAIL_PASSWORD;
+
+const mailTransport = nodemailer.createTransport({    
+  host: "smtp.office365.com",  
+  secure: false,
+  tls: {
+    rejectUnauthorized: false, // Allows self-signed certificates
+  },
+  port: 587,
+  auth: {
+      user: "office@easymenus.eu",
+      pass: password 
+  },
+});
+
 export const sendEmail = async (email, subject, template) => {
   const mailOptions = {
-    from: 'youreasymenus@gmail.com',
+    from: 'office@easymenus.eu',
     to: email,
     subject: subject,
     html: template,
   };
 
-  transporter.sendMail(mailOptions, function(error, info) {
+  mailTransport.sendMail(mailOptions, function(error, info) {
     if (error) {
       console.log(error);
     }

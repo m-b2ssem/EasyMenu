@@ -420,3 +420,50 @@ app.post('/create-payment-intent', async (req, res) => {
     }
   ]
 }
+
+/*
+https://www.montecapanne.at/online-bestellen
+this is the url to a menu, I want you to go there and create menu a json and list all the caregories and item with a struct like this, dont forget to add the image utl if it exist
+
+
+{
+  "userId": "101",
+  "menuId": "96",
+  "categories": [
+      {
+          "name": "example 1",
+          "items": [
+              {
+                  "name": "Hamburger Classic",
+                  "price": 12.90,
+                  "description": "Ca. 150g frisches Rindfleisch, Essiggurken, Tomaten, Zwiebeln, Petersilie, Moment-Soße, Pommes frites",
+                  "image_url": "https://example.com/hamburger",
+                },
+              {
+                  "name": "Cheeseburger",
+                  "price": 13.40,
+                  "description": "Ca. 150g frisches Rindfleisch, Käse, Essiggurken, Tomaten, Zwiebeln, Petersilie, Moment-Soße, Pommes frites",
+                  "image_url": "https://example.com/cheeseburger",
+                },
+          ]
+      },
+      "name": "example 2",
+          "items": [
+              {
+                  "name": "Hamburger Classic",
+                  "price": 12.90,
+                  "description": "Ca. 150g frisches Rindfleisch, Essiggurken, Tomaten, Zwiebeln, Petersilie, Moment-Soße, Pommes frites",
+                  "image_url": "https://example.com/hamburger",
+                },
+              {
+                  "name": "Cheeseburger",
+                  "price": 13.40,
+                  "description": "Ca. 150g frisches Rindfleisch, Käse, Essiggurken, Tomaten, Zwiebeln, Petersilie, Moment-Soße, Pommes frites",
+                  "image_url": "https://example.com/cheeseburger",
+                },
+          ]
+      }
+  ]
+}
+
+*/
