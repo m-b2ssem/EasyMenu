@@ -15,8 +15,6 @@ import { formatDate } from '../utils/helperFunctions.js'
 
 export const createCheckoutSession =  async (req, res) => {
     const { subscription, userId, billing_period } = req.body;
-    console.log(req.body);
-    console.log(STRIPE_MONTHLY_PRICE_ID, STRIPE_YEARLY_PRICE_ID)
     try {
       const  stringUserId = userId.toString();
       let sessionStripe = null;
@@ -31,6 +29,7 @@ export const createCheckoutSession =  async (req, res) => {
           },
           ],
           mode: "subscription",
+          allow_promotion_codes: true,
       });
       } else if (billing_period === 'yearly') {
         //success_url: "http://localhost:8080/success/" + userId + "/" + subscription,
@@ -45,6 +44,7 @@ export const createCheckoutSession =  async (req, res) => {
           },
           ],
           mode: "subscription",
+          allow_promotion_codes: true,
       });
       }
       const plan = await selectSubscrptionPlanByUserId(userId);
