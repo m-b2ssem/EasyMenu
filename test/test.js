@@ -466,4 +466,43 @@ this is the url to a menu, I want you to go there and create menu a json and lis
   ]
 }
 
+
+this is the the text of the menu  menu, I want you to anaylaze it there and create menu a json and list all the caregories and item with a struct like this example 
+
+{
+  "userId": "101",
+  "menuId": "96",
+  "categories": [
+      {
+          "name": "example 1",
+          "items": [
+              {
+                  "name": "Hamburger Classic",
+                  "price": 12.90,
+                  "description": "Ca. 150g frisches Rindfleisch, Essiggurken, Tomaten, Zwiebeln, Petersilie, Moment-Soße, Pommes frites",
+                },
+              {
+                  "name": "Cheeseburger",
+                  "price": 13.40,
+                  "description": "Ca. 150g frisches Rindfleisch, Käse, Essiggurken, Tomaten, Zwiebeln, Petersilie, Moment-Soße, Pommes frites",
+                },
+          ]
+      },
+      "name": "example 2",
+          "items": [
+              {
+                  "name": "Hamburger Classic",
+                  "price": 12.90,
+                  "description": "Ca. 150g frisches Rindfleisch, Essiggurken, Tomaten, Zwiebeln, Petersilie, Moment-Soße, Pommes frites",
+                },
+              {
+                  "name": "Cheeseburger",
+                  "price": 13.40,
+                  "description": "Ca. 150g frisches Rindfleisch, Käse, Essiggurken, Tomaten, Zwiebeln, Petersilie, Moment-Soße, Pommes frites",
+                },
+          ]
+      }
+  ]
+}
+
 */

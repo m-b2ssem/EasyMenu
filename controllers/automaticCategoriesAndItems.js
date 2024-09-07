@@ -15,7 +15,7 @@ export const automaticCategoriesAndItems = async (req, res) =>
     if(!categories || !menuId || isNaN(menuId) || categories.length === 0 || !userId || isNaN(userId)) {
         return res.status(400).json({message: 'Missing required fields'});
     }
-    if (await getMenuByUserId(menuId))
+    if (await getMenuByUserId(userId) === false)
     {
         return res.status(400).json({message: 'Menu does not exists'});
     }
