@@ -44,7 +44,6 @@ export const createCheckoutSession =  async (req, res) => {
           },
           ],
           mode: "subscription",
-          allow_promotion_codes: true,
       });
       }
       const plan = await selectSubscrptionPlanByUserId(userId);
