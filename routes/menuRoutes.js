@@ -6,6 +6,7 @@ import {
   updateLanguage,
   updateTheCurrency,
   getMenu,
+  MenuEmbed,
 } from '../controllers/menuController.js';
 
 const storage = multer({
@@ -14,6 +15,7 @@ const storage = multer({
 const router = Router();
 
 router.get('/menu/:menuid/:res', getMenu);
+router.get('/embed/:menuid/:res', MenuEmbed);
 
 router.post('/upload-logo-image', storage.single('image'), uploadLogoImage);
 router.post('/updateColor', updateColor);

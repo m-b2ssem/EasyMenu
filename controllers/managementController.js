@@ -38,12 +38,13 @@ export const manageMenuPage = async (req, res) => {
     let name_of_menu = menu.menu_name.replace(/\s+/g, "");
     name_of_menu = name_of_menu.toLowerCase();
 
-    const menu_name =
-      "https://www.easymenus.eu/menu/" + menu.menu_id + "/" + name_of_menu;
+    const menu_name = "https://www.easymenus.eu/menu/" + menu.menu_id + "/" + name_of_menu;
+    const menu_embed = "https://www.easymenus.eu/embed/" + menu.menu_id + "/" + name_of_menu;
     const langauges = await createLangaugeList(menu.menu_language);
     const currencies = await createCurrencyList(menu.menu_currency);
     const menuDesign = await getDesignByMenuId(menu.menu_id);
     res.render("menu", {
+      menu_embed: menu_embed,
       user: req.user,
       year: new Date().getFullYear(),
       langauges: langauges,

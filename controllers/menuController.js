@@ -64,7 +64,7 @@ export const getMenu =  async (req, res) => {
     }else {
       return res.render('message.ejs', { message: 'Your subscription is expaired, please go to your profile to renew it.', link: '/login', name: 'login' });
     }
-  };
+};
 
 export const uploadLogoImage = async (req, res) => {
   const file = req.file;
@@ -110,4 +110,48 @@ export const updateTheCurrency = async (req, res) => {
     return res.json({ success: false, message: 'Something went wrong, please try again.'});
   }
   res.json({ success: true });
+};
+
+export const MenuEmbed =  async (req, res) => {
+  const menuid = req.params.menuid;
+  
+  const result = await getMenuByMenuId(menuid);
+  if (!result) {
+    return res.render('message.ejs', { message: 'There is no menu found, please login to see the menu URL.', link: '/login', name: 'login' });
+  }
+  const menu = result[0];
+  if (!menu) {
+    return res.render('message.ejs', { message: 'There is no menu found, please login to see the menu URL.', link: '/login', name: 'login' });
+  }
+
+  const response = await selectSubscrptionPlanByUserId(menu.user_id);
+  const createdAt = new Date(response.created_at);
+  const expirationDate = new Date(createdAt);
+  expirationDate.setDate(expirationDate.getDate() + response.duration_days);
+  const today = new Date();
+  const isPlanValid = expirationDate > today;
+
+ //implament it later to display just when the plan is valid
+  if (isPlanValid){
+    let user = await selectUserById(menu.user_id);
+    user = user.rows[0];
+    const menu_design = await getDesignByMenuId(menuid);
+    const language = await createLangaugeList(menu.menu_language);
+    let categories = await getCategoriesWithItems(menuid);
+    if (!categories) {
+      categories = [];
+    }
+    const bachground_color = menu_design.background_color;
+    const currency = menu.menu_currency;
+
+    res.render('horizontal_menu_embed.ejs', {
+      'categories': categories,
+      'currency': currency,
+      'language': language,
+      'background_color': bachground_color,
+      'user': user
+    });
+  }else {
+    return res.render('message.ejs', { message: 'Your subscription is expaired, please go to your profile to renew it.', link: '/login', name: 'login' });
+  }
 };
