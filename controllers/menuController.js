@@ -16,7 +16,8 @@ import { convertArrayBufferToBase64 } from '../utils/helperFunctions.js';
 
 
 export const getMenu =  async (req, res) => {
-    const menuid = req.params.menuid;
+    const menuid = req.params;
+    
   
     const result = await getMenuByMenuId(menuid);
     if (!result) {

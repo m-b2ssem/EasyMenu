@@ -15,6 +15,7 @@
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "buffer": "^6.0.3",
+    "deepl-node": "^1.14.0",
     "dirname": "^0.1.0",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
@@ -32,6 +33,7 @@
     "qrcode": "^1.5.3",
     "sharp": "^0.33.4",
     "stripe": "^15.10.0",
+    "translate": "^3.0.1",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
