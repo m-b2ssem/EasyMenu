@@ -31,7 +31,11 @@ export const automaticCategoriesAndItems = async (req, res) =>
                     const itemName = item.name;
                     const itemPrice = item.price;
                     const itemDescription = item.description;
-                    await insertItem(categoryResult.category_id, itemName,itemDescription, itemPrice, null, "None", null);
+                    const allergens = Array.isArray(item.allergens) && item.allergens.length > 0 
+                    ? item.allergens.join(',') 
+                    : null;
+                    const veganStatus = item.vegan ? "Vegan" : "None";
+                    await insertItem(categoryResult.category_id, itemName,itemDescription, itemPrice, null, veganStatus, allergens);
                 }
             }
         }
