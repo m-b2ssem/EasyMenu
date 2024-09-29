@@ -170,6 +170,10 @@ export const fetchMenu = async (req, res) =>
     return res.json(null);
   }
   const categories = await getCategoriesWithItemsAndAllTranslations(menuId);
+  if (!categories)
+  {
+    return res.json(null);
+  }
   const menu_image = menu.menu_logo
   ? 'data:image/png;base64,' + await convertArrayBufferToBase64(menu.menu_logo)
   : 'https://easymenus.eu/img/mainlogo.jpg';

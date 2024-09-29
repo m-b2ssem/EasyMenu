@@ -266,6 +266,8 @@ export const getCategoriesWithItemsAndAllTranslations = async (menu_id) => {
         i.item_name,
         i.description,
         i.price,
+        i.food_type,
+        i.allergies,
         encode(i.image, 'base64') AS image_base64,
         i.priority AS item_priority,
         COALESCE(
@@ -301,6 +303,8 @@ export const getCategoriesWithItemsAndAllTranslations = async (menu_id) => {
         i.item_name,
         i.description,
         i.price,
+        i.food_type,
+        i.allergies,
         i.image,
         i.priority
       ORDER BY 
@@ -334,6 +338,8 @@ export const getCategoriesWithItemsAndAllTranslations = async (menu_id) => {
           item_name: row.item_name,
           description: row.description,
           price: row.price,
+          food_type: row.food_type,
+          allergies: row.allergies,
           item_priority: row.item_priority,
           translations: row.item_translations, // Add item translations
           image: row.image_base64,
