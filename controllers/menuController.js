@@ -8,6 +8,7 @@ import {
   getDesignByMenuId,
   getLogoImage,
   getCategoriesWithItems,
+  getCategoriesWithItemsAndAllTranslations,
 } from '../models/menuModel.js';
 import { createLangaugeList } from '../utils/helperFunctions.js';
 import { selectUserById } from '../models/userModel.js';
@@ -155,3 +156,29 @@ export const MenuEmbed =  async (req, res) => {
     return res.render('message.ejs', { message: 'Your subscription is expaired, please go to your profile to renew it.', link: '/login', name: 'login' });
   }
 };
+
+export const fetchMenu = async (req, res) =>
+{
+  const menuId = parseInt(req.params.menuId);
+  if (menuId === NaN || menuId < 0 || menuId !== 52)
+  {
+    return res.json(null);
+  }
+  const menu = await getMenuByMenuId(menuId);
+  if (!menu)
+  {
+    return res.json(null);
+  }
+  const categories = await getCategoriesWithItemsAndAllTranslations(menuId);
+  const menu_image = menu.menu_logo
+  ? 'data:image/png;base64,' + await convertArrayBufferToBase64(menu.menu_logo)
+  : 'https://easymenus.eu/img/mainlogo.jpg';
+  const finalResult = {
+    menu_name: menu.menu_name,
+    menu_language: menu.menu_language,
+    menu_currency: menu.menu_currency,
+    logo: menu_image, // Assuming 'logo' is a property of the menu
+    categories: categories,
+  };
+  res.json(finalResult);
+}

@@ -254,3 +254,107 @@ export const getMenuByMenuId = async (id) => {
         db.release();
     }
 }
+
+export const getCategoriesWithItemsAndAllTranslations = async (menu_id) => {
+    const db = await pool.connect();
+    const query = `
+      SELECT 
+        c.category_id,
+        c.category_name,
+        c.priority AS category_priority,
+        i.item_id,
+        i.item_name,
+        i.description,
+        i.price,
+        encode(i.image, 'base64') AS image_base64,
+        i.priority AS item_priority,
+        COALESCE(
+          jsonb_agg(DISTINCT jsonb_build_object(
+            'language_code', ct.language_code,
+            'translated_name', ct.translated_name
+          )) FILTER (WHERE ct.translation_id IS NOT NULL), '[]'
+        ) AS category_translations,
+        COALESCE(
+          jsonb_agg(DISTINCT jsonb_build_object(
+            'language_code', it.language_code,
+            'translated_name', it.translated_name,
+            'translated_description', it.translated_description
+          )) FILTER (WHERE it.translation_id IS NOT NULL), '[]'
+        ) AS item_translations
+      FROM 
+        categories c
+      INNER JOIN 
+        items i ON c.category_id = i.category_id
+      LEFT JOIN 
+        category_translations ct ON c.category_id = ct.category_id
+      LEFT JOIN 
+        item_translations it ON i.item_id = it.item_id
+      WHERE 
+        c.menu_id = $1
+        AND c.category_status = TRUE
+        AND i.item_status = TRUE
+      GROUP BY
+        c.category_id,
+        c.category_name,
+        c.priority,
+        i.item_id,
+        i.item_name,
+        i.description,
+        i.price,
+        i.image,
+        i.priority
+      ORDER BY 
+        c.priority DESC,
+        i.priority DESC;
+    `;
+    try {
+      const { rows } = await db.query(query, [menu_id]);
+      if (rows.length === 0) {
+        return null;
+      }
+      // Process the results to create a nested structure
+      const menu = {};
+      rows.forEach(row => {
+        const categoryId = row.category_id;
+  
+        // Initialize the category if it hasn't been added yet
+        if (!menu[categoryId]) {
+          menu[categoryId] = {
+            category_id: row.category_id,
+            category_name: row.category_name,
+            category_priority: row.category_priority,
+            translations: row.category_translations, // Add category translations
+            items: [],
+          };
+        }
+  
+        // Add the item to the category's items array
+        menu[categoryId].items.push({
+          item_id: row.item_id,
+          item_name: row.item_name,
+          description: row.description,
+          price: row.price,
+          item_priority: row.item_priority,
+          translations: row.item_translations, // Add item translations
+          image: row.image_base64,
+        });
+      });
+  
+      // Convert the menu object into an array and sort categories by priority (descending)
+      const menuArray = Object.values(menu).sort(
+        (a, b) => b.category_priority - a.category_priority
+      );
+  
+      // Sort items within each category by item priority (descending)
+      menuArray.forEach(category => {
+        category.items.sort((a, b) => b.item_priority - a.item_priority);
+      });
+  
+      return menuArray;
+    } catch (err) {
+      console.error('Error executing query', err.stack);
+      throw err;
+    } finally {
+      db.release();
+    }
+};
