@@ -17,7 +17,6 @@ import itemRoutes from './routes/itemRoutes.js';
 import stripeRoutes from './routes/stripeRoutes.js';
 import emilConfirmationRoutes from './routes/emilConfirmationRoutes.js';
 import facebookRoutes from './routes/facebookRoutes.js';
-import janaRoutes from './routes/janaRoutes.js';
 import  automaticCategoriesAndItems  from './routes/automaticCategoriesAndItems.js';
 import  changeEmail  from './routes/changeEmail.js';
 
@@ -59,7 +58,6 @@ app.use(itemRoutes);
 app.use(stripeRoutes);
 app.use(emilConfirmationRoutes);
 app.use(facebookRoutes);
-app.use(janaRoutes);
 app.use(changeEmail);
 
 

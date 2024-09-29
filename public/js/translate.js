@@ -20,7 +20,7 @@ function applyCustomStyles() {
     var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
     var style = document.createElement("style");
     style.textContent = `
-            .VIpgJd-ZVi9od-vH1Gmf {
+            .VIpgJd-ZVi9aod-vH1Gmf {
                 text-align: center!important;
             }
 

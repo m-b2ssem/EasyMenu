@@ -122,3 +122,24 @@ export const getUserIdByGategoryId = async (category_id)  =>{
         db.release();
     }
 }
+
+
+export const addCategoryTranslation = async (categoryId, languageCode, translatedName) =>
+{
+    const db = await pool.connect();
+    const sql = `
+    INSERT INTO category_translations (category_id, language_code, translated_name)
+    VALUES ($1, $2, $3)
+    RETURNING *;
+    `;
+    const values = [categoryId, languageCode, translatedName];
+    try {
+        const res = await db.query(sql, values);
+        return res.rows[0];
+    } catch (error) {
+        console.error('Error adding translation:', error);
+        throw error;
+    } finally {
+        db.release();
+    }
+}

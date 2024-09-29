@@ -7,9 +7,11 @@ import {
   insertItem,
   updateItem,
   getItemsByCategory,
-  deleteItemImageDb
+  deleteItemImageDb,
 } from '../models/itemModel.js';
 import { cehckSizeandConvertTOBytea, parsePrice } from '../utils/helperFunctions.js';
+import { createTranslationForItems } from '../services/translation.js'
+
 
 const upload = multer();
 
@@ -82,9 +84,10 @@ export const addItem =  async (req, res) => {
   }
   categoryId = parseInt(categoryId);
   const inserted = await insertItem(categoryId, itemName, description, intPrice, buffer, foodType, capitalisedAllergies);
-  if (!inserted) {
+  if (!inserted || (inserted && !inserted.item_id)) {
     return res.json({ success: false, message: 'Something went wrong, please try again.' });
   }
+  createTranslationForItems(inserted);
   res.json({ success: true });
 };
 

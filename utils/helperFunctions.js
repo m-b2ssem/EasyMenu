@@ -223,6 +223,9 @@ export async function createCurrencyList(currency) {
 
 
 export const convertArrayBufferToBase64 = async (buffer) => {
+    if (!buffer) {
+        return null;
+    }
     return  Buffer.from(buffer).toString('base64');
 }
 

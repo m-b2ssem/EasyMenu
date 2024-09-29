@@ -82,7 +82,7 @@ export const insertItem = async (category_id, item_name, description, price, ima
             "INSERT INTO items (user_id, category_id, item_name, description, price, image, food_type, allergies) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
             [user_id, category_id, item_name, description, price, image, foodType, allergies]);
         if (result.rows.length > 0) {
-            return true;
+            return result.rows[0];
         }
         return false;
     } catch (error) {
@@ -146,5 +146,47 @@ export const deleteItemImageDb = async (item_id) => {
         throw error;
     } finally {
         db.release();
+    }
+}
+
+
+export const addItemTranslation = async (itemId, languageCode, translatedName, translatedDescription) =>
+{
+    const db = await pool.connect();
+    const sql = `
+    INSERT INTO item_translations (item_id, language_code, translated_name, translated_description)
+    VALUES ($1, $2, $3, $4)
+    RETURNING *;
+  `;
+  const values = [itemId, languageCode, translatedName, translatedDescription];
+    try {
+        const res = await db.query(sql, values);
+        return res.rows[0];
+    } catch (error) {
+        console.error('Error adding translation:', error);
+        throw error;
+    } finally {
+        db.release();
+    }
+}
+
+export const updateTranslation = async (translationId, languageCode, translatedName, translatedDescription) =>
+{
+    const sql = `
+    UPDATE item_translations
+    SET language_code = $1, translated_name = $2, translated_description = $3
+    WHERE translation_id = $4
+    RETURNING *;
+    `;
+    const values = [languageCode, translatedName, translatedDescription, translationId];
+    const db = await this.pool.connect();
+    try {
+        const res = await db.query(sql, values);
+        return res.rows[0];
+    } catch (error) {
+        console.error('Error updating translation:', error);
+        throw error;
+    } finally {
+        client.release();
     }
 }
