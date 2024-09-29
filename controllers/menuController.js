@@ -164,8 +164,8 @@ export const fetchMenu = async (req, res) =>
   {
     return res.json(null);
   }
-  const menu = await getMenuByMenuId(menuId);
-  if (!menu)
+  const res2 = await getMenuByMenuId(menuId);
+  if (!res2)
   {
     return res.json(null);
   }
@@ -174,6 +174,7 @@ export const fetchMenu = async (req, res) =>
   {
     return res.json(null);
   }
+  const menu = res2[0];
   const menu_image = menu.menu_logo
   ? 'data:image/png;base64,' + await convertArrayBufferToBase64(menu.menu_logo)
   : 'https://easymenus.eu/img/mainlogo.jpg';
