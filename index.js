@@ -20,12 +20,18 @@ import facebookRoutes from './routes/facebookRoutes.js';
 import janaRoutes from './routes/janaRoutes.js';
 import  automaticCategoriesAndItems  from './routes/automaticCategoriesAndItems.js';
 import  changeEmail  from './routes/changeEmail.js';
+import cors from 'cors';
 
 
 config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 export const app = express();
+
+app.use(cors({
+  origin: '*', // Allow requests from any origin
+}));
+
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
